@@ -20,19 +20,19 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @GetMapping("/send_otp")
-    public String send_otp()
+    record send_otp_body(String mobile_number){}
+    @CrossOrigin
+    @PostMapping("/send_otp")
+    public String send_otp(@RequestBody send_otp_body send_otp_rec)
     {
-        return authenticationService.send_otp();
+        return authenticationService.send_otp(send_otp_rec.mobile_number);
     }
 
-    record otp_body(
-            String otp
-    ){}
+    record verify_otp_body(String mobile_number,String otp){}
+    @CrossOrigin
     @PostMapping("/verify_otp")
-    public String verify_otp(@RequestBody otp_body otp_rec)
+    public String verify_otp(@RequestBody verify_otp_body verify_otp_rec)
     {
-        return authenticationService.verify_otp(otp_rec.otp);
+        return authenticationService.verify_otp(verify_otp_rec.otp,verify_otp_rec.mobile_number);
     }
-
 }

@@ -9,9 +9,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/patient")
 public class PatientController {
-
     private final PatientService patientService;
-
     @ModelAttribute
     public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin", "*");

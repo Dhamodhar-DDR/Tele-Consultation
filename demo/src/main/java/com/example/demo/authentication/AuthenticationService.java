@@ -12,26 +12,26 @@ public class AuthenticationService {
     public void create_service() {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         com.twilio.rest.verify.v2.Service service = com.twilio.rest.verify.v2.Service.creator("My First Verify Service").create();
-        System.out.println("Verificatio=======]n Service Created!");
+        System.out.println("Verification Service Created!");
         System.out.println(service.getSid());
         String service_sid = service.getSid();
     }
-    public String send_otp() {
+    public String send_otp(String mobile_number) {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Verification verification = Verification.creator(
                         "VAe7a8961bee78f7920d14ec2ce79d82c1",
-                        "+919550660466",
+                        "+91"+mobile_number,
                         "sms")
                 .create();
         System.out.println(verification.getStatus());
         return verification.getStatus();
     }
-    public String verify_otp(String otp) {
+    public String verify_otp(String otp, String mobile_number) {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
         VerificationCheck verificationCheck = VerificationCheck.creator(
                         "VAe7a8961bee78f7920d14ec2ce79d82c1")
-                .setTo("+919550660466")
+                .setTo("+91"+mobile_number)
                 .setCode(otp)
                 .create();
         System.out.println(verificationCheck.getStatus());

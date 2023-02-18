@@ -3,15 +3,18 @@ package com.example.demo.patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+
+
 @Service
 public class PatientService {
 //    public List<Patient> list_student() {
 //        return List.of(new Patient(1,"Dhamod2har",20,"9550660466"));
 //    }
+//    @Autowired
     private PatientRepository patientRepository;
-    @Autowired
+
+//    @Autowired
     public PatientService(PatientRepository patientRepository){
         this.patientRepository = patientRepository;
     }

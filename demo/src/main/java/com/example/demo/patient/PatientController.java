@@ -16,7 +16,7 @@ public class PatientController {
     public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin", "*");
     }
-    @Autowired
+//    @Autowired
     public PatientController(PatientService patientService)
     {
         this.patientService = patientService;

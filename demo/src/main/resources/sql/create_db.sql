@@ -4,7 +4,7 @@ CREATE TABLE `Patient` (
 	`mobile_number` VARCHAR(255) NOT NULL,
 	`age` INT NOT NULL,
 	`gender` VARCHAR(255) NOT NULL,
-	`consent` BINARY NOT NULL,
+	`consent` BOOLEAN NOT NULL,
 	PRIMARY KEY (`patient_id`)
 );
 

@@ -19,17 +19,13 @@ public class PatientService {
         this.patientRepository = patientRepository;
     }
 
-    public List<Patient> list_student() {
+    public List<Patient> list_patient() {
         return patientRepository.findAll();
     }
 
-    public Patient create_patient(int id, String name, int age, String mobile) {
-        Patient p = new Patient();
-        p.setId(id);
-        p.setAge(age);
-        p.setMobile(mobile);
-        p.setName(name);
-        return patientRepository.save(p);
+    public Patient create_patient(String name, String mobile, int age, String gender, Boolean consent) {
+        Patient patient = new Patient( name, mobile,  age,  gender,  consent);
+        return patientRepository.save(patient);
     }
 
 }

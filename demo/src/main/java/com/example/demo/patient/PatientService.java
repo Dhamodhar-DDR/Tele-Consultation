@@ -28,4 +28,6 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
+    public Patient check_new_user(String mobile) { return patientRepository.findByMobileNumber(mobile); }
+
 }

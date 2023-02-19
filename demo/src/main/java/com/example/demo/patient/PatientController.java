@@ -20,7 +20,7 @@ public class PatientController {
         this.patientService = patientService;
     }
     @GetMapping("/")
-    public List<Patient> list_student() {
+    public List<Patient> list_patient() {
         return this.patientService.list_patient();
     }
 
@@ -34,6 +34,14 @@ public class PatientController {
     @PostMapping("/create")
     public Patient create_patient(@RequestBody new_patient_request npr) {
         return this.patientService.create_patient(npr.name,npr.mobile,npr.age, npr.gender, npr.consent);
+    }
+
+    record check_new_user_body (String mobile) {}
+    @PostMapping("/check_new_user")
+    public Boolean check_new_user(@RequestBody check_new_user_body cnub) {
+        Patient p = this.patientService.check_new_user(cnub.mobile);
+        if(p == null) return true;
+        else return false;
     }
 }
 

@@ -16,15 +16,53 @@ function Logincg() {
     setOtp(e.target.value);
   };
 
-  const handleSendOtpClick = (e) => {
+  const handleSendOtpClick = async (e) => {
     e.preventDefault();
-    // TODO: Send OTP to the phone number
     setShowOtp(true);
+
+    const send_otp_body = {
+      'mobile_number' : phone
+    }
+
+    await fetch('http://localhost:8090/api/v1/auth/send_otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(send_otp_body)
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log(data)
+    })
+    .catch(error => {
+      console.log(error)
+    });
   };
 
-  const handleLoginClick = (e) => {
+  const handleLoginClick = async (e) => {
     e.preventDefault();
-    // TODO: Verify the OTP and log in the user
+
+    const verify_otp_body = {
+      'mobile_number' : phone,
+      'otp': otp
+    }
+    await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(verify_otp_body)
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log(data)
+    })
+    .catch(error => {
+      console.log(error)
+    });
   };
 
   return (

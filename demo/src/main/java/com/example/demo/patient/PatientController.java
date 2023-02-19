@@ -9,32 +9,31 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/patient")
 public class PatientController {
-
     private final PatientService patientService;
-
     @ModelAttribute
     public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin", "*");
     }
-    @Autowired
+//    @Autowired
     public PatientController(PatientService patientService)
     {
         this.patientService = patientService;
     }
     @GetMapping("/")
     public List<Patient> list_student() {
-        return this.patientService.list_student();
+        return this.patientService.list_patient();
     }
 
     record new_patient_request(
-            int id,
             String name,
             int age,
-            String mobile
+            String mobile,
+            String gender,
+            Boolean consent
     ){}
     @PostMapping("/create")
     public Patient create_patient(@RequestBody new_patient_request npr) {
-        return this.patientService.create_patient(npr.id,npr.name,npr.age,npr.mobile);
+        return this.patientService.create_patient(npr.name,npr.mobile,npr.age, npr.gender, npr.consent);
     }
 }
 

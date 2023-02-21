@@ -20,7 +20,7 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
     @GetMapping("/")
-    public List<Doctor> list_student() {
+    public List<Doctor> list_patients() {
         return this.doctorService.list_doctor();
     }
 

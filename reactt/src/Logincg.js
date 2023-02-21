@@ -1,12 +1,45 @@
 
-import React, { useState } from "react";
+import React, { useState,useCallback,useEffect,Component, useRef} from "react";
+import OtpTimer from 'otp-timer'
+
 
 import './Logincg.css'
 
+
+
+
+
+
+
+
 function Logincg() {
+
+
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
+  const [valid, setvalid] = useState(false);
+  const[clickLogin, setclickLogin] = useState(false);
+  const[timerout, settimrout] = useState(true);
+  
+
+  const [count, setCount] = useState(10);
+  const [isActive, setIsActive] = useState(false);
+  const intervalRef = useRef(null);
+
+  const feedback = () => {
+
+    if(clickLogin && valid)
+    {
+      // alert("Navigate to next page")
+      
+    }
+
+    if(clickLogin && !valid)
+    {
+      return(<p> You've entered invalid OTP. Please Try again !</p>)
+    }
+  }
 
   const handlePhoneChange = (e) => {
     setPhone(e.target.value);
@@ -17,6 +50,7 @@ function Logincg() {
   };
 
   const handleSendOtpClick = async (e) => {
+    // startTimer();
     e.preventDefault();
     setShowOtp(true);
 
@@ -43,6 +77,7 @@ function Logincg() {
 
   const handleLoginClick = async (e) => {
     e.preventDefault();
+    setclickLogin(true);
 
     const verify_otp_body = {
       'mobile_number' : phone,
@@ -57,12 +92,53 @@ function Logincg() {
       body: JSON.stringify(verify_otp_body)
     })
     .then(response => response.text())
-    .then(data => {
+    .then(async(data) => {
       console.log(data)
+      if(data === "approved")
+      {
+        setvalid(true);
+
+        const check_new_user_body = {
+          'mobile_number' : phone
+        }
+    
+
+        await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' 
+          },
+          body: JSON.stringify(check_new_user_body)
+        })
+        .then(response => response.text())
+        .then(data => {
+          if(data)
+          {
+
+          }
+          else
+          {
+            
+          }
+        }
+
+        )
+
+
+      }
+      else 
+      {
+        setvalid(false);        
+      }
+
     })
     .catch(error => {
       console.log(error)
     });
+    
+
+
   };
 
   return (
@@ -72,20 +148,31 @@ function Logincg() {
         <label>Phone Number:</label>
         <input type="number" value={phone} onChange={handlePhoneChange} />
 
-        {showOtp && (
+        {showOtp? (
           <>
             <label>OTP:</label>
             <input type="number" value={otp} onChange={handleOtpChange} />
           </>
-        )}
+        ):null}
 
-        {!showOtp && (
+        {(!showOtp)?(
           <button onClick={handleSendOtpClick}>Send OTP</button>
-        )}
+        ):null}
 
-        {showOtp && (
-          <button onClick={handleLoginClick}>Login</button>
-        )}
+        {showOtp? (
+          <>
+          <button onClick={handleLoginClick}>Login</button> <br/>
+          {/* {console.log(timerout)} */}
+          <button onClick={handleSendOtpClick} disabled = {true}>Resend OTP ({count})</button>
+          </>
+          
+        ): null}
+
+        {
+            feedback()
+        }
+
+
       </form>
     </div>
   );

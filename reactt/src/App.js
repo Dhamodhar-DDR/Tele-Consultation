@@ -4,6 +4,7 @@ import './App.css';
 import Logincg from './Logincg';
 import Regc from './Regc';
 import ProfileSelector from './pop';
+import Login from './Login';
 
 
 function App() 
@@ -14,7 +15,7 @@ function App()
      <>
 
      <div className='pg1'>
-      <ProfileSelector />
+      <Logincg />
      </div>
 
 

@@ -1,6 +1,7 @@
 
 import React, { useState,useCallback,useEffect,Component, useRef} from "react";
-import OtpTimer from 'otp-timer'
+import { useNavigate } from 'react-router-dom';
+
 
 
 import './Logincg.css'
@@ -13,6 +14,8 @@ import './Logincg.css'
 
 
 function Logincg() {
+
+  const nav = useNavigate();
 
 
   const [phone, setPhone] = useState("");
@@ -27,18 +30,20 @@ function Logincg() {
   const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef(null);
 
-  const feedback = () => {
+  const feedback = (data) => {
 
-    if(clickLogin && valid)
+    if(!data)
     {
+      nav('/selectprofile');
       // alert("Navigate to next page")
       
     }
 
-    if(clickLogin && !valid)
+    else if(data)
     {
-      return(<p> You've entered invalid OTP. Please Try again !</p>)
+      nav('/register');
     }
+
   }
 
   const handlePhoneChange = (e) => {
@@ -94,9 +99,10 @@ function Logincg() {
     .then(response => response.text())
     .then(async(data) => {
       console.log(data)
+    
       if(data === "approved")
       {
-        setvalid(true);
+      
 
         const check_new_user_body = {
           'mobile_number' : phone
@@ -113,14 +119,12 @@ function Logincg() {
         })
         .then(response => response.text())
         .then(data => {
-          if(data)
-          {
 
-          }
-          else
-          {
-            
-          }
+          console.log("New User?",data);
+          
+        feedback(data);
+          
+        
         }
 
         )
@@ -129,11 +133,12 @@ function Logincg() {
       }
       else 
       {
-        setvalid(false);        
+        return(<p> You've entered invalid OTP. Please Try again !</p>);                
       }
 
     })
     .catch(error => {
+      return(<p> You've entered invalid OTP. Please Try again !</p>); 
       console.log(error)
     });
     
@@ -168,9 +173,6 @@ function Logincg() {
           
         ): null}
 
-        {
-            feedback()
-        }
 
 
       </form>

@@ -13,6 +13,12 @@ CREATE TABLE `Doctor` (
 	`doctor_id` INT NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL,
 	`mobile_number` VARCHAR(255) NOT NULL UNIQUE,
+	`online_status` BOOLEAN NOT NULL,
+	`age` INT NOT NULL,
+	`experience` VARCHAR(255),
+	`specialization` VARCHAR(255) NOT NULL,
+	`email` BINARY,
+	`gender` VARCHAR(255),
 	PRIMARY KEY (`doctor_id`)
 );
 
@@ -32,6 +38,7 @@ CREATE TABLE `Health_Record` (
 	`patient_id` INT NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255),
+	`file` blob NOT NULL,
 	PRIMARY KEY (`hr_id`)
 );
 
@@ -50,8 +57,3 @@ ALTER TABLE `Appointment` ADD CONSTRAINT `Appointment_fk1` FOREIGN KEY (`doctor_
 ALTER TABLE `Health_Record` ADD CONSTRAINT `Health_Record_fk0` FOREIGN KEY (`patient_id`) REFERENCES `Patient`(`patient_id`);
 
 ALTER TABLE `Prescription` ADD CONSTRAINT `Prescription_fk0` FOREIGN KEY (`app_id`) REFERENCES `Appointment`(`appointment_id`);
-
-
-
-
-

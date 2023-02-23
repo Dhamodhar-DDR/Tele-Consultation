@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
-import './Regc.css'
+import './Reg.css'
 
 
-function Regc() {
+function Regdoc() {
 
   const nav = useNavigate();
 
@@ -20,6 +20,9 @@ function Regc() {
   const [Name, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const[spec, setSpec] = useState("");
+  const[exp, setExp] = useState("");
+
   const [gender, setgender] = useState("");
   const [Age, setAge] = useState("");
   
@@ -47,6 +50,15 @@ function Regc() {
   const handlegender= (e) => {
     console.log(e.target.value);
     setgender(e.target.value);
+  };
+  const handleexp= (e) => {
+    console.log(e.target.value);
+    setExp(e.target.value);
+  };
+
+  const handlespec= (e) => {
+    console.log(e.target.value);
+    setSpec(e.target.value);
   };
 
   
@@ -114,6 +126,13 @@ function Regc() {
         <label>Email:</label>
         <input type="email" value={email} placeholder="(optional)" onChange={handleEmailChange} />
 
+        <label>Specialization:</label>
+        <input type="text" value={spec} placeholder="" onChange={handlespec} />
+
+        <label>Experience:</label>
+        <input type="" value={exp} placeholder="(in years)" onChange={handleexp} />
+
+
 
  
         <button type="submit">Register</button>
@@ -122,4 +141,4 @@ function Regc() {
   );
 }
 
-export default Regc;
+export default Regdoc;

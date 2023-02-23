@@ -6,8 +6,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Logincg from './Logincg';
 import Regc from './Regc';
 import ProfileSelector from './pop';
-import Login from './Login';
-
+import Regdoc from './Doctor/Reg';
+import Logindoc from './Doctor/Login';
 
 function App() 
 {
@@ -19,6 +19,10 @@ function App()
       <Route exact path="/" element={<Logincg />} />
       <Route path="/register" element={<Regc />} />
       <Route path="/selectprofile" element={<ProfileSelector/>}/>
+      {/* <Route exact path="/" element={<Logindoc />} />
+      <Route path="/register" element={<Regdoc />} /> */}
+    
+
     </Routes>
   </Router>
 

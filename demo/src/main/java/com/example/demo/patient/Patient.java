@@ -21,6 +21,8 @@ public class Patient {
 
     @Column(name = "gender")
     private String gender;
+    @Column(name = "email")
+    private String email;
 
     @Column(name = "consent")
     private Boolean consent;
@@ -28,11 +30,12 @@ public class Patient {
     // Constructor
     public Patient() {}
 
-    public Patient(String name, String mobileNumber, int age, String gender, Boolean consent) {
+    public Patient(String name, String mobileNumber, int age, String gender,String email ,Boolean consent) {
         this.name = name;
         this.mobileNumber = mobileNumber;
         this.age = age;
         this.gender = gender;
+        this.email = email;
         this.consent = consent;
     }
 
@@ -69,6 +72,15 @@ public class Patient {
     public void setAge(int age) {
         this.age = age;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 
     public String getGender() {
         return gender;

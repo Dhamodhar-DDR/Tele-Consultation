@@ -2,9 +2,9 @@
 import React, { useState,useCallback,useEffect,Component, useRef} from "react";
 import { createSearchParams, useNavigate } from 'react-router-dom';
 
-import './Logincg.css'
+import './Login.css'
 
-function Logincg() {
+function Logindoc() {
 
   const nav = useNavigate();
 
@@ -186,4 +186,4 @@ function Logincg() {
   );
 }
 
-export default Logincg;
+export default Logindoc;

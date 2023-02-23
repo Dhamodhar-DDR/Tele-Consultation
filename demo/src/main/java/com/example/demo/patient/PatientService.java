@@ -23,8 +23,8 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient create_patient(String name, String mobile, int age, String gender, Boolean consent) {
-        Patient patient = new Patient( name, mobile,  age,  gender,  consent);
+    public Patient create_patient(String name, String mobile, int age, String gender, String email, Boolean consent) {
+        Patient patient = new Patient( name, mobile,  age,  gender,  email ,consent);
         return patientRepository.save(patient);
     }
 

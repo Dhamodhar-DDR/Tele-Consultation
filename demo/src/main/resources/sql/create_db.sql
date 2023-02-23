@@ -5,6 +5,7 @@ CREATE TABLE `Patient` (
 	`age` INT NOT NULL,
 	`gender` VARCHAR(255) NOT NULL,
 	`consent` BOOLEAN NOT NULL,
+	`email` VARCHAR(255),
 	PRIMARY KEY (`patient_id`)
 );
 

@@ -29,12 +29,15 @@ public class PatientController {
             int age,
             String mobile,
             String gender,
+
+            String email,
+
             Boolean consent
     ){}
     @CrossOrigin
     @PostMapping("/create")
     public Patient create_patient(@RequestBody new_patient_request npr) {
-        return this.patientService.create_patient(npr.name,npr.mobile,npr.age, npr.gender, npr.consent);
+        return this.patientService.create_patient(npr.name,npr.mobile,npr.age, npr.gender, npr.email, npr.consent);
     }
 
     record check_new_user_body (String mobile) {}

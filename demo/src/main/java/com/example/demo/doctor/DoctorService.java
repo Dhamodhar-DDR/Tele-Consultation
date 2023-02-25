@@ -39,7 +39,6 @@ public class DoctorService {
         doctorRepository.save(doctor);
         return true;
     }
-
     public List<Doctor> getOnlineDoctors() {
         return doctorRepository.findByOnlineStatusTrue();
     }

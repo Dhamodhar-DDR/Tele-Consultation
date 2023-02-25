@@ -46,7 +46,7 @@ public class DoctorController {
 
     @CrossOrigin
     @PostMapping("/add_doctor")
-    public Doctor create_patient(@RequestBody new_doctor_request ndr) {
+    public Doctor create_doctor(@RequestBody new_doctor_request ndr) {
         return this.doctorService.create_doctor(ndr.name,ndr.mobile,ndr.onlineStatus,ndr.age,ndr.experience,ndr.specialization,ndr.email,ndr.gender);
     }
 
@@ -57,6 +57,14 @@ public class DoctorController {
         if(doc == null) return true;
         else return false;
     }
+
+    @CrossOrigin
+    @PostMapping("/get_doctor_by_mobile")
+    public Doctor get_doctor_by_mobile(@RequestBody check_new_mobile_body cnmb) {
+        return this.doctorService.check_new_mobile(cnmb.mobile_number);
+    }
+
+
 
     @CrossOrigin
     @PostMapping("/check_online_status")

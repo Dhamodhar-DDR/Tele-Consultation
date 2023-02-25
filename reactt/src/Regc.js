@@ -88,7 +88,7 @@ function Regc() {
 
   return (
     <div className="container">
-      <h1>Online Medical Consultation</h1>
+      <h1>User Registration</h1>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>
         <input type="text" value={Name} onChange={handleFirstNameChange} />
@@ -116,7 +116,7 @@ function Regc() {
 
 
  
-        <button type="submit">Register</button>
+        <button className="Login-doc-button" type="submit">Register</button>
       </form>
     </div>
   );

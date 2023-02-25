@@ -117,7 +117,7 @@ function Regdoc() {
 
   return (
     <div className="container">
-      <h1>Online Medical Consultation</h1>
+      <h1>Doctor Registration</h1>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>
         <input type="text" value={Name} onChange={handleFirstNameChange} />
@@ -152,7 +152,7 @@ function Regdoc() {
 
 
  
-        <button type="submit">Register</button>
+        <button className="Login-doc-button" type="submit">Register</button>
       </form>
     </div>
   );

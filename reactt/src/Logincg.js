@@ -154,7 +154,7 @@ function Logincg() {
 
   return (
     <div className="container">
-      <h1>Online Medical Consultation</h1>
+      <h1>Patient Login</h1>
       <form>
         <label>Phone Number:</label>
         <input type="number" value={phone} onChange={handlePhoneChange} />
@@ -167,14 +167,14 @@ function Logincg() {
         ):null}
 
         {(!showOtp)?(
-          <button onClick={handleSendOtpClick}>Send OTP</button>
+          <button className="Login-doc-button" onClick={handleSendOtpClick}>Send OTP</button>
         ):null}
 
         {showOtp? (
           <>
-          <button onClick={handleLoginClick}>Login</button> <br/>
+          <button className="Login-doc-button" onClick={handleLoginClick}>Login</button> <br/>
           {/* {console.log(timerout)} */}
-          <button onClick={handleSendOtpClick} disabled = {true}>Resend OTP ({count})</button>
+          <button className="Login-doc-button" onClick={handleSendOtpClick} disabled = {true}>Resend OTP ({count})</button>
           </>
           
         ): null}

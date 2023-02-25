@@ -23,11 +23,15 @@ function Logindoc() {
 
   const feedback = (data) => {
 
-    if(!data)
+    console.log("data in feedback, ",data);
+    console.log(typeof(data))
+    console.log(data=='false')
+    if(data == 'false')
     {
+      console.log("Inside if")
       nav({
         
-        pathname: '/selectprofile',
+        pathname: '/DocHome',
         search: createSearchParams({
           mobile: phone
         }).toString()
@@ -37,11 +41,11 @@ function Logindoc() {
       
     }
 
-    else if(data)
+    else if(data == 'true')
     {
       nav({
         
-        pathname: '/register',
+        pathname: '/register_doc',
         search: createSearchParams({
           mobile: phone
         }).toString()
@@ -115,7 +119,7 @@ function Logindoc() {
         }
     
 
-        await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
+        await fetch('http://localhost:8090/api/v1/doctor/check_new_mobile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

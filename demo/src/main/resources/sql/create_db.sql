@@ -17,7 +17,7 @@ CREATE TABLE `Doctor` (
 	`age` INT NOT NULL,
 	`experience` VARCHAR(255),
 	`specialization` VARCHAR(255) NOT NULL,
-	`email` BINARY,
+	`email` VARCHAR(255),
 	`gender` VARCHAR(255),
 	PRIMARY KEY (`doctor_id`)
 );

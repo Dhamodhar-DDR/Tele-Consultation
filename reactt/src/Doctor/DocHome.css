@@ -1,0 +1,110 @@
+/* Navigation bar styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+  }
+  
+  .navbar button {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 10px;
+    font-size: 15px;
+    transition: color 0.3s ease-in-out;
+    float: left;
+  }
+  
+  .navbar a:hover {
+    color: #1973f0;
+  }
+  
+  .nav-button {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    background-color: #2c3e50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  /* Button styles */
+  /* .button {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    margin-left: 650px;
+    background-color: #3a90f2;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .button:hover {
+    background-color: #1234f3;
+  } */
+
+  
+  
+  /* Heading styles */
+  .heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  /* List styles */
+  .list {
+    margin-top: 10px;
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .list li {
+    margin-bottom: 5px;
+    padding: 10px;
+    background-color: #f5f5f5;
+  }
+  
+  /* Centered button */
+.centered-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+/* Button styles */
+.consultation-button {
+  background-color: #249d1c;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.consultation-button:hover {
+  background-color: #f39c12;
+}
+
+/* Stop consultation styles */
+.stop-consultation {
+  background-color: #c0392b;
+}
+

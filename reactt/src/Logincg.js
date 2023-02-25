@@ -23,7 +23,7 @@ function Logincg() {
 
   const feedback = (data) => {
 
-    if(!data)
+    if(data == 'false')
     {
       nav({
         
@@ -37,11 +37,11 @@ function Logincg() {
       
     }
 
-    else if(data)
+    else if(data == 'true')
     {
       nav({
         
-        pathname: '/register',
+        pathname: '/register_p',
         search: createSearchParams({
           mobile: phone
         }).toString()

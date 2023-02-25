@@ -1,6 +1,7 @@
 
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import './pop.css'
 
 
@@ -12,8 +13,9 @@ function ProfileSelector() {
    const p3 = {id: 3, avatar: "./imgs/p3.jpeg",name:"Ethan", age: 63}
 
    const profiles = [p1,p2,p3];
+   const nav = useNavigate();
 
-   const onProfileSelect = () => {alert("Prof selected");};
+   const onProfileSelect = () => {nav('/select_doc');};
 
   return (
     <div className="popup-overlay">

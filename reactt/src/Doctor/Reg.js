@@ -1,7 +1,9 @@
 
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+
+import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
+
 
 import './Reg.css'
 
@@ -65,27 +67,42 @@ function Regdoc() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     console.log("In handle num:",searchParams.get("mobile"));
-    const create_patient_body = {
+    const create_doc_body = {
         'name' : Name,
-        'age' : Age,
         'mobile' : searchParams.get("mobile"),
-        'gender' : gender,
+
+        'age' : Age,
+        'specialization':spec,
+        'experience': exp,
         'email' : email,
-        'consent' : false
+        'gender' : gender,
+        'onlineStatus' : false
       }
+      console.log(create_doc_body.email);
   
-      await fetch('http://localhost:8090/api/v1/patient/create', {
+      await fetch('http://localhost:8090/api/v1/doctor/add_doctor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
-        body: JSON.stringify(create_patient_body)
+        body: JSON.stringify(create_doc_body)
       })
       .then(response => response.json())
       .then(data => {
         console.log(data)
-        nav('/selectprofile')
+      //  if(data.status == 200)
+       // {
+        nav({
+        
+          pathname: '/DocHome',
+          search: createSearchParams({
+            mobile: searchParams.get('mobile')
+          }).toString()
+        
+        });
+  
+       // }
 
       })
       .catch(error => {

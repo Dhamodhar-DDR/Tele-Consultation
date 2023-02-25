@@ -7,7 +7,7 @@ import java.util.List;
 public interface PatientRepository extends JpaRepository<Patient, Integer> {
     @Query(value = "SELECT * FROM PATIENT",nativeQuery = true)
     List<Patient> get_all_patients();
-    Patient findByMobileNumber(String mobileNumber);
+    List<Patient> findByMobileNumber(String mobileNumber);
 
 }
 

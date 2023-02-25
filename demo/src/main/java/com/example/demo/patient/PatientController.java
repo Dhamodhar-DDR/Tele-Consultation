@@ -44,13 +44,14 @@ public class PatientController {
     @CrossOrigin
     @PostMapping("/check_new_user")
     public Boolean check_new_user(@RequestBody check_new_user_body cnub) {
-        Patient p = this.patientService.check_new_user(cnub.mobile_number);
+        List<Patient> p = this.patientService.check_new_user(cnub.mobile_number);
         if(p == null) return true;
         else return false;
     }
 
-
+    @CrossOrigin
+    @PostMapping("/display_profiles")
+    public List<Patient> display_profiles(@RequestBody check_new_user_body cnub) {
+         return this.patientService.check_new_user(cnub.mobile_number);
+    }
 }
-
-
-

@@ -51,17 +51,17 @@ public class DoctorController {
     }
 
     @CrossOrigin
-    @PostMapping("/check_online_status")
-    public Boolean check_online_status(@RequestBody check_online_status_body cosb) {
-        return this.doctorService.check_online_status(cosb.doctorID);
-    }
-
-    @CrossOrigin
     @PostMapping("/check_new_mobile")
     public Boolean check_new_mobile(@RequestBody check_new_mobile_body cnmb) {
         Doctor doc = this.doctorService.check_new_mobile(cnmb.mobile_number);
         if(doc == null) return true;
         else return false;
+    }
+
+    @CrossOrigin
+    @PostMapping("/check_online_status")
+    public Boolean check_online_status(@RequestBody check_online_status_body cosb) {
+        return this.doctorService.check_online_status(cosb.doctorID);
     }
 
     @CrossOrigin

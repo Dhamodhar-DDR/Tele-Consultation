@@ -178,7 +178,8 @@ function Logindoc() {
           <>
           <button className="Login-doc-button" onClick={handleLoginClick}>Login</button> <br/>
           {/* {console.log(timerout)} */}
-          <button className="Login-doc-button" onClick={handleSendOtpClick} disabled = {true}>Resend OTP ({count})</button>
+          
+          <button className="Login-doc-button" onClick={handleSendOtpClick} >Resend OTP</button>
           </>
           
         ): null}

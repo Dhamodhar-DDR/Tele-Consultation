@@ -42,7 +42,13 @@
    */
 
 
-
+  .heading-1{
+    
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    color: #fff;
+  }
 
 
 
@@ -51,12 +57,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 60%;
+    width: 80%;
     margin-bottom: 20px;
     margin-left: auto;
     margin-right: auto;
     padding: 20px;
     border: 1px solid #ccc;
+    background-color: #ffffff;
   }
   
   .doctor-details {

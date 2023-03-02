@@ -59,6 +59,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     margin-right: 1rem;
+
   }
   
   .popup-profile:last-child {
@@ -83,5 +84,10 @@
   
   .popup-profile p {
     font-size: 1.2rem;
+  }
+
+  .profilepics {
+    height: 100px;
+    width: 100px;
   }
   

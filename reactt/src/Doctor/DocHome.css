@@ -20,7 +20,7 @@
   }
   
   .navbar a:hover {
-    color: #1973f0;
+    color: #e6e9ee;
   }
   
   .nav-button {
@@ -33,9 +33,15 @@
     padding: 10px 20px;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease-in-out;
+    border-radius: 20px;
+    transition-duration: 0.9s;
+    /* transition: background-color 0.3s ease-in-out; */
   }
+  .nav-button:hover {
+    background-color: #ececef;
+    color: #2c3e50;
+  }
+  
   
   /* Button styles */
   /* .button {
@@ -92,15 +98,15 @@
   background-color: #249d1c;
   color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 20px 40px;
   cursor: pointer;
-  font-size: 16px;
-  border-radius: 5px;
+  font-size: 30px;
+  border-radius: 25px;
   transition: background-color 0.3s ease-in-out;
 }
 
 .consultation-button:hover {
-  background-color: #f39c12;
+  background-color: #3b4bd6;
 }
 
 /* Stop consultation styles */

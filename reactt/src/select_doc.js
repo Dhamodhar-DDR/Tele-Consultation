@@ -1,5 +1,9 @@
 import React from "react";
+import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
+
+
 import './select_doc.css'
+import def_pp from '../src/imgs/profile.png'
 
 import { useState, useEffect } from "react";
 
@@ -80,25 +84,56 @@ function DoctorList() {
   // const p8 = {id: 5, image: "./imgs/p2.jpeg",name:"Chris", experience: 7, description:"asfgsdgs"}
   // const p9 = {id: 6, image: "./imgs/p3.jpeg",name:"Eth", experience: 22, description:"abxcbxcxbc"}
 
+  const nav = useNavigate()
 
+  const HandleLogout = () =>{
+  
+    nav('/login_p')
+  
+    
+  }
+  
 
 
  
   //const doctors = [p1,p2,p3,p4,p5,p6,p7,p8];
  
   return (
+
+    <>
+      
+      {/* Navigation bar */}
+      <div className="navbar">
+        <div>
+        <button className="nav-button">Home</button>
+        <button className="nav-button">Manage Profile</button>
+        <button className="nav-button">Appointment History</button>
+
+          {/* <a href="#">Edit Profile</a>
+          <a href="#">Appointment History</a> */}
+        </div>
+        <div>
+        <button className="nav-button" onClick={HandleLogout}>Logout</button>
+        </div>
+      </div>
+
     <div className="doctor-list">
-      <h1>Choose a doctor</h1>
+      <br/>
+      <h1 className="heading-1">Choose a doctor</h1>
+
+
       {doclist.map((doctor) => (
         <DoctorProfile
           key={doctor.doctorId}
-          image={"D:/tele-git/Tele-Consultation/reactt/src/imgs/download.jpeg"}
+          image={def_pp}
           name={doctor.name}
           experience={doctor.experience}
-          description={"Default description"}
+          description={doctor.specialization}
         />
       ))}
     </div>
+
+    </>
   );
 }
 

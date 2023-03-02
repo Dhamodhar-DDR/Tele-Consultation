@@ -45,7 +45,7 @@ public class PatientController {
     @PostMapping("/check_new_user")
     public Boolean check_new_user(@RequestBody check_new_user_body cnub) {
         List<Patient> p = this.patientService.check_new_user(cnub.mobile_number);
-        if(p == null) return true;
+        if(p.size() == 0) return true;
         else return false;
     }
 

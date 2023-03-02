@@ -7,9 +7,11 @@
   }
   
   body {
-    font-family: DejaVu Sans Mono, monospace;
+    /* font-family: DejaVu Sans Mono, monospace; */
+    /* font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif; */
+    font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif; 
     line-height: 1.5;
-    background-color: #ffeb9c;
+    background-color: #25a0d5;
 
     color: #333;
   }
@@ -76,8 +78,12 @@
   text-align: center;
   text-decoration: none;
   user-select: none;
+  align-items: center;
   -webkit-user-select: none;
   touch-action: manipulation;
+  width: 203px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .Login-doc-button:hover {

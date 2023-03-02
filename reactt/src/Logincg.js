@@ -15,6 +15,7 @@ function Logincg() {
   const [valid, setvalid] = useState(false);
   const[clickLogin, setclickLogin] = useState(false);
   const[timerout, settimrout] = useState(true);
+  const[login_approved, setloginapproved] = useState(-1);
   
 
   const [count, setCount] = useState(10);
@@ -22,7 +23,7 @@ function Logincg() {
   const intervalRef = useRef(null);
 
   const feedback = (data) => {
-
+    
     if(data == 'false')
     {
       nav({
@@ -108,6 +109,7 @@ function Logincg() {
     
       if(data === "approved")
       {
+        setloginapproved(1);
       
 
         const check_new_user_body = {
@@ -139,6 +141,7 @@ function Logincg() {
       }
       else 
       {
+        setloginapproved(2);
         return(<p> You've entered invalid OTP. Please Try again !</p>);                
       }
 
@@ -173,8 +176,22 @@ function Logincg() {
         {showOtp? (
           <>
           <button className="Login-doc-button" onClick={handleLoginClick}>Login</button> <br/>
+          <button className="Login-doc-button" onClick={handleSendOtpClick}>Resend OTP</button>
+
+          {
+           (login_approved == 2)?(
+            
+            <>
+            
+            <br/>
+            <p style={{color:"red"}}> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  You've entered invalid OTP. Please Try again !</p>
+
+            </>
+
+           ):null
+
+           }
           {/* {console.log(timerout)} */}
-          <button className="Login-doc-button" onClick={handleSendOtpClick} disabled = {true}>Resend OTP ({count})</button>
           </>
           
         ): null}

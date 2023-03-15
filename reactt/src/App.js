@@ -11,6 +11,7 @@ import Logindoc from './Doctor/Login';
 import DocHome from './Doctor/DocHome';
 import Page1 from './pg1';
 import DoctorList from './select_doc';
+import VideoCall from './VideoCall/videocall.component'
 
 function App() 
 {
@@ -25,6 +26,7 @@ function App()
     <Routes>
       
       <Route exact path="/" element={<Page1 />} />
+      <Route exact path="/video_call" element={<VideoCall />} />
       <Route exact path="/login_p" element={<Logincg />} />     
       <Route exact path="/register_p" element={<Regc />} />
       <Route exact path="/login_doc" element={<Logindoc />} />

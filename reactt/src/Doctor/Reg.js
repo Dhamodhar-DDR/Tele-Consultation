@@ -10,31 +10,23 @@ import './Reg.css'
 
 function Regdoc() {
 
+  
   const nav = useNavigate();
-
-
-
-    useEffect(() => {
-        console.log("Received num: ", searchParams.get("mobile"));
-      });
+  
   const[searchParams] = useSearchParams();
-
   const [Name, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const[spec, setSpec] = useState("");
   const[exp, setExp] = useState("");
-
   const [gender, setgender] = useState("");
   const [Age, setAge] = useState("");
-  
+
+  useEffect(() => {
+    console.log("Received num: ", searchParams.get("mobile"));
+  });
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
-  };
-
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
   };
 
   const handleEmailChange = (e) => {
@@ -79,7 +71,7 @@ function Regdoc() {
         'onlineStatus' : false
       }
       console.log(create_doc_body.email);
-  
+      
       await fetch('http://localhost:8090/api/v1/doctor/add_doctor', {
         method: 'POST',
         headers: {
@@ -89,28 +81,44 @@ function Regdoc() {
         body: JSON.stringify(create_doc_body)
       })
       .then(response => response.json())
-      .then(data => {
-        console.log(data)
-      //  if(data.status == 200)
-       // {
-        nav({
-        
-          pathname: '/DocHome',
-          search: createSearchParams({
-            mobile: searchParams.get('mobile')
-          }).toString()
-        
+      .then(async(data) => {
+        const get_doc_by_mobile_body = {
+          'mobile_number': searchParams.get("mobile")
+        }
+        await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' 
+          },
+          body: JSON.stringify(get_doc_by_mobile_body)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Doc Id assigned: ",data.doctorId)
+          nav({
+            pathname: '/DocHome',
+            search: createSearchParams({
+              doc_id: data.doctorId
+            }).toString()
+          });
+        })
+        .catch(error => {
+          console.log("error fetching id")
+          console.log(error)
         });
-  
-       // }
-
+        
+        // nav({
+        //   pathname: '/DocHome',
+        //   search: createSearchParams({
+        //     doc_id: doc_id
+        //   }).toString()
+        // });
       })
       .catch(error => {
         console.log(error)
       });
 
-  
-    // TODO: Submit the registration form to the server
   };
 
 
@@ -148,9 +156,6 @@ function Regdoc() {
 
         <label>Experience:</label>
         <input type="" value={exp} placeholder="(in years)" onChange={handleexp} />
-
-
-
  
         <button className="Login-doc-button" type="submit">Register</button>
       </form>

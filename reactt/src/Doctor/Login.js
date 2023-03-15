@@ -10,6 +10,7 @@ function Logindoc() {
 
 
   const [phone, setPhone] = useState("");
+  const [doc_id, setDoc_id] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [valid, setvalid] = useState(false);
@@ -21,24 +22,36 @@ function Logindoc() {
   const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef(null);
 
-  const feedback = (data) => {
-
-    console.log("data in feedback, ",data);
-    console.log(typeof(data))
-    console.log(data=='false')
+  const feedback = async(data) => {
     if(data == 'false')
     {
-      console.log("Inside if")
-      nav({
-        
-        pathname: '/DocHome',
-        search: createSearchParams({
-          mobile: phone
-        }).toString()
-      
+      const get_doc_by_mobile_body = {
+        'mobile_number': phone
+      }
+      await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*' 
+        },
+        body: JSON.stringify(get_doc_by_mobile_body)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Doc Id assigned: ",data.doctorId)
+        setDoc_id(data.doctorId)
+        nav({
+          pathname: '/DocHome',
+          search: createSearchParams({
+            doc_id: data.doctorId
+          }).toString()
+        });
+      })
+      .catch(error => {
+        console.log("error fetching id")
+        console.log(error)
       });
-      // alert("Navigate to next page")
-      
+  
     }
 
     else if(data == 'true')
@@ -112,13 +125,9 @@ function Logindoc() {
     
       if(data === "approved")
       {
-      
-
         const check_new_user_body = {
           'mobile_number' : phone
         }
-    
-
         await fetch('http://localhost:8090/api/v1/doctor/check_new_mobile', {
           method: 'POST',
           headers: {
@@ -129,17 +138,9 @@ function Logindoc() {
         })
         .then(response => response.text())
         .then(data => {
-
           console.log("New User?",data);
-          
-        feedback(data);
-          
-        
-        }
-
-        )
-
-
+          feedback(data);
+        })
       }
       else 
       {

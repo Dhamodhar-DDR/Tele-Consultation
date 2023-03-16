@@ -3,18 +3,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
-
-
 import './DocHome.css'
 
-
 function DocHome() {
-
   const [isConsultationActive, setIsConsultationActive] = useState(false);
-
   const [doc_id, setDoc_id] = useState(-1);
-
-
+  const[searchParams] = useSearchParams();
+  const nav = useNavigate()
 
   const get_online_stat = async(doc_id_param) => {
     const check_status_body = {
@@ -40,65 +35,47 @@ function DocHome() {
     });
   }
 
-
-  useEffect(() => {
-    console.log("Received num: ", searchParams.get("doc_id"));
-    setDoc_id(searchParams.get("doc_id"));
-    get_online_stat(searchParams.get("doc_id"));
-  
-  }, []);
-
-const[searchParams] = useSearchParams();
-
-const nav = useNavigate()
-
-const HandleLogout = () =>{
-
-  set_status(false)
-  nav('/login_doc')
-
-  
-}
-
-const set_status = async(param) =>{
-
-  const set_online_status_body = {
-
-    'doctorID' : doc_id,
-    'online_status': param      
+  const HandleLogout = () =>{
+    set_status(false)
+    nav('/login_doc')
   }
-  console.log("bef await isconsulatationactive", param)
 
-  await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*' 
-    },
-    body: JSON.stringify(set_online_status_body)
-  })
-  .then(response => response.text())
-  .then(data => {
-    console.log("Online status: ",data)
-    setIsConsultationActive(param)
-  })
-  .catch(error => {
-    console.log(error)
-  });
+  const set_status = async(param) =>
+  {
+    const set_online_status_body = {
 
-}
-
-const Consultation_Button = () => {
-  const toggleConsultation = async() => {
-    await set_status(!isConsultationActive);
-    nav({
-      pathname: '/video_call',
-      search: createSearchParams({
-        doc_id: doc_id
-      }).toString()
+      'doctorID' : doc_id,
+      'online_status': param      
+    }
+    console.log("bef await isconsulatationactive", param)
+    await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(set_online_status_body)
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log("Online status: ",data)
+      setIsConsultationActive(param)
+    })
+    .catch(error => {
+      console.log(error)
     });
   }
 
+  const Consultation_Button = () => {
+    const toggleConsultation = async() => {
+      await set_status(!isConsultationActive);
+      nav({
+        pathname: '/doctor_call',
+        search: createSearchParams({
+          doc_id: doc_id
+        }).toString()
+      });
+    } 
   return (
     <div className="centered-button">
       <button
@@ -109,7 +86,14 @@ const Consultation_Button = () => {
       </button>
     </div>
   );
-}
+  }
+
+  useEffect(() => {
+    console.log("Received num: ", searchParams.get("doc_id"));
+    setDoc_id(searchParams.get("doc_id"));
+    get_online_stat(searchParams.get("doc_id"));
+  }, []);
+
 
   return (
     <div>

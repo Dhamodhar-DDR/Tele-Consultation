@@ -5,44 +5,10 @@ import './vc.css'
 import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 
-function VideoCall() {
+function DoctorCall() {
     const nav = useNavigate();
-    const [isConsultationActive, setIsConsultationActive] = useState(false);
-
-    
+    const [isConsultationActive, setIsConsultationActive] = useState(false);    
     const[searchParams] = useSearchParams();
-    
-    const get_online_stat = async(doc_id_param) => {
-        const check_status_body = {
-            'doctorID': doc_id_param
-        }
-        await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*' 
-            },
-            body: JSON.stringify(check_status_body)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(check_status_body);
-            console.log("Online Status: ",data)
-            console.log(typeof(data));
-            setIsConsultationActive(data);
-        })
-        .catch(error => {
-            console.log("error getting online status")
-            console.log(error)
-        });
-    }
-    
-
-    useEffect(() => {
-        console.log("Received doc_id: ", searchParams.get("doc_id"));
-        get_online_stat(searchParams.get("doc_id"));
-      });
-
 
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
  
@@ -52,13 +18,7 @@ function VideoCall() {
     let client;
     let channel;
     
-    let queryString = window.location.search
-    let urlParams = new URLSearchParams(queryString)
-    // let roomId = urlParams.get('room')
-    let roomId = 'main'
-    // if(!roomId){
-    //     window.location = 'lobby.html'
-    // }
+    let roomId = searchParams.get("doc_id");
     
     let localStream;
     let remoteStream;
@@ -81,6 +41,7 @@ function VideoCall() {
     }
     
     let init = async () => {
+        
         client = await AgoraRTM.createInstance(APP_ID)
         await client.login({uid, token})
     
@@ -193,6 +154,7 @@ function VideoCall() {
     let leaveChannel = async () => {
         await channel.leave()
         await client.logout()
+        await peerConnection.close();
     }
     
     let toggleCamera = async () => {
@@ -221,36 +183,66 @@ function VideoCall() {
       
     window.addEventListener('beforeunload', leaveChannel)
 
-    
+    const get_online_stat = async(doc_id_param) => {
+        const check_status_body = {
+            'doctorID': doc_id_param
+        }
+        await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' 
+            },
+            body: JSON.stringify(check_status_body)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(check_status_body);
+            console.log("Online Status: ",data)
+            console.log(typeof(data));
+            setIsConsultationActive(data);
+        })
+        .catch(error => {
+            console.log("error getting online status")
+            console.log(error)
+        });
+    }
+
     const set_status = async(param) =>{
 
-    const set_online_status_body = {
-      'doctorID' : searchParams.get("doc_id"),
-      'online_status': param      
+        const set_online_status_body = {
+            'doctorID' : searchParams.get("doc_id"),
+            'online_status': param      
+        }
+        console.log("bef await isconsulatationactive", param)
+    
+        await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*' 
+            },
+            body: JSON.stringify(set_online_status_body)
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Online status: ",data)
+            setIsConsultationActive(param)
+        })
+        .catch(error => {
+            console.log(error)
+        });
     }
-    console.log("bef await isconsulatationactive", param)
-  
-    await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(set_online_status_body)
-    })
-    .then(response => response.text())
-    .then(data => {
-      console.log("Online status: ",data)
-      setIsConsultationActive(param)
-    })
-    .catch(error => {
-      console.log(error)
-    });
-  
-  }
 
-    const Consultation_Button = () => {
-        const toggleConsultation = async() => {
+    useEffect(() => {
+        console.log("Received doc_id: ", searchParams.get("doc_id"));
+        get_online_stat(searchParams.get("doc_id"));
+    });
+
+    const Consultation_Button = () => 
+    {
+        const toggleConsultation = async() => 
+        {
             await set_status(false);
             nav({
                 pathname: '/DocHome',
@@ -258,8 +250,9 @@ function VideoCall() {
                 doc_id: searchParams.get("doc_id")
                 }).toString()
             });
+            leaveChannel();
+            window.location.reload();
         }
-      
         return (
           <div className="centered-button">
             <button
@@ -270,28 +263,28 @@ function VideoCall() {
             </button>
           </div>
         );
-      }
+    }
 
     
-  return (
-    <div>
-        <button onClick={init}>Start connection</button>
-        <div id="videos" >
-            <video className="video-player" id="user-1" autoPlay playsInline></video>
-            <video className="video-player" id="user-2" autoPlay playsInline></video>
-        </div>
-        <div id="controls">
-            <div onClick={toggleCamera} className="control-container" id="camera-btn">
-                <img src={cam_icon} />
+    return (
+        <div>
+            <button onClick={init}>Start connection</button>
+            <div id="videos" >
+                <video className="video-player" id="user-1" autoPlay playsInline></video>
+                <video className="video-player" id="user-2" autoPlay playsInline></video>
             </div>
-            <div onClick={toggleMic} className="control-container" id="mic-btn">
-                <img src={mic_icon}/>
+            <div id="controls">
+                <div onClick={toggleCamera} className="control-container" id="camera-btn">
+                    <img src={cam_icon} />
+                </div>
+                <div onClick={toggleMic} className="control-container" id="mic-btn">
+                    <img src={mic_icon}/>
+                </div>
             </div>
+            {Consultation_Button()}
         </div>
-        {Consultation_Button()}
-    </div>
-  );
+    );
 }
 
-export default VideoCall;
+export default DoctorCall;
 

@@ -19,6 +19,7 @@ public class AuthenticationController {
     @PostMapping("/send_otp")
     public String send_otp(@RequestBody send_otp_body send_otp_rec)
     {
+        System.out.println("Hello?");
         return authenticationService.send_otp(send_otp_rec.mobile_number);
     }
 

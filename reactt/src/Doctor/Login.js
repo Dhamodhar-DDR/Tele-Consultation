@@ -10,7 +10,6 @@ function Logindoc() {
 
 
   const [phone, setPhone] = useState("");
-  const [doc_id, setDoc_id] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [valid, setvalid] = useState(false);
@@ -39,7 +38,6 @@ function Logindoc() {
       .then(response => response.json())
       .then(data => {
         console.log("Doc Id assigned: ",data.doctorId)
-        setDoc_id(data.doctorId)
         nav({
           pathname: '/DocHome',
           search: createSearchParams({
@@ -51,20 +49,15 @@ function Logindoc() {
         console.log("error fetching id")
         console.log(error)
       });
-  
     }
-
     else if(data == 'true')
     {
       nav({
-        
         pathname: '/register_doc',
         search: createSearchParams({
           mobile: phone
         }).toString()
-      
       });
-
     }
 
   }

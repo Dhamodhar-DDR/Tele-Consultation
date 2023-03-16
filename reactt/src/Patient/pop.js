@@ -17,7 +17,9 @@ function ProfileSelector() {
    const profiles = [p1,p2,p3];
    const nav = useNavigate();
 
-   const onProfileSelect = () => {nav('/select_doc');};
+   const onProfileSelect = (profile) => {
+    nav('/select_doc');
+  };
 
   return (
     <div className="popup-overlay">
@@ -26,7 +28,6 @@ function ProfileSelector() {
           &times;
         </div>
         <div className="popup-header">
-          {/* <img src="/netflix-logo.png" alt="Netflix logo" width="60" /> */}
           <h2>Select User</h2>
         </div>
         <div className="popup-profiles">
@@ -34,8 +35,7 @@ function ProfileSelector() {
             <div
               className="popup-profile"
               key={profile.id}
-              onClick={() => onProfileSelect(profile)}
-            >
+              onClick={() => onProfileSelect(profile)}>
               <img className="profilepics" src={profile.avatar} alt={profile.name} />
               <h3>{profile.name}</h3>
               <p>{profile.age} years old</p>

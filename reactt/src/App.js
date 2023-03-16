@@ -9,15 +9,14 @@ import Logindoc from './Doctor/Login';
 import DocHome from './Doctor/DocHome';
 import Page1 from './pg1';
 import DoctorList from './Patient/select_doc';
-import VideoCall from './VideoCall/videocall.component'
-
+import DoctorCall from './Doctor/DoctorCall'
+import PatientCall from './Patient/PatientCall'
 function App() 
 {
   return (
   <Router>
     <Routes>
       <Route exact path="/" element={<Page1 />} />
-      <Route exact path="/video_call" element={<VideoCall />} />
       <Route exact path="/login_p" element={<Logincg />} />     
       <Route exact path="/register_p" element={<Regc />} />
       <Route exact path="/login_doc" element={<Logindoc />} />
@@ -25,6 +24,8 @@ function App()
       <Route path="/DocHome" element={<DocHome />} />
       <Route path="/select_doc" element={<DoctorList />} />
       <Route path="/selectprofile" element={<ProfileSelector/>}/> 
+      <Route path="/patient_call" element={<PatientCall/>}/> 
+      <Route path="/doctor_call" element={<DoctorCall/>}/> 
       {/* <Route exact path="/" element={<Logindoc />} />
       <Route path="/register" element={<Regdoc />} /> */}
     </Routes>

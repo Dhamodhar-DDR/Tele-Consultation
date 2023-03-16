@@ -7,37 +7,40 @@ import { useState, useEffect } from "react";
 
 //import DoctorProfile from "./DoctorProfile";
 
-function DoctorProfile(props) {
-    return (
-        <div className="doctor-profile">
-          <div className="doctor-details">
-            <img src={props.image} alt={props.name} />
-            <div className="doctor-text">
-              <h2>{props.name}</h2>
-              <p>{props.experience} years of experience</p>
-              <p>{props.description}</p>
-            </div>
-          </div>
-          <div className="book-appointment">
-            <button>Book Appointment</button>
-          </div>
-        </div>
-      );
-  }
-  
-
 function DoctorList() {
-
+  const nav = useNavigate()
   const [doclist, setdoclist] = useState([])
 
-  useEffect(() => {
+  function handleBookAppointment (doc_id) {
+    return function() {
+        nav({
+        pathname: '/patient_call',
+        search: createSearchParams({
+          doc_id: doc_id
+        }).toString()
+      });
+    }
+  }
 
-    get_onine_doc_list()
-
-  }, [])
+  const DoctorProfile = (props) => {
+    return (
+      <div className="doctor-profile">
+        <div className="doctor-details">
+          <img src={props.image} alt={props.name} />
+          <div className="doctor-text">
+            <h2>{props.name}</h2>
+            <p>{props.experience} years of experience</p>
+            <p>{props.description}</p>
+          </div>
+        </div>
+        <div className="book-appointment">
+          <button onClick={handleBookAppointment(props.id)}>Book Appointment</button>
+        </div>
+      </div>
+    );
+}
 
   const get_onine_doc_list = async() => {
-
     await fetch('http://localhost:8090/api/v1/doctor/get_online_doctors', {
       method: 'GET',
       headers: {
@@ -57,26 +60,28 @@ function DoctorList() {
 
   }
 
-  const nav = useNavigate()
-  
   const handleLogout = () =>{
     nav('/login_p')
   }
- 
+
+  useEffect(() => {
+    get_onine_doc_list()
+  }, [])
+
   return (
     <div>
       {/* Navigation bar */}
       <div className="navbar">
         <div>
-        <button className="nav-button">Home</button>
-        <button className="nav-button">Manage Profile</button>
-        <button className="nav-button">Appointment History</button>
+          <button className="nav-button">Home</button>
+          <button className="nav-button">Manage Profile</button>
+          <button className="nav-button">Appointment History</button>
 
-          {/* <a href="#">Edit Profile</a>
-          <a href="#">Appointment History</a> */}
+            {/* <a href="#">Edit Profile</a>
+            <a href="#">Appointment History</a> */}
         </div>
         <div>
-        <button className="nav-button" onClick={handleLogout}>Logout</button>
+          <button className="nav-button" onClick={handleLogout}>Logout</button>
         </div>
       </div>
       <div className="doctor-list">
@@ -87,6 +92,7 @@ function DoctorList() {
               key={doctor.doctorId}
               image={def_pp}
               name={doctor.name}
+              id = {doctor.doctorId}
               experience={doctor.experience}
               description={doctor.specialization}
             />

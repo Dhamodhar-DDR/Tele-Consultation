@@ -27,28 +27,20 @@ function Logincg() {
     if(data == 'false')
     {
       nav({
-        
         pathname: '/selectprofile',
         search: createSearchParams({
           mobile: phone
         }).toString()
-      
       });
-      // alert("Navigate to next page")
-      
     }
-
     else if(data == 'true')
     {
       nav({
-        
         pathname: '/register_p',
         search: createSearchParams({
           mobile: phone
         }).toString()
-      
       });
-
     }
 
   }
@@ -111,12 +103,10 @@ function Logincg() {
       {
         setloginapproved(1);
       
-
         const check_new_user_body = {
           'mobile_number' : phone
         }
     
-
         await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
           method: 'POST',
           headers: {
@@ -127,17 +117,9 @@ function Logincg() {
         })
         .then(response => response.text())
         .then(data => {
-
-          console.log("New User?",data);
-          
-        feedback(data);
-          
-        
-        }
-
-        )
-
-
+          console.log("New User?",data);  
+          feedback(data);
+        })
       }
       else 
       {

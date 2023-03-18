@@ -1,8 +1,7 @@
 package com.example.demo.patient;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 
@@ -29,6 +28,6 @@ public class PatientService {
     }
 
     public List<Patient> check_new_user(String mobile) { return patientRepository.findByMobileNumber(mobile); }
-
+    public Patient get_patient_by_id(Integer patientID) {return patientRepository.findByPatientId(patientID);}
 
 }

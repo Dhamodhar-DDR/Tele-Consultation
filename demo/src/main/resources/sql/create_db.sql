@@ -6,7 +6,7 @@ CREATE TABLE `Patient` (
 	`gender` VARCHAR(255) NOT NULL,
 	`consent` BOOLEAN NOT NULL,
 	`email` VARCHAR(255),
-	`profile_pic` blob NOT NULL,
+	`profile_pic` blob,
 	PRIMARY KEY (`patient_id`)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE `Doctor` (
 	`experience` VARCHAR(255),
 	`specialization` VARCHAR(255) NOT NULL,
 	`email` VARCHAR(255),
-	`profile_pic` blob NOT NULL,
+	`profile_pic` blob,
 	PRIMARY KEY (`doctor_id`)
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE `Appointment` (
 	`appointment_id` INT NOT NULL AUTO_INCREMENT,
 	`booking_time` TIMESTAMP NOT NULL,
 	`patient_id` INT NOT NULL,
-	`doctor_id` VARCHAR(255),
+	`doctor_id` INT NOT NULL,
 	`start_time` TIMESTAMP,
 	`end_time` TIMESTAMP,
 	`is_followup` BOOLEAN NOT NULL,

@@ -5,19 +5,51 @@ import def_pp from '../imgs/profile.png'
 
 import { useState, useEffect } from "react";
 
-//import DoctorProfile from "./DoctorProfile";
-
 function DoctorList() {
   const nav = useNavigate()
   const [doclist, setdoclist] = useState([])
+  const[searchParams] = useSearchParams();
 
-  function handleBookAppointment (doc_id) {
-    return function() {
+   function handleBookAppointment (doc_id) {
+    return async function() {
+      const now = new Date(); // get current date and time
+      const timestamp = now.toISOString(); // convert to ISO string
+      console.log(timestamp); // prints something like "2023-03-18T14:25:48.123Z"
+  
+      const create_app_body = {
+        bookingTime : timestamp,
+        patientId : searchParams.get("pat_id"),
+        doctorId: doc_id,
+        startTime : timestamp,
+        endTime : null,
+        isFollowup: false,
+        markForFollowup : false,
+        status : 'live',
+        description : ''
+      }
+      await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*' 
+        },
+        body: JSON.stringify(create_app_body)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        console.log(data.appointmentId)
         nav({
-        pathname: '/patient_call',
-        search: createSearchParams({
-          doc_id: doc_id
-        }).toString()
+          pathname: '/patient_call',
+          search: createSearchParams({
+            doc_id: doc_id,
+            pat_id: searchParams.get("pat_id"),
+            app_id: data.appointmentId
+          }).toString()
+        });
+      })
+      .catch(error => {
+        console.log(error)
       });
     }
   }
@@ -66,6 +98,7 @@ function DoctorList() {
 
   useEffect(() => {
     get_onine_doc_list()
+    console.log("Received pat_id: ", searchParams.get("pat_id"));
   }, [])
 
   return (

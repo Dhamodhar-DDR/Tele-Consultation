@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, createSearchParams, useNavigate } from "react-router-dom";
 
 import './Regc.css'
 
@@ -73,15 +73,17 @@ function Regc() {
       .then(response => response.json())
       .then(data => {
         console.log(data)
-        nav('/selectprofile')
-
+        nav({
+          pathname: '/selectprofile',
+          search: createSearchParams({
+            mobile: searchParams.get("mobile")
+          }).toString()
+        });
       })
       .catch(error => {
         console.log(error)
       });
 
-  
-    // TODO: Submit the registration form to the server
   };
 
 

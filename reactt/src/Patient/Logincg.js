@@ -1,6 +1,6 @@
 
-import React, { useState,useCallback,useEffect,Component, useRef} from "react";
-import { createSearchParams, useNavigate } from 'react-router-dom';
+import React, { useState} from "react";
+import { createSearchParams,useSearchParams, useNavigate } from 'react-router-dom';
 
 import './Logincg.css'
 
@@ -16,11 +16,6 @@ function Logincg() {
   const[clickLogin, setclickLogin] = useState(false);
   const[timerout, settimrout] = useState(true);
   const[login_approved, setloginapproved] = useState(-1);
-  
-
-  const [count, setCount] = useState(10);
-  const [isActive, setIsActive] = useState(false);
-  const intervalRef = useRef(null);
 
   const feedback = (data) => {
     

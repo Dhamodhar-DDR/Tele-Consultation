@@ -42,19 +42,22 @@ function PatientCall() {
     
     let init = async () => {
         await get_doc_online_stat(searchParams.get("doc_id")).then(async() => {
-            client = await AgoraRTM.createInstance(APP_ID)
-            await client.login({uid, token})
-        
-            channel = client.createChannel(roomId)
-            await channel.join()
-        
-            channel.on('MemberJoined', handleUserJoined)
-            channel.on('MemberLeft', handleUserLeft)
-        
-            client.on('MessageFromPeer', handleMessageFromPeer)
-        
-            localStream = await navigator.mediaDevices.getUserMedia(constraints)
-            document.getElementById('user-1').srcObject = localStream
+            if(isConsultationActive)
+            {
+                client = await AgoraRTM.createInstance(APP_ID)
+                await client.login({uid, token})
+            
+                channel = client.createChannel(roomId)
+                await channel.join()
+            
+                channel.on('MemberJoined', handleUserJoined)
+                channel.on('MemberLeft', handleUserLeft)
+            
+                client.on('MessageFromPeer', handleMessageFromPeer)
+            
+                localStream = await navigator.mediaDevices.getUserMedia(constraints)
+                document.getElementById('user-1').srcObject = localStream
+            }
         })
     }
      
@@ -206,16 +209,72 @@ function PatientCall() {
             console.log(error);
         });
     }
+    async function setAppStatus(status) {
+        const set_status_body = {
+            appId : searchParams.get("app_id"),
+            value : status
+        }
+        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*' 
+            },
+            body: JSON.stringify(set_status_body)
+          })
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        const data = response.json();
+        console.log(data)
+        return data;
+    }
+
+    async function setAppEndTime() {
+        const now = new Date(); // get current date and time
+        const timestamp = now.toISOString(); // convert to ISO string
+        console.log(timestamp); // prints something like "2023-03-18T14:25:48.123Z"  
+        
+        const set_end_time_body = {
+            appId : searchParams.get("app_id"),
+            value : timestamp
+        }
+        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*' 
+            },
+            body: JSON.stringify(set_end_time_body)
+          })
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        const data = response.json();
+        console.log(data)
+        return data;
+    }
+
+
 
     const handleLeaveCall = async(e) => {
         console.log(e);
-        nav('/select_doc');
+        const set_status_res = await setAppStatus("completed");
+        const set_end_time_res = await setAppEndTime();
+        nav({
+            pathname: '/select_doc',
+            search: createSearchParams({
+              pat_id: searchParams.get("pat_id")
+            }).toString()
+          });
         leaveChannel();
         window.location.reload();
     }
     
     useEffect(() => {
         console.log("Received doc_id: ", searchParams.get("doc_id"));
+        console.log("Received pat_id: ", searchParams.get("pat_id"));
+        console.log("Received app_id: ", searchParams.get("app_id"));
     });
     
   return (

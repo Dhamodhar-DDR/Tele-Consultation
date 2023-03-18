@@ -3,7 +3,6 @@ package com.example.demo.appointment;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -42,22 +41,22 @@ public class AppointmentService {
         }
     }
 
-    public boolean setStartTime(int id, LocalDateTime value) {
+    public boolean setStartTime(int id, Timestamp value) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
         if (optionalAppointment.isPresent()) {
             Appointment appointment = optionalAppointment.get();
-            appointment.setStartTime(Timestamp.valueOf(value));
+            appointment.setStartTime(value);
             appointmentRepository.save(appointment);
             return true;
         } else {
             return false;
         }
     }
-    public boolean setEndTime(int id, LocalDateTime value) {
+    public boolean setEndTime(int id, Timestamp value) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
         if (optionalAppointment.isPresent()) {
             Appointment appointment = optionalAppointment.get();
-            appointment.setEndTime(Timestamp.valueOf(value));
+            appointment.setEndTime(value);
             appointmentRepository.save(appointment);
             return true;
         } else {

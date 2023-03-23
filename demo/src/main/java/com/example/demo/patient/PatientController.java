@@ -1,8 +1,6 @@
 package com.example.demo.patient;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +39,7 @@ public class PatientController {
     }
 
     record check_new_user_body (String mobile_number) {}
+    record get_patient_by_id_body (Integer pat_id) {}
     @CrossOrigin
     @PostMapping("/check_new_user")
     public Boolean check_new_user(@RequestBody check_new_user_body cnub) {
@@ -53,5 +52,11 @@ public class PatientController {
     @PostMapping("/display_profiles")
     public List<Patient> display_profiles(@RequestBody check_new_user_body cnub) {
          return this.patientService.check_new_user(cnub.mobile_number);
+    }
+
+    @CrossOrigin
+    @PostMapping("/get_patient_by_id")
+    public Patient get_patient_by_id(@RequestBody get_patient_by_id_body gpbib) {
+        return this.patientService.get_patient_by_id(gpbib.pat_id);
     }
 }

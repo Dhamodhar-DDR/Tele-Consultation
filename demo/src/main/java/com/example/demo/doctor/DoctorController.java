@@ -63,8 +63,11 @@ public class DoctorController {
     public Doctor get_doctor_by_mobile(@RequestBody check_new_mobile_body cnmb) {
         return this.doctorService.check_new_mobile(cnmb.mobile_number);
     }
-
-
+    @CrossOrigin
+    @PostMapping("/get_doctor_by_id")
+    public Doctor get_doctor_by_doc_id(@RequestBody check_online_status_body cosb) {
+        return this.doctorService.get_doctor_by_id(cosb.doctorID);
+    }
 
     @CrossOrigin
     @PostMapping("/check_online_status")

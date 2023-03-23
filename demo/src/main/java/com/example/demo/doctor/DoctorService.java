@@ -46,4 +46,6 @@ public class DoctorService {
     public Doctor check_new_mobile(String mobile) {
         return doctorRepository.findByMobileNumber(mobile);
     }
+
+    public Doctor get_doctor_by_id(Integer doctorID) {return doctorRepository.findByDoctorId(doctorID);}
 }

@@ -3,39 +3,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
-
-
 import './DocHome.css'
 
-
 function DocHome() {
-
   const [isConsultationActive, setIsConsultationActive] = useState(false);
-
   const [doc_id, setDoc_id] = useState(-1);
-
-  const get_docId = async(get_doc_by_mobile_body) => {
-
-    await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(get_doc_by_mobile_body)
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Doc Id assigned: ",data.doctorId)
-      setDoc_id(data.doctorId)
-      // console.log(doc_id)
-      get_online_stat(data.doctorId)
-    })
-    .catch(error => {
-      console.log("error fetching id")
-      console.log(error)
-    });
-  }
+  const[searchParams] = useSearchParams();
+  const nav = useNavigate()
 
   const get_online_stat = async(doc_id_param) => {
     const check_status_body = {
@@ -61,91 +35,47 @@ function DocHome() {
     });
   }
 
+  const HandleLogout = () =>{
+    set_status(false)
+    nav('/login_doc')
+  }
 
-  useEffect(() => {
-    console.log("Received num: ", searchParams.get("mobile"));
-    const get_doc_by_mobile_body = {
+  const set_status = async(param) =>
+  {
+    const set_online_status_body = {
 
-      'mobile_number': searchParams.get("mobile")
+      'doctorID' : doc_id,
+      'online_status': param      
     }
-    get_docId(get_doc_by_mobile_body)
-    
-  
-    // await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': '*' 
-    //   },
-    //   body: JSON.stringify(get_doc_by_mobile_body)
-    // })
-    // .then(response => response.text())
-    // .then(data => {
-    //   console.log("Doc Id assigned: ",data)
-    //   setDoc_id(data)
-    // })
-    // .catch(error => {
-    //   console.log("error fetching id")
-    //   console.log(error)
-    // });
-  
-  }, []);
-
-const[searchParams] = useSearchParams();
-
-const nav = useNavigate()
-
-const HandleLogout = () =>{
-
-  set_status(false)
-  nav('/login_doc')
-
-  
-}
-
-const set_status = async(param) =>{
-
-  const set_online_status_body = {
-
-    'doctorID' : doc_id,
-    'online_status': param      
-  }
-  console.log("bef await isconsulatationactive", param)
-
-  await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*' 
-    },
-    body: JSON.stringify(set_online_status_body)
-  })
-  .then(response => response.text())
-  .then(data => {
-    console.log("Online status: ",data)
-    setIsConsultationActive(param)
-  })
-  .catch(error => {
-    console.log(error)
-  });
-
-
-
-
-}
-
-const Consultation_Button = () => {
-  
-
-
-
-  const toggleConsultation = () => {
-
-    set_status(!isConsultationActive);
-
-
+    console.log("bef await isconsulatationactive", param)
+    await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(set_online_status_body)
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log("Online status: ",data)
+      setIsConsultationActive(param)
+    })
+    .catch(error => {
+      console.log(error)
+    });
   }
 
+  const Consultation_Button = () => {
+    const toggleConsultation = async() => {
+      await set_status(!isConsultationActive);
+      nav({
+        pathname: '/doctor_call',
+        search: createSearchParams({
+          doc_id: doc_id
+        }).toString()
+      });
+    } 
   return (
     <div className="centered-button">
       <button
@@ -156,7 +86,14 @@ const Consultation_Button = () => {
       </button>
     </div>
   );
-}
+  }
+
+  useEffect(() => {
+    console.log("Received num: ", searchParams.get("doc_id"));
+    setDoc_id(searchParams.get("doc_id"));
+    get_online_stat(searchParams.get("doc_id"));
+  }, []);
+
 
   return (
     <div>

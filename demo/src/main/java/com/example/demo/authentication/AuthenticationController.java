@@ -1,11 +1,7 @@
 package com.example.demo.authentication;
 
-import com.example.demo.patient.PatientService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/auth")
 public class AuthenticationController {
@@ -14,17 +10,16 @@ public class AuthenticationController {
     public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin", "*");
     }
-
     public AuthenticationController(AuthenticationService authenticationService)
     {
         this.authenticationService = authenticationService;
     }
-
     record send_otp_body(String mobile_number){}
     @CrossOrigin
     @PostMapping("/send_otp")
     public String send_otp(@RequestBody send_otp_body send_otp_rec)
     {
+        System.out.println("Hello?");
         return authenticationService.send_otp(send_otp_rec.mobile_number);
     }
 

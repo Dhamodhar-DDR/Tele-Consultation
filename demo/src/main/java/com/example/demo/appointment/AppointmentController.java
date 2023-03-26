@@ -29,6 +29,10 @@ public class AppointmentController {
     record setStatusReqbod(Integer appId, String value){}
     record setTimeReqbod(Integer appId, Timestamp value){}
 
+    record getEarlReqbod(Timestamp value){}
+    record getAppById(Integer appId){}
+    record sendSSEReqBod(Integer patId){}
+
     public AppointmentController(AppointmentService appointmentService)
     {
         this.appointmentService = appointmentService;
@@ -67,5 +71,23 @@ public class AppointmentController {
         boolean success = appointmentService.setEndTime(req_bod.appId, req_bod.value);
         return success;
     }
+
+    @CrossOrigin
+    @PostMapping("/get_earliest_waiting_app")
+    public Appointment get_earliest_waiting_appointment(@RequestBody getEarlReqbod req_bod) {
+        return appointmentService.get_earliest_appointment(req_bod.value);
+    }
+
+    @CrossOrigin
+    @PostMapping("/get_appointment_by_id")
+    public Appointment get_appointment_by_id(@RequestBody getAppById req_bod) {
+        return appointmentService.get_appointment_by_id(req_bod.appId);
+    }
+
+//    @CrossOrigin
+//    @PostMapping("/send_sse_pat")
+//    public Appointment get_appointment_by_id(@RequestBody getAppById req_bod) {
+//        return appointmentService.get_appointment_by_id(req_bod.appId);
+//    }
 
 }

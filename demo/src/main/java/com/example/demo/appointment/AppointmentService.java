@@ -64,4 +64,14 @@ public class AppointmentService {
         }
     }
 
+    public Appointment get_earliest_appointment(Timestamp value){
+        return appointmentRepository.get_earliest_appointment(value);
+    }
+
+    public Appointment get_appointment_by_id(Integer appId){
+        return appointmentRepository.findByAppointmentId(appId);
+    }
+
+
+
 }

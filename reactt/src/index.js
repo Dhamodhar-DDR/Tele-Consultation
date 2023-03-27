@@ -2,16 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import Modal from './Patient/upload';
+import AddProf from './Patient/AddProf';
+import DoctorList from './Patient/manageprof';
+
 
 
 import reportWebVitals from './reportWebVitals';
-// import Homepat from './homepat';
+import Homepat from './Patient/homepat';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+
     <App />
-    {/* <Homepat/> */}
+    {/* <AddProf/> */}
+    {/* <DoctorList/> */}
+    {/* <Modal/> */}
+    
   </React.StrictMode>
 );
 

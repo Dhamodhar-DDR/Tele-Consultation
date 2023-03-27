@@ -9,6 +9,7 @@ import './Regc.css'
 function Regc() {
 
   const nav = useNavigate();
+  
 
 
 

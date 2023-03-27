@@ -94,7 +94,7 @@ function Logincg() {
     .then(async(data) => {
       console.log(data)
     
-      if(data === "approved")
+      if(data == "approved")
       {
         setloginapproved(1);
       

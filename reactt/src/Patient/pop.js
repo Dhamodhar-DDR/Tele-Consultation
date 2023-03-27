@@ -22,7 +22,7 @@ function ProfileSelector() {
 
    const onProfileSelect = (profile) => {
     nav({
-      pathname: '/select_doc',
+      pathname: '/home_pat',
       search: createSearchParams({
         pat_id: pat_id
       }).toString()

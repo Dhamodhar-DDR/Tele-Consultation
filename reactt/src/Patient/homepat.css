@@ -1,10 +1,10 @@
 /* Styles for the buttons */
-body {
+/* body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-  }
+  } */
 
   .button-container {
     display: flex;
@@ -32,7 +32,7 @@ body {
   }
   
   .button:hover {
-    background-color: #f9f9f9;
+    background-color: #068641;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     transform: translateY(-5px);
   }

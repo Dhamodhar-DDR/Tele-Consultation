@@ -84,8 +84,7 @@ function PatientCall() {
                 peerConnection.addIceCandidate(message.candidate)
             }
         }
-    
-    
+
     }
     
     let handleUserJoined = async (MemberId) => {
@@ -255,8 +254,6 @@ function PatientCall() {
         return data;
     }
 
-
-
     const handleLeaveCall = async(e) => {
         console.log(e);
         const set_status_res = await setAppStatus("completed");
@@ -272,10 +269,8 @@ function PatientCall() {
     }
     
     useEffect(() => {
-        console.log("Received doc_id: ", searchParams.get("doc_id"));
-        console.log("Received pat_id: ", searchParams.get("pat_id"));
-        console.log("Received app_id: ", searchParams.get("app_id"));
-    });
+        init()
+    },[]);
     
   return (
     <div>

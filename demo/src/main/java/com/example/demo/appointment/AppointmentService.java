@@ -41,6 +41,11 @@ public class AppointmentService {
         }
     }
 
+    public String getStatus(int appId) {
+        Appointment app =  appointmentRepository.findByAppointmentId(appId);
+        return app.getStatus();
+    }
+
     public boolean setStartTime(int id, Timestamp value) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
         if (optionalAppointment.isPresent()) {
@@ -64,8 +69,8 @@ public class AppointmentService {
         }
     }
 
-    public Appointment get_earliest_appointment(Timestamp value){
-        return appointmentRepository.get_earliest_appointment(value);
+    public Appointment get_earliest_appointment(Integer docId){
+        return appointmentRepository.get_earliest_appointment(docId);
     }
 
     public Appointment get_appointment_by_id(Integer appId){

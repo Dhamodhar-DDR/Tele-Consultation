@@ -7,13 +7,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
-<<<<<<< HEAD
-    private static final String ACCOUNT_SID = "AC3a2109e5fd2a1585faa0d32e2b2361ef"; //System.getenv("ACbc91ba0b1ce5b5020130385133c2ae46");
-    private static final String AUTH_TOKEN = "6273aababb5968e5a04fa9169ecde5da"; //System.getenv("aa2cab81ac3f795ce2280dbe04659ef1");
-=======
     private static final String ACCOUNT_SID = "ACbc91ba0b1ce5b5020130385133c2ae46"; //System.getenv("ACbc91ba0b1ce5b5020130385133c2ae46");
-    private static final String AUTH_TOKEN = "c8c306742827114f0733d594d4666c61"; //System.getenv("aa2cab81ac3f795ce2280dbe04659ef1");
->>>>>>> 5f2cb183a1b5b9efd5bfeec842f797eedc283acd
+    private static final String AUTH_TOKEN = "dba9409d15a70fd0e4d7337763768485"; //System.getenv("aa2cab81ac3f795ce2280dbe04659ef1");
     public void create_service() {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         com.twilio.rest.verify.v2.Service service = com.twilio.rest.verify.v2.Service.creator("My First Verify Service").create();

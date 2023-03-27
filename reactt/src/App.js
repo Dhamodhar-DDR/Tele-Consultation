@@ -15,7 +15,7 @@ import Homepat from './Patient/homepat';
 import Modal from './Patient/upload';
 import PatList from './Patient/manageprof';
 import AddProf from './Patient/AddProf';
-
+import WaitingPage from './Patient/waitingpage'
 
 function App() 
 {
@@ -36,7 +36,7 @@ function App()
       <Route path="/modal" element={<Modal/>}/> 
       <Route path="/patlist" element={<PatList/>}/>
       <Route path="/addprof" element={<AddProf/>}/> 
-
+      <Route path="/waiting_page" element={<WaitingPage/>}/> 
       {/* <Route exact path="/" element={<Logindoc />} />
       <Route path="/register" element={<Regdoc />} /> */}
     </Routes>

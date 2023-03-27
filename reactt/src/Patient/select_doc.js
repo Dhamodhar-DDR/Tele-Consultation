@@ -24,7 +24,7 @@ function DoctorList() {
         endTime : null,
         isFollowup: false,
         markForFollowup : false,
-        status : 'live',
+        status : 'waiting',
         description : ''
       }
       await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
@@ -40,13 +40,21 @@ function DoctorList() {
         console.log(data)
         console.log(data.appointmentId)
         nav({
-          pathname: '/patient_call',
+          pathname: '/waiting_page',
           search: createSearchParams({
             doc_id: doc_id,
             pat_id: searchParams.get("pat_id"),
             app_id: data.appointmentId
           }).toString()
         });
+        // nav({
+        //   pathname: '/patient_call',
+        //   search: createSearchParams({
+        //     doc_id: doc_id,
+        //     pat_id: searchParams.get("pat_id"),
+        //     app_id: data.appointmentId
+        //   }).toString()
+        // });
       })
       .catch(error => {
         console.log(error)

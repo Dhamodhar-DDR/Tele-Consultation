@@ -55,6 +55,7 @@ function DoctorCall() {
     
         localStream = await navigator.mediaDevices.getUserMedia(constraints)
         document.getElementById('user-1').srcObject = localStream
+        handlenextPatient();
     }
      
     
@@ -237,7 +238,7 @@ function DoctorCall() {
     useEffect(() => {
         console.log("Received doc_id: ", searchParams.get("doc_id"));
         get_online_stat(searchParams.get("doc_id"));
-    });
+    },[]);
 
     const Consultation_Button = () => 
     {
@@ -265,6 +266,87 @@ function DoctorCall() {
         );
     }
 
+    const handlenextPatient = async()=>{
+        console.log("Next patient is being called")
+        // let earliest_time_stamp = ""; 
+        // if(searchParams.get("app_id") != "" || searchParams.get("app_id") != null)
+        // {
+        //     //Api call to get the just finished appointment. 
+        //     const get_curr_app_body = {
+        //         appId : searchParams.get("app_id")
+        //     }
+        //     const get_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_appointment_by_id', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Access-Control-Allow-Origin': '*' 
+        //         },
+        //         body: JSON.stringify(get_curr_app_body)
+        //     })
+        //     if(get_app_response.status != 200) console.log(get_app_response)
+        //     else earliest_time_stamp = await get_app_response.json()['booking_time']
+
+
+        //     //Api call to set appointment to completed status
+        //     const set_app_status_body = {
+        //         appId : searchParams.get("app_id"),
+        //         value : "completed"
+        //     }
+        //     const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Access-Control-Allow-Origin': '*' 
+        //         },
+        //         body: JSON.stringify(set_app_status_body)
+        //     })
+        //     if(set_status_response.status != 200) console.log(set_status_response)
+        // }
+        // else
+        // {
+        //     //Set timestamp to 0,0,0 
+        //     earliest_time_stamp = "2222-07-14T18:30:00.000Z"
+        // }
+        
+        //Api call to get the earliest appointment with waiting status
+        const earliest_app_response_body = {
+            docId: searchParams.get("doc_id")
+        }
+        const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*' 
+            },
+            body: JSON.stringify(earliest_app_response_body)
+        })
+        console.log(earliest_app_response)
+        if(earliest_app_response.status != 200) console.log(earliest_app_response)
+        else {
+            const earliest_app = await earliest_app_response.json();
+            console.log(earliest_app.appointmentId)
+            
+            //Change this appointment to live and connect the patient    
+            const set_app_status_body = {
+                appId : earliest_app.appointmentId,
+                value : "live"
+            }
+            const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*' 
+                },
+                body: JSON.stringify(set_app_status_body)
+            })
+            if(set_status_response.status != 200) console.log(set_status_response)    
+            else{
+                console.log("Next patient status changed!")
+            }
+
+        }
+    }   
+
     
     return (
         <div>
@@ -282,6 +364,7 @@ function DoctorCall() {
                 </div>
             </div>
             {Consultation_Button()}
+            <button onClick={handlenextPatient}>Next patient</button>
         </div>
     );
 }

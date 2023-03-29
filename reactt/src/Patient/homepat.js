@@ -48,6 +48,15 @@ function Homepat(){
     });
 
   }
+  const handleAppoinHist = () => {
+    nav({
+      pathname: '/appoinhist',
+      search: createSearchParams({
+        pat_id: pat_id
+      }).toString()
+    });
+
+  }
 
 
   const handleModalOpen = () => {
@@ -80,7 +89,7 @@ function Homepat(){
         </div>
       </div>
       <div className="button" onClick={handleManageProf}>Manage Profiles</div>
-      <div className="button">Appointment History</div>
+      <div className="button" onClick={handleAppoinHist}>Appointment History</div>
     </div>
 
 

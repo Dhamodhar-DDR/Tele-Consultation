@@ -15,6 +15,7 @@ import Homepat from './Patient/homepat';
 import Modal from './Patient/upload';
 import PatList from './Patient/manageprof';
 import AddProf from './Patient/AddProf';
+import AppoinHist from './Patient/appoin_hist';
 
 
 function App() 
@@ -36,6 +37,7 @@ function App()
       <Route path="/modal" element={<Modal/>}/> 
       <Route path="/patlist" element={<PatList/>}/>
       <Route path="/addprof" element={<AddProf/>}/> 
+      <Route path="/appoinhist" element={<AppoinHist/>}/> 
 
       {/* <Route exact path="/" element={<Logindoc />} />
       <Route path="/register" element={<Regdoc />} /> */}

@@ -1,0 +1,32 @@
+.slide-over {
+  position: fixed;
+  top: 0;
+  left: -300px; /* set the initial position of the slide-over to be off screen */
+  height: 100%;
+  width: 300px;
+  background-color: #fff;
+  z-index: 100;
+  transition: all 0.3s ease-in-out;
+}
+
+.slide-over.show {
+  transform: translateX(300px); /* move the slide-over into view when it is shown */
+}
+
+.slide-over-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding: 0 10px;
+  background-color: #eee;
+  border-bottom: 1px solid #ccc;
+}
+
+.slide-over-content {
+  padding: 10px;
+}
+
+.slide-over-close {
+  cursor: pointer;
+}

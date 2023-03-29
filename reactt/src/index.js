@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import Slideover from './testing_rec';
 import Modal from './Patient/upload';
 import AddProf from './Patient/AddProf';
 import DoctorList from './Patient/manageprof';
-
+import AppoinHist from './Patient/appoin_hist';
 
 
 import reportWebVitals from './reportWebVitals';
@@ -15,7 +16,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
 
-    <App />
+    <AppoinHist />
     {/* <AddProf/> */}
     {/* <DoctorList/> */}
     {/* <Modal/> */}

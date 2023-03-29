@@ -7,19 +7,39 @@ import { useState, useEffect } from "react";
 
 function PatList() {
   const [doclist, setdoclist] = useState([])
-  const p1 = {name: "pat1", gender: "Male", age: 21, email: "abc@abc"}
-  const p2 = {name: "pat2", gender: "Female", age: 28, email: "ac@abc"}
+  // const p1 = {name: "pat1", gender: "Male", age: 21, email: "abc@abc"}
+  // const p2 = {name: "pat2", gender: "Female", age: 28, email: "ac@abc"}
 
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
   const pat_id = searchParams.get("pat_id");
   
-  useEffect(()=>{
-    setdoclist([p1,p2])
-}, [])
+  const get_all_profiles = async() => {
+    const getProfilesBody = {
+      pat_id : searchParams.get('pat_id')
+    }
+    await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(getProfilesBody)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Profiles List: ",data)
+      setdoclist(data);
+    })    
+  }
+
+  useEffect(() => {
+    console.log(searchParams.get('pat_id'))
+    get_all_profiles();
+  }, [])
+
 
   const handleAddProf = () =>{
-
     nav({
       pathname: '/addprof',
       search: createSearchParams({
@@ -29,7 +49,6 @@ function PatList() {
   }
 
   const handleSwitchProf = () => {
-
     nav({
       pathname: '/selectprofile',
       search: createSearchParams({
@@ -127,7 +146,6 @@ function PatList() {
         <h1 className="heading-1">List of Profiles</h1>
           {doclist.map((doctor, index) => (
             <DoctorProfile
-
               key = {index}
               image={def_pp}
               name={doctor.name}
@@ -140,8 +158,6 @@ function PatList() {
       <div className="end-buttons">
            <button onClick={handleAddProf}>Add Profile</button> <br/>
            <button onClick={handleSwitchProf}>Switch Profile</button>
-
-
       </div>
     </div>
   );

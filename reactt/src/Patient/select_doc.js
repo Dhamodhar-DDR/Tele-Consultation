@@ -95,6 +95,49 @@ function DoctorList() {
   const handleLogout = () =>{
     nav('/login_p')
   }
+  
+  const navToHome = () =>{
+    nav({
+      pathname: '/home_pat',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
+  const navToMngProfile = () =>{
+    nav({
+      pathname: '/patlist',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
+  const navToAppHis = () =>{
+    // nav('/login_p')
+  }
+
+  const getAppointments = async() => {
+    const getAppsBody = {
+      patId : searchParams.get('pat_id')
+    }
+    await fetch('http://localhost:8090/api/v1/appointment/get_patient_appointments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(getAppsBody)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Appointment list: ",data)
+    })
+    .catch(error => {
+      console.log(error)
+    });
+  }
 
   useEffect(() => {
     get_onine_doc_list()
@@ -106,9 +149,9 @@ function DoctorList() {
       {/* Navigation bar */}
       <div className="navbar">
         <div>
-          <button className="nav-button">Home</button>
-          <button className="nav-button">Manage Profile</button>
-          <button className="nav-button">Appointment History</button>
+          <button onClick={navToHome} className="nav-button">Home</button>
+          <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
+          <button onClick={navToAppHis} className="nav-button">Appointment History</button>
 
             {/* <a href="#">Edit Profile</a>
             <a href="#">Appointment History</a> */}
@@ -118,6 +161,7 @@ function DoctorList() {
         </div>
       </div>
       <div className="doctor-list">
+        <button onClick={getAppointments}>Get Appointments</button>
         <br/>
         <h1 className="heading-1">Choose a doctor</h1>
           {doclist.map((doctor) => (
@@ -130,6 +174,7 @@ function DoctorList() {
               description={doctor.specialization}
             />
         ))}
+
       </div>
     </div>
   );

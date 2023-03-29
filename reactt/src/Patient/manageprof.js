@@ -26,8 +26,6 @@ function PatList() {
         pat_id: pat_id
       }).toString()
     });
-
-
   }
 
   const handleSwitchProf = () => {
@@ -36,6 +34,24 @@ function PatList() {
       pathname: '/selectprofile',
       search: createSearchParams({
         pat_id: pat_id
+      }).toString()
+    });
+  }
+
+  const navToHome = () =>{
+    nav({
+      pathname: '/home_pat',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
+  const navToMngProfile = () =>{
+    nav({
+      pathname: '/patlist',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
       }).toString()
     });
   }
@@ -94,8 +110,8 @@ function PatList() {
       {/* Navigation bar */}
       <div className="navbar">
         <div>
-          <button className="nav-button">Home</button>
-          <button className="nav-button">Manage Profile</button>
+          <button onClick={navToHome} className="nav-button">Home</button>
+          <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
           <button className="nav-button">Appointment History</button>
 
             {/* <a href="#">Edit Profile</a>

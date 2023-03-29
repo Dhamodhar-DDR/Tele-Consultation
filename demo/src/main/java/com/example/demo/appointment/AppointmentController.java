@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/appointment")
@@ -31,7 +32,9 @@ public class AppointmentController {
 
     record getEarlReqbod(Integer docId){}
     record getAppById(Integer appId){}
-    record sendSSEReqBod(Integer patId){}
+
+    record getPatAppReqBod(Integer patId){}
+    record getDocAppReqBod(Integer docId){}
 
     public AppointmentController(AppointmentService appointmentService)
     {
@@ -105,6 +108,20 @@ public class AppointmentController {
     public Appointment get_appointment_by_id(@RequestBody getAppById req_bod) {
         return appointmentService.get_appointment_by_id(req_bod.appId);
     }
+
+    @CrossOrigin
+    @PostMapping("/get_patient_appointments")
+    public List<Appointment> get_patient_appointments(@RequestBody getPatAppReqBod req_bod) {
+        return appointmentService.get_patient_appointments(req_bod.patId);
+    }
+
+    @CrossOrigin
+    @PostMapping("/get_doctor_appointments")
+    public List<Appointment> get_doctor_appointments(@RequestBody getDocAppReqBod req_bod) {
+        return appointmentService.get_doctor_appointments(req_bod.docId);
+
+    }
+
 
 //    @CrossOrigin
 //    @PostMapping("/send_sse_pat")

@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from "react";
-// import { useSearchParams, createSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, createSearchParams, useNavigate } from "react-router-dom";
 
 import './AddProf.css'
 
@@ -9,6 +9,8 @@ import './AddProf.css'
 function AddProf() {
 
   
+  const nav = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [Name, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -46,13 +48,31 @@ function AddProf() {
   const handleSubmit = () =>{};
 
 
+  const navToHome = () =>{
+    nav({
+      pathname: '/home_pat',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
+  const navToMngProfile = () =>{
+    nav({
+      pathname: '/patlist',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
 
   return (
     <div>
       <div className="navbar">
         <div>
-          <button className="nav-button">Home</button>
-          <button className="nav-button">Manage Profile</button>
+          <button onClick={navToHome} className="nav-button">Home</button>
+          <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
           <button className="nav-button">Appointment History</button>
 
             {/* <a href="#">Edit Profile</a>

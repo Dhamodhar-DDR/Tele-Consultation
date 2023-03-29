@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class AppointmentService {
@@ -85,6 +86,12 @@ public class AppointmentService {
         return appointmentRepository.findByAppointmentId(appId);
     }
 
+    public List<Appointment> get_patient_appointments(Integer patId){
+        return appointmentRepository.get_patient_appointments(patId);
+    }
+    public List<Appointment> get_doctor_appointments(Integer docId){
+        return appointmentRepository.get_doctor_appointments(docId);
+    }
 
 
 }

@@ -65,6 +65,21 @@ public class AppointmentController {
         return status;
     }
 
+    class QueueStatus {
+        public String status;
+        public Integer count;
+        public Boolean doctor_live;
+    }
+    @CrossOrigin
+    @PostMapping("/get_queue_status")
+    public QueueStatus getQueueStatus(@RequestBody getAppById req_bod) {
+        QueueStatus qs = new QueueStatus();
+        qs.status = appointmentService.getStatus(req_bod.appId);
+        qs.count = appointmentService.get_queue_count(req_bod.appId);
+        qs.doctor_live = appointmentService.get_doctor_status(req_bod.appId);
+        return qs;
+    }
+
     @CrossOrigin
     @PostMapping("/set_start_time")
     public boolean setStartTime(@RequestBody setTimeReqbod req_bod) {

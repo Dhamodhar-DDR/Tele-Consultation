@@ -20,7 +20,7 @@ function DoctorList() {
         bookingTime : timestamp,
         patientId : searchParams.get("pat_id"),
         doctorId: doc_id,
-        startTime : timestamp,
+        startTime : null,
         endTime : null,
         isFollowup: false,
         markForFollowup : false,
@@ -47,14 +47,6 @@ function DoctorList() {
             app_id: data.appointmentId
           }).toString()
         });
-        // nav({
-        //   pathname: '/patient_call',
-        //   search: createSearchParams({
-        //     doc_id: doc_id,
-        //     pat_id: searchParams.get("pat_id"),
-        //     app_id: data.appointmentId
-        //   }).toString()
-        // });
       })
       .catch(error => {
         console.log(error)

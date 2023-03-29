@@ -8,12 +8,12 @@ import cam_icon from '../imgs/icons/camera.png'
 function PatientCall() {
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
-    const [isConsultationActive, setIsConsultationActive] = useState(false);    
+    var isConsultationActive = false;    
 
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
  
     let token = null;
-    let uid = String(Math.floor(Math.random() * 10000))
+    let uid = "p_"+String(searchParams.get("pat_id"))
     
     let client;
     let channel;
@@ -41,14 +41,21 @@ function PatientCall() {
     }
     
     let init = async () => {
-        await get_doc_online_stat(searchParams.get("doc_id")).then(async() => {
+        await get_doc_online_stat(searchParams.get("doc_id")).then(async(data) => {
+            console.log("Consultation", isConsultationActive)
+            console.log("Consultation", data)
             if(isConsultationActive)
             {
+                console.log('Started !');
                 client = await AgoraRTM.createInstance(APP_ID)
                 await client.login({uid, token})
             
                 channel = client.createChannel(roomId)
-                await channel.join()
+                await channel.join().then(() => {
+                    console.log('Joined channel', roomId);
+                    }).catch((err) => {
+                        console.log(`Error logging in to Agora RTM: ${err}`);
+                    });
             
                 channel.on('MemberJoined', handleUserJoined)
                 channel.on('MemberLeft', handleUserLeft)
@@ -65,6 +72,8 @@ function PatientCall() {
     let handleUserLeft = (MemberId) => {
         document.getElementById('user-2').style.display = 'none'
         document.getElementById('user-1').classList.remove('smallFrame')
+        //If doctor leaves, patient should also leave
+        handleLeaveCall();    
     }
     
     let handleMessageFromPeer = async (message, MemberId) => {
@@ -83,6 +92,10 @@ function PatientCall() {
             if(peerConnection){
                 peerConnection.addIceCandidate(message.candidate)
             }
+        }
+
+        if(message.type === 'leave'){
+            handleLeaveCall();   
         }
 
     }
@@ -198,10 +211,11 @@ function PatientCall() {
             body: JSON.stringify(check_status_body)
         })
         .then(response => response.json())
-        .then(data => {
+        .then(async(data) => {
             console.log(check_status_body);
             console.log("Online Status: ",data)
-            setIsConsultationActive(data);
+            isConsultationActive = data;
+            return data;
         })
         .catch(error => {
             console.log("error getting online status")
@@ -256,6 +270,7 @@ function PatientCall() {
 
     const handleLeaveCall = async(e) => {
         console.log(e);
+        
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
         nav({
@@ -264,12 +279,12 @@ function PatientCall() {
               pat_id: searchParams.get("pat_id")
             }).toString()
           });
-        leaveChannel();
+        await leaveChannel();
         window.location.reload();
     }
     
     useEffect(() => {
-        init()
+        init();
     },[]);
     
   return (

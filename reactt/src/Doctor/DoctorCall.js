@@ -1,4 +1,4 @@
-import React,{ useState, useEffect} from "react";
+import React,{ useState, useEffect, Component} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
 import './vc.css'
@@ -7,13 +7,15 @@ import cam_icon from '../imgs/icons/camera.png'
 
 function DoctorCall() {
     const nav = useNavigate();
-    const [isConsultationActive, setIsConsultationActive] = useState(false);    
+    const [isConsultationActive, setIsConsultationActive] = useState(true);    
     const[searchParams] = useSearchParams();
-
+    var appointmentId = -1;
+    var patientId = -1;
+    
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
- 
+
     let token = null;
-    let uid = String(Math.floor(Math.random() * 10000))
+    let uid = "d_"+String(searchParams.get("doc_id"));
     
     let client;
     let channel;
@@ -40,8 +42,7 @@ function DoctorCall() {
         audio:true
     }
     
-    let init = async () => {
-        
+    let init = async () => {   
         client = await AgoraRTM.createInstance(APP_ID)
         await client.login({uid, token})
     
@@ -50,16 +51,17 @@ function DoctorCall() {
     
         channel.on('MemberJoined', handleUserJoined)
         channel.on('MemberLeft', handleUserLeft)
-    
+        
         client.on('MessageFromPeer', handleMessageFromPeer)
     
         localStream = await navigator.mediaDevices.getUserMedia(constraints)
         document.getElementById('user-1').srcObject = localStream
-        handlenextPatient();
+        
     }
      
     
     let handleUserLeft = (MemberId) => {
+        console.log("User left: ", MemberId)
         document.getElementById('user-2').style.display = 'none'
         document.getElementById('user-1').classList.remove('smallFrame')
     }
@@ -81,8 +83,6 @@ function DoctorCall() {
                 peerConnection.addIceCandidate(message.candidate)
             }
         }
-    
-    
     }
     
     let handleUserJoined = async (MemberId) => {
@@ -93,7 +93,7 @@ function DoctorCall() {
     
     let createPeerConnection = async (MemberId) => {
         peerConnection = new RTCPeerConnection(servers)
-    
+        // setPatientConnection(peerConnection);
         remoteStream = new MediaStream()
         document.getElementById('user-2').srcObject = remoteStream
         document.getElementById('user-2').style.display = 'block'
@@ -155,7 +155,7 @@ function DoctorCall() {
     let leaveChannel = async () => {
         await channel.leave()
         await client.logout()
-        await peerConnection.close();
+        // await peerConnection.close();
     }
     
     let toggleCamera = async () => {
@@ -198,9 +198,8 @@ function DoctorCall() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(check_status_body);
-            console.log("Online Status: ",data)
-            console.log(typeof(data));
+            // console.log(check_status_body);
+            // console.log("Online Status: ",data)
             setIsConsultationActive(data);
         })
         .catch(error => {
@@ -236,8 +235,7 @@ function DoctorCall() {
     }
 
     useEffect(() => {
-        console.log("Received doc_id: ", searchParams.get("doc_id"));
-        get_online_stat(searchParams.get("doc_id"));
+        init();
     },[]);
 
     const Consultation_Button = () => 
@@ -268,47 +266,42 @@ function DoctorCall() {
 
     const handlenextPatient = async()=>{
         console.log("Next patient is being called")
-        // let earliest_time_stamp = ""; 
-        // if(searchParams.get("app_id") != "" || searchParams.get("app_id") != null)
-        // {
-        //     //Api call to get the just finished appointment. 
-        //     const get_curr_app_body = {
-        //         appId : searchParams.get("app_id")
-        //     }
-        //     const get_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_appointment_by_id', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'Access-Control-Allow-Origin': '*' 
-        //         },
-        //         body: JSON.stringify(get_curr_app_body)
-        //     })
-        //     if(get_app_response.status != 200) console.log(get_app_response)
-        //     else earliest_time_stamp = await get_app_response.json()['booking_time']
-
-
-        //     //Api call to set appointment to completed status
-        //     const set_app_status_body = {
-        //         appId : searchParams.get("app_id"),
-        //         value : "completed"
-        //     }
-        //     const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'Access-Control-Allow-Origin': '*' 
-        //         },
-        //         body: JSON.stringify(set_app_status_body)
-        //     })
-        //     if(set_status_response.status != 200) console.log(set_status_response)
-        // }
-        // else
-        // {
-        //     //Set timestamp to 0,0,0 
-        //     earliest_time_stamp = "2222-07-14T18:30:00.000Z"
-        // }
+        console.log(appointmentId)
+        //Api call to set appointment to completed status
+        if(appointmentId != -1)
+        {
+            await channel.getMembers().then((members) => {
+                console.log(`There are ${members.length} members in the channel`);
+                console.log(members)
+                for(const element of members)
+                {
+                    if(element === "p_"+String(patientId))
+                    {
+                        console.log("Removing patientId--------------------------------------");
+                        client.sendMessageToPeer({text:JSON.stringify({'type':'leave', 'answer':'none'})}, "p_"+String(patientId))
+                        break;
+                    }
+                }            
+            });    
+            
+            handleUserLeft(String(patientId));
+            
+            const set_app_status_body = {
+                appId : appointmentId,
+                value : "completed"
+            }
+            const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*' 
+                },
+                body: JSON.stringify(set_app_status_body)
+            })
+            if(set_status_response.status != 200) console.log(set_status_response)    
+            else console.log("Changed previous appointment status to completed!")
+        }
         
-        //Api call to get the earliest appointment with waiting status
         const earliest_app_response_body = {
             docId: searchParams.get("doc_id")
         }
@@ -341,16 +334,46 @@ function DoctorCall() {
             })
             if(set_status_response.status != 200) console.log(set_status_response)    
             else{
+                const now = new Date(); // get current date and time
+                const timestamp = now.toISOString(); // convert to ISO string
+                const set_start_time_body = {
+                    appId : earliest_app.appointmentId,
+                    value : timestamp
+                }    
+                const set_start_time_response = await fetch('http://localhost:8090/api/v1/appointment/set_start_time', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*' 
+                    },
+                    body: JSON.stringify(set_start_time_body)
+                })
+    
                 console.log("Next patient status changed!")
+                appointmentId = earliest_app.appointmentId;
+                patientId = earliest_app.patientId;
             }
-
         }
     }   
 
-    
+    const handleGetMembers = () =>
+    {        
+        channel.getMembers().then((members) => {
+            console.log(`There are ${members.length} members in the channel`);
+            console.log(members)
+            for(let i = 0;i<members.length;i++)
+            {
+                if(members[i] === "d_"+String(searchParams.get("doc_id")))
+                {
+                    console.log('Doctor exists')
+                    break;
+                }
+            }            
+        });    
+    }
     return (
         <div>
-            <button onClick={init}>Start connection</button>
+            {/* <button onClick={init}>Start connection</button> */}
             <div id="videos" >
                 <video className="video-player" id="user-1" autoPlay playsInline></video>
                 <video className="video-player" id="user-2" autoPlay playsInline></video>
@@ -365,6 +388,8 @@ function DoctorCall() {
             </div>
             {Consultation_Button()}
             <button onClick={handlenextPatient}>Next patient</button>
+            <button onClick={handleGetMembers}>Get Members</button>
+            
         </div>
     );
 }

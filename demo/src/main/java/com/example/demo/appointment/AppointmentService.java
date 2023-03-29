@@ -73,6 +73,14 @@ public class AppointmentService {
         return appointmentRepository.get_earliest_appointment(docId);
     }
 
+    public Integer get_queue_count(Integer appId){
+        return appointmentRepository.get_queue_count(appId);
+    }
+
+    public Boolean get_doctor_status(Integer appId){
+        return appointmentRepository.check_doctor_status(appId);
+    }
+
     public Appointment get_appointment_by_id(Integer appId){
         return appointmentRepository.findByAppointmentId(appId);
     }

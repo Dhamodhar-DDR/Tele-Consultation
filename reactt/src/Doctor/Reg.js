@@ -18,7 +18,7 @@ function Regdoc() {
   const [email, setEmail] = useState("");
   const[spec, setSpec] = useState("");
   const[exp, setExp] = useState("");
-  const [gender, setgender] = useState("");
+  const [gender, setgender] = useState("male");
   const [Age, setAge] = useState("");
 
   useEffect(() => {

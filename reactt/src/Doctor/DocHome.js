@@ -10,6 +10,7 @@ function DocHome() {
   const [doc_id, setDoc_id] = useState(-1);
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
+  const did = searchParams.get('doc_id')
 
   const get_online_stat = async(doc_id_param) => {
     const check_status_body = {
@@ -33,6 +34,19 @@ function DocHome() {
       console.log("error getting online status")
       console.log(error)
     });
+  }
+
+  const handleAppointHist = () =>{
+
+    nav({
+      pathname: '/DocAppoinHist',
+      search: createSearchParams({
+        doc_id: did
+      }).toString()
+    });
+
+
+
   }
 
   const HandleLogout = () =>{
@@ -102,7 +116,7 @@ function DocHome() {
         <div>
         <button className="nav-button">Home</button>
         <button className="nav-button">Edit Profile</button>
-        <button className="nav-button">Appointment History</button>
+        <button className="nav-button" onClick={handleAppointHist}>Appointment History</button>
 
           {/* <a href="#">Edit Profile</a>
           <a href="#">Appointment History</a> */}

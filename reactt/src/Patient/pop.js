@@ -10,44 +10,73 @@ import female_def_pp from '../imgs/fem_def_pp.png';
 
 
 function ProfileSelector() {
-  const [pat_id, setPatId] = useState(-1);
+  const [profiles,setProfiles] = useState([]);
   const[searchParams] = useSearchParams();
+  const nav = useNavigate();
 
-   const p1 = {id: 1, avatar: male_def_pp,name:"Veer", age: 21}
-   const p2 = {id: 2, avatar: female_def_pp,name:"Nancy", age: 47}
-   const p3 = {id: 3, avatar: male_def_pp,name:"Ethan", age: 63}
-
-   const profiles = [p1,p2,p3]; 
-   const nav = useNavigate();
-
-   const onProfileSelect = (profile) => {
+  const onProfileSelect = (profile) => {
     nav({
-      pathname: '/select_doc',
+      pathname: '/home_pat',
       search: createSearchParams({
-        pat_id: pat_id
+        pat_id: profile.patientId
       }).toString()
     });
-   };
+  };
   
    const get_pat_id = async() => {
-    const get_profiles_body = {
-      'mobile_number' : searchParams.get("mobile")
+    if(searchParams.get('mobile') != undefined)
+    {
+      const get_profiles_body = {
+        'mobile_number' : searchParams.get("mobile")
+      }
+      await fetch('http://localhost:8090/api/v1/patient/display_profiles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*' 
+        },
+        body: JSON.stringify(get_profiles_body)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        setProfiles(data)
+      })
+      .catch(error => {
+        console.log(error)
+      });
     }
-    await fetch('http://localhost:8090/api/v1/patient/display_profiles', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(get_profiles_body)
-    })
-    .then(response => response.json())
-    .then(data => {
-      setPatId(data[0].patientId);
-    })
-    .catch(error => {
-      console.log(error)
-    });
+    else if(searchParams.get('pat_id') != undefined)
+    {
+        const getProfilesBody = {
+          pat_id : searchParams.get('pat_id')
+        }
+        await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' 
+          },
+          body: JSON.stringify(getProfilesBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setProfiles(data)
+        })    
+    }
+   }
+
+   const get_default_pic =(gender)=>{
+    if(gender==='Female' || gender==='female') 
+    {
+      return female_def_pp;
+    }
+    else 
+    {
+      return  male_def_pp;
+    }
+
    }
 
   useEffect(() => {
@@ -57,9 +86,9 @@ function ProfileSelector() {
   return (
     <div className="popup-overlay">
       <div className="popup">
-        <div className="popup-close">
+        {/* <div className="popup-close">
           &times;
-        </div>
+        </div> */}
         <div className="popup-header">
           <h2>Select User</h2>
         </div>
@@ -67,9 +96,9 @@ function ProfileSelector() {
           {profiles.map((profile) => (
             <div
               className="popup-profile"
-              key={profile.id}
+              key={profile.patientId}
               onClick={() => onProfileSelect(profile)}>
-              <img className="profilepics" src={profile.avatar} alt={profile.name} />
+              <img className="profilepics" src={get_default_pic(profile.gender)} alt={profile.name} />
               <h3>{profile.name}</h3>
               <p>{profile.age} years old</p>
             </div>

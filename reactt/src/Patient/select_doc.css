@@ -41,19 +41,22 @@
   }
    */
 
-
-  .heading-1{
+.nav-bar .prof {
+  margin-right: auto;
+  margin-left: auto;
+  align-self: center;
+  align-items: center;
+}
+.heading-1{
     
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    color: #fff;
-  }
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  color: #fff;
+}
 
 
-
-   
-   .doctor-profile {
+.doctor-profile {
     display: flex;
     flex-direction: row;
     align-items: center;

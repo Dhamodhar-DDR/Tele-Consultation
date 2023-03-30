@@ -1,8 +1,8 @@
 package com.example.demo.doctor;
 
-import com.example.demo.patient.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
 import java.util.List;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
@@ -11,5 +11,4 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     Doctor findByDoctorId(Integer doctorID);
     List<Doctor> findByOnlineStatusTrue();
     Doctor findByMobileNumber(String mobileNumber);
-
 }

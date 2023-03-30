@@ -11,6 +11,14 @@ import Page1 from './pg1';
 import DoctorList from './Patient/select_doc';
 import DoctorCall from './Doctor/DoctorCall'
 import PatientCall from './Patient/PatientCall'
+import Homepat from './Patient/homepat';
+import Modal from './Patient/upload';
+import PatList from './Patient/manageprof';
+import AddProf from './Patient/AddProf';
+import AppoinHist from './Patient/appoin_hist';
+import WaitingPage from './Patient/waitingpage'
+import DocAppoinHist from './Doctor/doc_appoin_hist';
+
 function App() 
 {
   return (
@@ -26,6 +34,14 @@ function App()
       <Route path="/selectprofile" element={<ProfileSelector/>}/> 
       <Route path="/patient_call" element={<PatientCall/>}/> 
       <Route path="/doctor_call" element={<DoctorCall/>}/> 
+      <Route path="/home_pat" element={<Homepat/>}/> 
+      <Route path="/modal" element={<Modal/>}/> 
+      <Route path="/patlist" element={<PatList/>}/>
+      <Route path="/addprof" element={<AddProf/>}/> 
+      <Route path="/appoinhist" element={<AppoinHist/>}/> 
+      <Route path="/waiting_page" element={<WaitingPage/>}/> 
+      <Route path="/DocAppoinHist" element={<DocAppoinHist/>}/> 
+
       {/* <Route exact path="/" element={<Logindoc />} />
       <Route path="/register" element={<Regdoc />} /> */}
     </Routes>

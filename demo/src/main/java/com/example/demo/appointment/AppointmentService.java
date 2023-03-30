@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class AppointmentService {
@@ -41,6 +42,11 @@ public class AppointmentService {
         }
     }
 
+    public String getStatus(int appId) {
+        Appointment app =  appointmentRepository.findByAppointmentId(appId);
+        return app.getStatus();
+    }
+
     public boolean setStartTime(int id, Timestamp value) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
         if (optionalAppointment.isPresent()) {
@@ -63,5 +69,41 @@ public class AppointmentService {
             return false;
         }
     }
+
+    public Appointment get_earliest_appointment(Integer docId){
+        return appointmentRepository.get_earliest_appointment(docId);
+    }
+
+    public Integer get_queue_count(Integer appId){
+        return appointmentRepository.get_queue_count(appId);
+    }
+
+    public Boolean get_doctor_status(Integer appId){
+        return appointmentRepository.check_doctor_status(appId);
+    }
+
+    public Appointment get_appointment_by_id(Integer appId){
+        return appointmentRepository.findByAppointmentId(appId);
+    }
+
+    public List<String> get_doctor_names(Integer patId){
+        return appointmentRepository.get_doctor_names(patId);
+    }
+
+    public List<String> get_patient_names(Integer docId){
+        return appointmentRepository.get_patient_names(docId);
+    }
+
+    public List<String> get_doctor_specs(Integer patId){
+        return appointmentRepository.get_doctor_specs(patId);
+    }
+
+    public List<Appointment> get_patient_appointments(Integer patId){
+        return appointmentRepository.get_patient_appointments(patId);
+    }
+    public List<Appointment> get_doctor_appointments(Integer docId){
+        return appointmentRepository.get_doctor_appointments(docId);
+    }
+
 
 }

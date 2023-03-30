@@ -35,7 +35,7 @@ function Logindoc() {
       const get_doc_by_mobile_body = {
         'mobile_number': phone
       }
-      await fetch('http://172.16.140.228:8090/api/v1/doctor/get_doctor_by_mobile', {
+      await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ function Logindoc() {
     //   'mobile_number' : phone
     // }
 
-    // await fetch('http://172.16.140.228:8090/api/v1/auth/send_otp', {
+    // await fetch('http://localhost:8090/api/v1/auth/send_otp', {
     //   method: 'POST',
     //   headers: {
     //     'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ function Logindoc() {
     //   'mobile_number' : phone,
     //   'otp': otp
     // }
-    // await fetch('http://172.16.140.228:8090/api/v1/auth/verify_otp', {
+    // await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
     //   method: 'POST',
     //   headers: {
     //     'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ function Logindoc() {
         const check_new_user_body = {
           'mobile_number' : phone
         }
-        await fetch('http://172.16.140.228:8090/api/v1/doctor/check_new_mobile', {
+        await fetch('http://localhost:8090/api/v1/doctor/check_new_mobile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

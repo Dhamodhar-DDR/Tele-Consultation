@@ -18,6 +18,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     @Query(value = "SELECT * FROM Appointment where patient_id = :patId ORDER BY booking_time ASC",nativeQuery = true)
     List<Appointment> get_patient_appointments(@Param("patId") Integer patId);
 
+    @Query(value = "SELECT Doctor.name FROM Doctor JOIN Appointment ON Appointment.doctor_id = Doctor.doctor_id WHERE Appointment.patient_id = :patId ORDER BY Appointment.booking_time ASC;",nativeQuery = true)
+    List<String> get_doctor_names(@Param("patId") Integer patId);
+    @Query(value = "SELECT Doctor.specialization FROM Doctor JOIN Appointment ON Appointment.doctor_id = Doctor.doctor_id WHERE Appointment.patient_id = :patId ORDER BY Appointment.booking_time ASC;",nativeQuery = true)
+    List<String> get_doctor_specs(@Param("patId") Integer patId);
+
+    @Query(value = "SELECT Patient.name FROM Patient JOIN Appointment ON Appointment.patient_id = Patient.patient_id WHERE Appointment.doctor_id = :docId ORDER BY Appointment.booking_time ASC;",nativeQuery = true)
+    List<String> get_patient_names(@Param("docId") Integer docId);
+
     @Query(value = "SELECT * FROM Appointment where doctor_id = :docId ORDER BY booking_time ASC",nativeQuery = true)
     List<Appointment> get_doctor_appointments(@Param("docId") Integer docId);
     Appointment findByAppointmentId(Integer appId);

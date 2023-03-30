@@ -86,6 +86,18 @@ public class AppointmentService {
         return appointmentRepository.findByAppointmentId(appId);
     }
 
+    public List<String> get_doctor_names(Integer patId){
+        return appointmentRepository.get_doctor_names(patId);
+    }
+
+    public List<String> get_patient_names(Integer docId){
+        return appointmentRepository.get_patient_names(docId);
+    }
+
+    public List<String> get_doctor_specs(Integer patId){
+        return appointmentRepository.get_doctor_specs(patId);
+    }
+
     public List<Appointment> get_patient_appointments(Integer patId){
         return appointmentRepository.get_patient_appointments(patId);
     }

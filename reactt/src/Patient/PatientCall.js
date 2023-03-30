@@ -222,7 +222,7 @@ function PatientCall() {
         const check_status_body = {
             'doctorID': doc_id_param
         }
-        await fetch('http://172.16.140.228:8090/api/v1/doctor/check_online_status', {
+        await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ function PatientCall() {
             appId : searchParams.get("app_id"),
             value : status
         }
-        const response =  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_status', {
+        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -272,7 +272,7 @@ function PatientCall() {
             appId : searchParams.get("app_id"),
             value : timestamp
         }
-        const response =  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_end_time', {
+        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

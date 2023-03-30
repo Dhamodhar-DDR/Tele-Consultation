@@ -32,7 +32,7 @@ function DocAppoinHist() {
   const get_appoin_history = async() =>{
 
     const getappoinhist = {docId: searchParams.get("doc_id")}
-    await fetch('http://172.16.140.228:8090/api/v1/appointment/get_doctor_appointments', {
+    await fetch('http://localhost:8090/api/v1/appointment/get_doctor_appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,71 +56,27 @@ function DocAppoinHist() {
 
   }
 
-//   const get_prof_name_by_id = async() => {
-
-//     const getpatidbody = {pat_id: searchParams.get("pat_id")}
-//     await fetch('http://172.16.140.228:8090/api/v1/patient/get_patient_by_id', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Access-Control-Allow-Origin': '*' 
-//       },
-//       body: JSON.stringify(getpatidbody)
+    const navToHome = () =>{
+      nav({
+        pathname: '/home_pat',
+        search: createSearchParams({
+          pat_id: searchParams.get('pat_id')
+        }).toString()
+      });
+    }
   
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//       console.log("Online docs list get profff: ",data)
-//       setprofname(data.name)  
-//       console.log("After set profname ",prof_name)     
-//     })
-//     .catch(error => {
-//       console.log(error)
-//     });
+    const navToMngProfile = () =>{
+      nav({
+        pathname: '/patlist',
+        search: createSearchParams({
+          pat_id: searchParams.get('pat_id')
+        }).toString()
+      });
+    }
   
-//   }
-  
-
-
-
-    const doctors = [
-        {
-          id: 1,
-          name: "Dr. John Smith",
-          photo: "https://via.placeholder.com/200",
-          startTime: "9:00 AM",
-          endTime: "10:00 AM"
-        },
-        {
-          id: 2,
-          name: "Dr. Jane Doe",
-          photo: "https://via.placeholder.com/200",
-          startTime: "11:00 AM",
-          endTime: "12:00 PM"
-        }
-      ];
-
-      const navToHome = () =>{
-        nav({
-          pathname: '/home_pat',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
-      }
-    
-      const navToMngProfile = () =>{
-        nav({
-          pathname: '/patlist',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
-      }
-    
-      const navToAppHis = () =>{
-        // nav('/login_p')
-      }
+    const navToAppHis = () =>{
+      // nav('/login_p')
+    }
     
     
       return (
@@ -144,16 +100,16 @@ function DocAppoinHist() {
           <h1>Patient Appointment History</h1>
             <ul className="doctor-list">
               {appoinlist.map(appointment => (
-                <li key={appointment.appointmentId}>
+                <li key={appointment.appointment.appointmentId}>
                   <div className="doctor-profile">
                     <img className="doctor-photo" src={def_pp} alt="Doctor" />
                     <div className="doctor-info">
-                      <div className="doctor-name">{appointment.appointmentId}</div>
-                      <div className="info-label"><b>Call Start Time:</b> {appointment.startTime}</div>
+                      <div className="doctor-name">{appointment.name}</div>
+                      <div className="info-label"><b>Call Start Time:</b> {appointment.appointment.startTime}</div>
                       {/* <div className="info-value">{doctor.startTime}</div> */}
-                      <div className="info-label"><b>Call End Time:</b> {appointment.endTime}</div>
+                      <div className="info-label"><b>Call End Time:</b> {appointment.appointment.endTime}</div>
                       {/* <div className="info-value">{doctor.endTime}</div> */}
-                      <div className="info-label"><b>Status: </b>{appointment.status}</div>
+                      <div className="info-label"><b>Status: </b>{appointment.appointment.status}</div>
                       {/* <div className="info-value">{doctor.endTime}</div> */}
                       
                       <button>View Details</button>

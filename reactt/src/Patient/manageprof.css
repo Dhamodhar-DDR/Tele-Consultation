@@ -49,11 +49,8 @@
     margin-right: auto;
     color: #1b0707;
   }
-
-
-
    
-   .doctor-profile {
+  .doctor-profile {
     display: flex;
     flex-direction: row;
     align-items: center;

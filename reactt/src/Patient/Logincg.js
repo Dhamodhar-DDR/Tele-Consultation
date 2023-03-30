@@ -104,7 +104,7 @@ function Logincg() {
         }
     
         //await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
-          await fetch('http://172.16.140.228:8090/api/v1/patient/check_new_user', {
+          await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

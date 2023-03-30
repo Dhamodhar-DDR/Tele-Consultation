@@ -15,7 +15,7 @@ const WaitingPage = () => {
         }
 
         const intervalId = setInterval(async() => {
-            fetch('http://172.16.140.228:8090/api/v1/appointment/get_queue_status', {
+            fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const WaitingPage = () => {
                     appId : searchParams.get("app_id"),
                     value : 'cancelled'
                   }
-                  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_status', {
+                  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',

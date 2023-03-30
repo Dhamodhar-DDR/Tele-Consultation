@@ -17,6 +17,7 @@ import PatList from './Patient/manageprof';
 import AddProf from './Patient/AddProf';
 import AppoinHist from './Patient/appoin_hist';
 import WaitingPage from './Patient/waitingpage'
+import DocAppoinHist from './Doctor/doc_appoin_hist';
 
 function App() 
 {
@@ -39,6 +40,8 @@ function App()
       <Route path="/addprof" element={<AddProf/>}/> 
       <Route path="/appoinhist" element={<AppoinHist/>}/> 
       <Route path="/waiting_page" element={<WaitingPage/>}/> 
+      <Route path="/DocAppoinHist" element={<DocAppoinHist/>}/> 
+
       {/* <Route exact path="/" element={<Logindoc />} />
       <Route path="/register" element={<Regdoc />} /> */}
     </Routes>

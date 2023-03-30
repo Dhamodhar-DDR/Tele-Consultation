@@ -25,11 +25,25 @@ function PatientCall() {
     let peerConnection;
     
     const servers = {
-        iceServers:[
-            {
-                urls:['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
-            }
-        ]
+        // iceServers:[
+        //     {
+        //         urls:['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
+        //     }
+        iceServers: [{
+            urls: [ "stun:bn-turn1.xirsys.com" ]
+         }, {
+            username: "Yh4cKgXCeYNDluHkIMBH4uuYnaAlW0a_rGXKLNjDPuAoG1u_rSWbtjvxge8eN7sFAAAAAGQlFXJTcmluaXZhcw==",
+            credential: "9ca7f90c-ceb6-11ed-8e86-0242ac140004",
+            urls: [
+                "turn:bn-turn1.xirsys.com:80?transport=udp",
+                "turn:bn-turn1.xirsys.com:3478?transport=udp",
+                "turn:bn-turn1.xirsys.com:80?transport=tcp",
+                "turn:bn-turn1.xirsys.com:3478?transport=tcp",
+                "turns:bn-turn1.xirsys.com:443?transport=tcp",
+                "turns:bn-turn1.xirsys.com:5349?transport=tcp"
+            ]
+         }]
+        
     }
     
     let constraints = {
@@ -91,6 +105,9 @@ function PatientCall() {
         if(message.type === 'candidate'){
             if(peerConnection){
                 peerConnection.addIceCandidate(message.candidate)
+                console.log("candidate: ",message.candidate)
+
+
             }
         }
 
@@ -155,6 +172,8 @@ function PatientCall() {
     
         let answer = await peerConnection.createAnswer()
         await peerConnection.setLocalDescription(answer)
+
+        console.log("answer, ",answer," offer: ",offer)
     
         client.sendMessageToPeer({text:JSON.stringify({'type':'answer', 'answer':answer})}, MemberId)
     }
@@ -202,7 +221,7 @@ function PatientCall() {
         const check_status_body = {
             'doctorID': doc_id_param
         }
-        await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
+        await fetch('http://172.16.140.228:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -227,7 +246,7 @@ function PatientCall() {
             appId : searchParams.get("app_id"),
             value : status
         }
-        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+        const response =  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_status', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -252,7 +271,7 @@ function PatientCall() {
             appId : searchParams.get("app_id"),
             value : timestamp
         }
-        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
+        const response =  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_end_time', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import "./waitingpage.css";
 
 const WaitingPage = () => {
     const nav = useNavigate()
-    const [queueCount, setqueueCount] = useState(0);
+    const [queueCount, setqueueCount] = useState(-1);
     const[searchParams] = useSearchParams();
   
     useEffect(() => {
@@ -15,7 +15,7 @@ const WaitingPage = () => {
         }
 
         const intervalId = setInterval(async() => {
-            fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
+            fetch('http://172.16.140.228:8090/api/v1/appointment/get_queue_status', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const WaitingPage = () => {
                     appId : searchParams.get("app_id"),
                     value : 'cancelled'
                   }
-                  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+                  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_status', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
@@ -76,7 +76,13 @@ const WaitingPage = () => {
     <div className="waiting-page">
       <div className="loading-spinner"></div>
       <p className="waiting-text">You are added to the Queue. Please wait for your turn ..... </p>
-      <p>Number of appointments ahead in the queue : {queueCount}</p>
+      <p>Number of appointments ahead in the queue : </p>
+      {
+        (queueCount == -1)?(
+          <p> Loading...</p>
+        ):<p>{queueCount}</p>
+
+      }
     </div>
   );
 };

@@ -17,6 +17,33 @@ function AddProf() {
   const [email, setEmail] = useState("");
   const [gender, setgender] = useState("");
   const [Age, setAge] = useState("");
+
+  const [prof_name, setprofname] = useState('')
+
+  const get_prof_name_by_id = async() => {
+
+    const getpatidbody = {pat_id: searchParams.get("pat_id")}
+    await fetch('http://172.16.140.228:8090/api/v1/patient/get_patient_by_id', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(getpatidbody)
+  
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Online docs list get profff: ",data)
+      setprofname(data.name)  
+      console.log("After set profname ",prof_name)     
+    })
+    .catch(error => {
+      console.log(error)
+    });
+  
+  }
+
   
 
   const handleFirstNameChange = (e) => {
@@ -47,6 +74,12 @@ function AddProf() {
 
   useEffect(() => {
     console.log(searchParams.get('pat_id'))
+    
+    get_prof_name_by_id()
+    
+    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received profilename pat_id: ", prof_name);
+
   }, [])
   
   const handleSubmit = async(e) =>{
@@ -59,7 +92,7 @@ function AddProf() {
       'email' : email,
       'consent' : false
     }
-    await fetch('http://localhost:8090/api/v1/patient/add_new_profile', {
+    await fetch('http://172.16.140.228:8090/api/v1/patient/add_new_profile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -114,6 +147,7 @@ function AddProf() {
             <a href="#">Appointment History</a> */}
         </div>
         <div>
+        <button className="nav-button1"><img  />{prof_name}</button>
           <button className="nav-button" >Logout</button>
         </div>
       </div>

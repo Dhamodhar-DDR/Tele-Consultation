@@ -41,7 +41,12 @@
   }
    */
 
-
+.nav-bar .prof {
+  margin-right: auto;
+  margin-left: auto;
+  align-self: center;
+  align-items: center;
+}
   .heading-1{
     
     width: fit-content;

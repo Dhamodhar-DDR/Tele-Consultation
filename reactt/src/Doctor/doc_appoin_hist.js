@@ -1,4 +1,4 @@
-import './appoin_hist.css'
+import './doc_appoin_hist.css'
 import def_pp from '../imgs/profile.png'
 
 
@@ -9,7 +9,7 @@ import { useSearchParams,createSearchParams, useNavigate } from 'react-router-do
 
 
 
-function AppoinHist() {
+function DocAppoinHist() {
 
   const nav = useNavigate()
 
@@ -19,11 +19,11 @@ function AppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log(searchParams.get('pat_id'))
-    get_prof_name_by_id()
+    console.log(searchParams.get('doc_id'))
+  //  get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id: ", searchParams.get("doc_id"));
     console.log("Received profilename pat_id: ", prof_name);
 
     
@@ -31,8 +31,8 @@ function AppoinHist() {
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {patId: searchParams.get("pat_id")}
-    await fetch('http://172.16.140.228:8090/api/v1/appointment/get_patient_appointments', {
+    const getappoinhist = {docId: searchParams.get("doc_id")}
+    await fetch('http://172.16.140.228:8090/api/v1/appointment/get_doctor_appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ function AppoinHist() {
     })
     .then(response => response.json())
     .then(data => {
-      console.log("Online apoin list get profff: ",data)
+      console.log("Online docs apoin list get profff: ",data)
       settappoinlist(data)  
      // console.log("After set profname ",prof_name)     
     })
@@ -56,29 +56,29 @@ function AppoinHist() {
 
   }
 
-  const get_prof_name_by_id = async() => {
+//   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: searchParams.get("pat_id")}
-    await fetch('http://172.16.140.228:8090/api/v1/patient/get_patient_by_id', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(getpatidbody)
+//     const getpatidbody = {pat_id: searchParams.get("pat_id")}
+//     await fetch('http://172.16.140.228:8090/api/v1/patient/get_patient_by_id', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Access-Control-Allow-Origin': '*' 
+//       },
+//       body: JSON.stringify(getpatidbody)
   
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Online docs list get profff: ",data)
-      setprofname(data.name)  
-      console.log("After set profname ",prof_name)     
-    })
-    .catch(error => {
-      console.log(error)
-    });
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//       console.log("Online docs list get profff: ",data)
+//       setprofname(data.name)  
+//       console.log("After set profname ",prof_name)     
+//     })
+//     .catch(error => {
+//       console.log(error)
+//     });
   
-  }
+//   }
   
 
 
@@ -135,13 +135,13 @@ function AppoinHist() {
             <a href="#">Appointment History</a> */}
         </div>
         <div>
-        <button className="nav-button1"><img  />{prof_name}</button>
+        {/* <button className="nav-button1"><img  />{prof_name}</button> */}
 
           <button className="nav-button" >Logout</button>
         </div>
       </div>
           <div className="appointment-history">
-          <h1>Appointment History</h1>
+          <h1>Patient Appointment History</h1>
             <ul className="doctor-list">
               {appoinlist.map(appointment => (
                 <li key={appointment.appointmentId}>
@@ -168,7 +168,7 @@ function AppoinHist() {
       );
 }
 
-export default AppoinHist;
+export default DocAppoinHist;
 
 
 

@@ -9,7 +9,10 @@
   body {
     /* font-family: DejaVu Sans Mono, monospace; */
     /* font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif; */
-    font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif; 
+    /* font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;  */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
     line-height: 1.5;
     background-color: #25a0d5;
 

@@ -10,12 +10,13 @@ function DocHome() {
   const [doc_id, setDoc_id] = useState(-1);
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
+  const did = searchParams.get('doc_id')
 
   const get_online_stat = async(doc_id_param) => {
     const check_status_body = {
       'doctorID': doc_id_param
     }
-    await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
+    await fetch('http://172.16.140.228:8090/api/v1/doctor/check_online_status', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,6 +36,19 @@ function DocHome() {
     });
   }
 
+  const handleAppointHist = () =>{
+
+    nav({
+      pathname: '/DocAppoinHist',
+      search: createSearchParams({
+        doc_id: did
+      }).toString()
+    });
+
+
+
+  }
+
   const HandleLogout = () =>{
     set_status(false)
     nav('/login_doc')
@@ -48,7 +62,7 @@ function DocHome() {
       'online_status': param      
     }
     console.log("bef await isconsulatationactive", param)
-    await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
+    await fetch('http://172.16.140.228:8090/api/v1/doctor/set_online_status', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -102,7 +116,7 @@ function DocHome() {
         <div>
         <button className="nav-button">Home</button>
         <button className="nav-button">Edit Profile</button>
-        <button className="nav-button">Appointment History</button>
+        <button className="nav-button" onClick={handleAppointHist}>Appointment History</button>
 
           {/* <a href="#">Edit Profile</a>
           <a href="#">Appointment History</a> */}

@@ -389,21 +389,25 @@ function DoctorCall() {
     return (
         <div>
             {/* <button onClick={init}>Start connection</button> */}
-            <div id="videos" >
+            <div id="videos" style={{height:'100vh'}}>
                 <video className="video-player" id="user-1" autoPlay playsInline></video>
                 <video className="video-player" id="user-2" autoPlay playsInline></video>
             </div>
             <div id="controls">
+
+            <div className="vid-cb">{Consultation_Button()} </div>
                 <div onClick={toggleCamera} className="control-container" id="camera-btn">
                     <img src={cam_icon} />
                 </div>
                 <div onClick={toggleMic} className="control-container" id="mic-btn">
                     <img src={mic_icon}/>
                 </div>
+                
+                <button style = {{backgroundColor: "green"}}onClick={handlenextPatient}>Next patient</button>
             </div>
-            {Consultation_Button()}
-            <button onClick={handlenextPatient}>Next patient</button>
-            <button onClick={handleGetMembers}>Get Members</button>
+            {/* <div className="vid-cb">{Consultation_Button()} </div> */}
+            
+            
             
         </div>
     );

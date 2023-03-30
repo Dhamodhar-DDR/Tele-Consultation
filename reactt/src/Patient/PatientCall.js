@@ -1,7 +1,8 @@
 import React,{ useState, useEffect} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
-import './vc.css'
+//import './vc.css'
+import './PatientCall.css'
 import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 
@@ -307,24 +308,34 @@ function PatientCall() {
     },[]);
     
   return (
-    <div>
-        <button onClick={init}>Start connection</button>
-        <div id="videos" >
-            <video className="video-player" id="user-1" autoPlay playsInline></video>
-            <video className="video-player" id="user-2" autoPlay playsInline></video>
-        </div>
-        <div id="controls">
+    <div className="video-call-pg">
+
+        <div id="videos" style={{height:'100vh'}}>
+          {/* <div className="rightbutton"> */}
+            {/* <button className="leave-button" onClick={handleLeaveCall}>
+              Leave Call
+            </button> */}
+           {/* </div> */}
+
+            <video className="video-player" id="user-1" autoPlay playsInline>
+            
+            </video>
+            <video className="video-player" id="user-2" autoPlay playsInline>
+                
+            </video>
+            
+
+            <div id="controls">
             <div onClick={toggleCamera} className="control-container" id="camera-btn">
                 <img src={cam_icon} />
             </div>
             <div onClick={toggleMic} className="control-container" id="mic-btn">
                 <img src={mic_icon}/>
             </div>
-        </div>
-        <div className="centered-button">
-            <button className="leave-button" onClick={handleLeaveCall}>
+            <button className="leave-button" id="leave-btn" onClick={handleLeaveCall}>
               Leave Call
             </button>
+        </div>
         </div>
     </div>
   );

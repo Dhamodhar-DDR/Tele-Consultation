@@ -10,12 +10,20 @@
 }
 
 .button-container {
+  position: relative;
+  display: flex;
+  margin-top: 0px;
+  
+   top: -50px;
+
+  
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   background-image: url('imgs/background.jpeg');
   background-size: cover;
+
   font-family: var(--font-family);
 }
 

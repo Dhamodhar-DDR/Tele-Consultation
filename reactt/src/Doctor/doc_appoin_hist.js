@@ -32,7 +32,7 @@ function DocAppoinHist() {
   const get_appoin_history = async() =>{
 
     const getappoinhist = {docId: searchParams.get("doc_id")}
-    await fetch('http://localhost:8090/api/v1/appointment/get_doctor_appointments', {
+    await fetch('http://172.16.140.228:8090/api/v1/appointment/get_doctor_appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,9 +58,9 @@ function DocAppoinHist() {
 
     const navToHome = () =>{
       nav({
-        pathname: '/home_pat',
+        pathname: '/DocHome',
         search: createSearchParams({
-          pat_id: searchParams.get('pat_id')
+          doc_id: searchParams.get('doc_id')
         }).toString()
       });
     }
@@ -69,13 +69,19 @@ function DocAppoinHist() {
       nav({
         pathname: '/patlist',
         search: createSearchParams({
-          pat_id: searchParams.get('pat_id')
+          doc_id: searchParams.get('doc_id')
         }).toString()
       });
     }
   
     const navToAppHis = () =>{
-      // nav('/login_p')
+      nav({
+        pathname: '/DocAppoinHist',
+        search: createSearchParams({
+          doc_id: searchParams.get('doc_id')
+        }).toString()
+      });
+
     }
     
     
@@ -83,9 +89,9 @@ function DocAppoinHist() {
         <div>
       <div className="navbar">
         <div>
-          <button onClick={navToHome} className="nav-button">Home</button>
-          <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
-          <button className="nav-button">Appointment History</button>
+          <button className="nav-button" onClick={navToHome}>Home</button>
+          {/* <button onClick={navToMngProfile} className="nav-button">Manage Profile</button> */}
+          <button className="nav-button" onClick={navToAppHis}>Appointment History</button>
 
             {/* <a href="#">Edit Profile</a>
             <a href="#">Appointment History</a> */}

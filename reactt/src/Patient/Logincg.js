@@ -57,7 +57,7 @@ function Logincg() {
     //   'mobile_number' : phone
     // }
 
-    // await fetch('http://localhost:8090/api/v1/auth/send_otp', {
+    // await fetch('http://172.16.140.228:8090/api/v1/auth/send_otp', {
     //   method: 'POST',
     //   headers: {
     //     'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ function Logincg() {
     //   'mobile_number' : phone,
     //   'otp': otp
     // }
-    // await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
+    // await fetch('http://172.16.140.228:8090/api/v1/auth/verify_otp', {
     //   method: 'POST',
     //   headers: {
     //     'Content-Type': 'application/json',
@@ -103,8 +103,8 @@ function Logincg() {
           'mobile_number' : phone
         }
     
-        //await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
-          await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
+        //await fetch('http://172.16.140.228:8090/api/v1/patient/check_new_user', {
+          await fetch('http://172.16.140.228:8090/api/v1/patient/check_new_user', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

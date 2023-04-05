@@ -20,7 +20,7 @@ function Homepat(){
   const get_prof_name_by_id = async() => {
 
     const getpatidbody = {pat_id: searchParams.get("pat_id")}
-    await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
+    await fetch('http://172.16.140.228:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

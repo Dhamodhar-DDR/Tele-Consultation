@@ -63,7 +63,7 @@ function Regc() {
         'consent' : false
       }
   
-      await fetch('http://localhost:8090/api/v1/patient/create', {
+      await fetch('http://172.16.140.228:8090/api/v1/patient/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

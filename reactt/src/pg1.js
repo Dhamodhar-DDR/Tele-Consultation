@@ -15,8 +15,8 @@ function Page1() {
   return (
   <div>
     <div className="button-container">
-      <button className="pg1-button" id="doctor" onClick={nav_doc_login()}>Doctor Login</button>
-      <button className="pg1-button" id="patient" onClick={nav_pat_login()}>Patient Login</button>
+      <button className="pg1-button" id="doctor" onClick={nav_doc_login}>Doctor Login</button>
+      <button className="pg1-button" id="patient" onClick={nav_pat_login}>Patient Login</button>
     </div>
 
     <div className="about-us">

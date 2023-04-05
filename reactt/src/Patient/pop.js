@@ -29,7 +29,7 @@ function ProfileSelector() {
       const get_profiles_body = {
         'mobile_number' : searchParams.get("mobile")
       }
-      await fetch('http://localhost:8090/api/v1/patient/display_profiles', {
+      await fetch('http://172.16.140.228:8090/api/v1/patient/display_profiles', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ function ProfileSelector() {
         const getProfilesBody = {
           pat_id : searchParams.get('pat_id')
         }
-        await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
+        await fetch('http://172.16.140.228:8090/api/v1/patient/get_all_profiles', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

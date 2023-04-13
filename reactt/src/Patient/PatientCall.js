@@ -1,19 +1,20 @@
 import React,{ useState, useEffect} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
-import './vc.css'
+//import './vc.css'
+import './PatientCall.css'
 import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 
 function PatientCall() {
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
-    const [isConsultationActive, setIsConsultationActive] = useState(false);    
+    var isConsultationActive = false;    
 
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
  
     let token = null;
-    let uid = String(Math.floor(Math.random() * 10000))
+    let uid = "p_"+String(searchParams.get("pat_id"))
     
     let client;
     let channel;
@@ -25,11 +26,25 @@ function PatientCall() {
     let peerConnection;
     
     const servers = {
-        iceServers:[
-            {
-                urls:['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
-            }
-        ]
+        // iceServers:[
+        //     {
+        //         urls:['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
+        //     }
+        iceServers: [{
+            urls: [ "stun:bn-turn1.xirsys.com" ]
+         }, {
+            username: "Yh4cKgXCeYNDluHkIMBH4uuYnaAlW0a_rGXKLNjDPuAoG1u_rSWbtjvxge8eN7sFAAAAAGQlFXJTcmluaXZhcw==",
+            credential: "9ca7f90c-ceb6-11ed-8e86-0242ac140004",
+            urls: [
+                "turn:bn-turn1.xirsys.com:80?transport=udp",
+                "turn:bn-turn1.xirsys.com:3478?transport=udp",
+                "turn:bn-turn1.xirsys.com:80?transport=tcp",
+                "turn:bn-turn1.xirsys.com:3478?transport=tcp",
+                "turns:bn-turn1.xirsys.com:443?transport=tcp",
+                "turns:bn-turn1.xirsys.com:5349?transport=tcp"
+            ]
+         }]
+        
     }
     
     let constraints = {
@@ -41,14 +56,21 @@ function PatientCall() {
     }
     
     let init = async () => {
-        await get_doc_online_stat(searchParams.get("doc_id")).then(async() => {
+        await get_doc_online_stat(searchParams.get("doc_id")).then(async(data) => {
+            console.log("Consultation", isConsultationActive)
+            console.log("Consultation", data)
             if(isConsultationActive)
             {
+                console.log('Started !');
                 client = await AgoraRTM.createInstance(APP_ID)
                 await client.login({uid, token})
             
                 channel = client.createChannel(roomId)
-                await channel.join()
+                await channel.join().then(() => {
+                    console.log('Joined channel', roomId);
+                    }).catch((err) => {
+                        console.log(`Error logging in to Agora RTM: ${err}`);
+                    });
             
                 channel.on('MemberJoined', handleUserJoined)
                 channel.on('MemberLeft', handleUserLeft)
@@ -65,6 +87,8 @@ function PatientCall() {
     let handleUserLeft = (MemberId) => {
         document.getElementById('user-2').style.display = 'none'
         document.getElementById('user-1').classList.remove('smallFrame')
+        //If doctor leaves, patient should also leave
+        handleLeaveCall();    
     }
     
     let handleMessageFromPeer = async (message, MemberId) => {
@@ -82,7 +106,14 @@ function PatientCall() {
         if(message.type === 'candidate'){
             if(peerConnection){
                 peerConnection.addIceCandidate(message.candidate)
+                console.log("candidate: ",message.candidate)
+
+
             }
+        }
+
+        if(message.type === 'leave'){
+            handleLeaveCall();   
         }
 
     }
@@ -142,6 +173,8 @@ function PatientCall() {
     
         let answer = await peerConnection.createAnswer()
         await peerConnection.setLocalDescription(answer)
+
+        console.log("answer, ",answer," offer: ",offer)
     
         client.sendMessageToPeer({text:JSON.stringify({'type':'answer', 'answer':answer})}, MemberId)
     }
@@ -189,7 +222,7 @@ function PatientCall() {
         const check_status_body = {
             'doctorID': doc_id_param
         }
-        await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
+        await fetch('http://172.16.140.228:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -198,10 +231,11 @@ function PatientCall() {
             body: JSON.stringify(check_status_body)
         })
         .then(response => response.json())
-        .then(data => {
+        .then(async(data) => {
             console.log(check_status_body);
             console.log("Online Status: ",data)
-            setIsConsultationActive(data);
+            isConsultationActive = data;
+            return data;
         })
         .catch(error => {
             console.log("error getting online status")
@@ -213,7 +247,7 @@ function PatientCall() {
             appId : searchParams.get("app_id"),
             value : status
         }
-        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+        const response =  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_status', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -238,7 +272,7 @@ function PatientCall() {
             appId : searchParams.get("app_id"),
             value : timestamp
         }
-        const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
+        const response =  await fetch('http://172.16.140.228:8090/api/v1/appointment/set_end_time', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -256,6 +290,7 @@ function PatientCall() {
 
     const handleLeaveCall = async(e) => {
         console.log(e);
+        
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
         nav({
@@ -264,33 +299,43 @@ function PatientCall() {
               pat_id: searchParams.get("pat_id")
             }).toString()
           });
-        leaveChannel();
+        await leaveChannel();
         window.location.reload();
     }
     
     useEffect(() => {
-        init()
+        init();
     },[]);
     
   return (
-    <div>
-        <button onClick={init}>Start connection</button>
-        <div id="videos" >
-            <video className="video-player" id="user-1" autoPlay playsInline></video>
-            <video className="video-player" id="user-2" autoPlay playsInline></video>
-        </div>
-        <div id="controls">
+    <div className="video-call-pg">
+
+        <div id="videos" style={{height:'100vh'}}>
+          {/* <div className="rightbutton"> */}
+            {/* <button className="leave-button" onClick={handleLeaveCall}>
+              Leave Call
+            </button> */}
+           {/* </div> */}
+
+            <video className="video-player" id="user-1" autoPlay playsInline>
+            
+            </video>
+            <video className="video-player" id="user-2" autoPlay playsInline>
+                
+            </video>
+            
+
+            <div id="controls">
             <div onClick={toggleCamera} className="control-container" id="camera-btn">
                 <img src={cam_icon} />
             </div>
             <div onClick={toggleMic} className="control-container" id="mic-btn">
                 <img src={mic_icon}/>
             </div>
-        </div>
-        <div className="centered-button">
-            <button className="leave-button" onClick={handleLeaveCall}>
+            <button className="leave-button" id="leave-btn" onClick={handleLeaveCall}>
               Leave Call
             </button>
+        </div>
         </div>
     </div>
   );

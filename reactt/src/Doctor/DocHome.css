@@ -90,19 +90,23 @@
 .centered-button {
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  font-size: small;
+  /* margin-top: 50px; */
+}
+
+.by {
+  border-radius: 100%;
 }
 
 /* Button styles */
 .consultation-button {
   background-color: #249d1c;
   color: #fff;
-  border: none;
-  padding: 20px 40px;
   cursor: pointer;
-  font-size: 30px;
-  border-radius: 25px;
+  font-size: 25px;
+  border-radius: 0%;
   transition: background-color 0.3s ease-in-out;
+  border-color: black;
 }
 
 .consultation-button:hover {
@@ -111,6 +115,7 @@
 
 /* Stop consultation styles */
 .stop-consultation {
-  background-color: #c0392b;
+  background-color: rgb(175, 45, 45);
+  /* background-color: #c0392b; */
 }
 

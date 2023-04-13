@@ -6,9 +6,17 @@ import def_pp from '../imgs/profile.png'
 import { useState, useEffect } from "react";
 
 function DoctorList() {
+
   const nav = useNavigate()
   const [doclist, setdoclist] = useState([])
   const[searchParams] = useSearchParams();
+  const [prof_name, setprofname] = useState('')
+
+  
+
+
+
+
 
    function handleBookAppointment (doc_id) {
     return async function() {
@@ -20,14 +28,14 @@ function DoctorList() {
         bookingTime : timestamp,
         patientId : searchParams.get("pat_id"),
         doctorId: doc_id,
-        startTime : timestamp,
+        startTime : null,
         endTime : null,
         isFollowup: false,
         markForFollowup : false,
         status : 'waiting',
         description : ''
       }
-      await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
+      await fetch('http://172.16.140.228:8090/api/v1/appointment/create_appointment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,14 +55,6 @@ function DoctorList() {
             app_id: data.appointmentId
           }).toString()
         });
-        // nav({
-        //   pathname: '/patient_call',
-        //   search: createSearchParams({
-        //     doc_id: doc_id,
-        //     pat_id: searchParams.get("pat_id"),
-        //     app_id: data.appointmentId
-        //   }).toString()
-        // });
       })
       .catch(error => {
         console.log(error)
@@ -80,8 +80,33 @@ function DoctorList() {
     );
 }
 
+const get_prof_name_by_id = async() => {
+
+  const getpatidbody = {pat_id: searchParams.get("pat_id")}
+  await fetch('http://172.16.140.228:8090/api/v1/patient/get_patient_by_id', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*' 
+    },
+    body: JSON.stringify(getpatidbody)
+
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Online docs list get profff: ",data)
+    setprofname(data.name)  
+    console.log("After set profname ",prof_name)     
+  })
+  .catch(error => {
+    console.log(error)
+  });
+
+}
+
+
   const get_onine_doc_list = async() => {
-    await fetch('http://localhost:8090/api/v1/doctor/get_online_doctors', {
+    await fetch('http://172.16.140.228:8090/api/v1/doctor/get_online_doctors', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -103,10 +128,38 @@ function DoctorList() {
   const handleLogout = () =>{
     nav('/login_p')
   }
+  
+  const navToHome = () =>{
+    nav({
+      pathname: '/home_pat',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
+  const navToMngProfile = () =>{
+    nav({
+      pathname: '/patlist',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
+  const navToAppHis = () =>{
+    // nav('/login_p')
+  }
+
+
 
   useEffect(() => {
+
+
+    get_prof_name_by_id()
     get_onine_doc_list()
     console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
   return (
@@ -114,20 +167,27 @@ function DoctorList() {
       {/* Navigation bar */}
       <div className="navbar">
         <div>
-          <button className="nav-button">Home</button>
-          <button className="nav-button">Manage Profile</button>
-          <button className="nav-button">Appointment History</button>
+          <button onClick={navToHome} className="nav-button">Home</button>
+          <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
+          <button onClick={navToAppHis} className="nav-button">Appointment History</button>
+          
+          
 
             {/* <a href="#">Edit Profile</a>
             <a href="#">Appointment History</a> */}
         </div>
+       
         <div>
+        <button className="nav-button1"><img  />{prof_name}</button>
           <button className="nav-button" onClick={handleLogout}>Logout</button>
+          
         </div>
       </div>
+      <h1 className="heading-1">Choose a doctor</h1>
       <div className="doctor-list">
         <br/>
-        <h1 className="heading-1">Choose a doctor</h1>
+        
+          
           {doclist.map((doctor) => (
             <DoctorProfile
               key={doctor.doctorId}
@@ -138,6 +198,7 @@ function DoctorList() {
               description={doctor.specialization}
             />
         ))}
+
       </div>
     </div>
   );

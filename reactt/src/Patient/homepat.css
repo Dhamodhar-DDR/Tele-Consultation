@@ -74,6 +74,7 @@
   }
   
   .dropdown-content {
+    color: #333;
     display: none;
     position: absolute;
     top: 100%;
@@ -90,6 +91,7 @@
   }
   
   .dropdown-item {
+    color: #333;
     display: block;
     padding: 5px 10px;
     cursor: pointer;

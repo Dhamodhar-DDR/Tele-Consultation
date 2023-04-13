@@ -21,7 +21,7 @@ function Regc() {
   const [Name, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [gender, setgender] = useState("");
+  const [gender, setgender] = useState("male");
   const [Age, setAge] = useState("");
   
 
@@ -63,7 +63,7 @@ function Regc() {
         'consent' : false
       }
   
-      await fetch('http://localhost:8090/api/v1/patient/create', {
+      await fetch('http://172.16.140.228:8090/api/v1/patient/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,11 +94,11 @@ function Regc() {
       <h1>User Registration</h1>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>
-        <input type="text" value={Name} onChange={handleFirstNameChange} />
+        <input required type="text" value={Name} onChange={handleFirstNameChange} />
 
 
         <label>Age:</label>
-        <input type="number" value={Age} onChange={handleAgeChange} />
+        <input required type="number" value={Age} onChange={handleAgeChange} />
 
         <label id="gen">Gender:</label>
         <select id="gender_dropdown" onChange={handlegender}>
@@ -111,14 +111,8 @@ function Regc() {
         <label for="male">Male</label>
         <input type="radio" value="Female" id="male" onChange={handleAgeChange} />
         <label for="female">Female</label> */}
-
-
-
         <label>Email:</label>
         <input type="email" value={email} placeholder="(optional)" onChange={handleEmailChange} />
-
-
- 
         <button className="Login-doc-button" type="submit">Register</button>
       </form>
     </div>

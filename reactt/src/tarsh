@@ -1,0 +1,87 @@
+import './homepat.css'
+
+import React, { useState, useEffect } from 'react';
+
+
+function Homepat(){
+
+    const [showNewDropdown, setShowNewDropdown] = useState(false);
+    const [showFollowUpDropdown, setShowFollowUpDropdown] = useState(false);
+
+    useEffect(()=>{
+        //You can add your code here for mounting phase of component
+        console.log("new dropdown state; ", showNewDropdown)
+        console.log("follow dropdown state; ", showFollowUpDropdown)
+        
+    },[])
+
+    const Handlehovernew = () => {
+
+        setShowNewDropdown(true)
+        console.log("new dropdown state: ", showNewDropdown)
+
+    };
+    const Handlehovernewleave = () => {
+
+        setShowNewDropdown(false)
+        console.log("new dropdown state: ", showNewDropdown)
+
+
+    };
+    const Handlehoverfoll = () => {
+
+        setShowFollowUpDropdown(true)
+        console.log("new dropdown state: ", showNewDropdown)
+
+    };
+    const Handlehoverfollleave = () => {
+
+        setShowFollowUpDropdown(false)
+        console.log("new dropdown state: ", showNewDropdown)
+
+
+    };
+
+
+
+  
+
+    return (
+        <div className="button-container">
+          <div className="button"
+            onMouseEnter ={Handlehovernew}
+            onMouseLeave={Handlehovernewleave}
+          >
+            New Appointment
+            {(showNewDropdown)? (
+              <div className="dropdown">
+                <div className="dropdown-content">
+                  <div className="dropdown-item">Choose a doctor</div>
+                  <div className="dropdown-item">Auto-assign a doctor</div>
+                </div>
+              </div>
+            ): null}
+          </div>
+          <div className="button"
+            onMouseEnter ={Handlehoverfoll}
+            onMouseLeave={Handlehoverfollleave}
+          >
+
+            Follow Up Appointment
+            {showFollowUpDropdown && (
+              <div className="dropdown">
+                <div className="dropdown-content">
+                  <div className="dropdown-item">Assign Previous Doctor</div>
+                  <div className="dropdown-item">Auto-assign a doctor</div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="button">Manage Profiles</div>
+          <div className="button">Appointment History</div>
+        </div>
+      );
+    
+    }
+
+export default Homepat;

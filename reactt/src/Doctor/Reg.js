@@ -18,7 +18,7 @@ function Regdoc() {
   const [email, setEmail] = useState("");
   const[spec, setSpec] = useState("");
   const[exp, setExp] = useState("");
-  const [gender, setgender] = useState("");
+  const [gender, setgender] = useState("male");
   const [Age, setAge] = useState("");
 
   useEffect(() => {
@@ -72,7 +72,7 @@ function Regdoc() {
       }
       console.log(create_doc_body.email);
       
-      await fetch('http://localhost:8090/api/v1/doctor/add_doctor', {
+      await fetch('http://172.16.140.228:8090/api/v1/doctor/add_doctor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ function Regdoc() {
         const get_doc_by_mobile_body = {
           'mobile_number': searchParams.get("mobile")
         }
-        await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
+        await fetch('http://172.16.140.228:8090/api/v1/doctor/get_doctor_by_mobile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

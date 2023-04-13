@@ -30,4 +30,14 @@ public class PatientService {
     public List<Patient> check_new_user(String mobile) { return patientRepository.findByMobileNumber(mobile); }
     public Patient get_patient_by_id(Integer patientID) {return patientRepository.findByPatientId(patientID);}
 
+    public List<Patient> get_all_profiles(Integer patientID) {
+        Patient p = patientRepository.findByPatientId(patientID);
+        return patientRepository.findByMobileNumber(p.getMobileNumber());
+    }
+
+    public Patient add_new_profile(Integer patientID, String name, int age, String gender, String email, Boolean consent) {
+        Patient old_patient = patientRepository.findByPatientId(patientID);
+        Patient patient = new Patient( name, old_patient.getMobileNumber(),  age,  gender,  email ,consent);
+        return patientRepository.save(patient);
+    }
 }

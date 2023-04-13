@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import Slideover from './testing_rec';
 import Modal from './Patient/upload';
 import AddProf from './Patient/AddProf';
 import DoctorList from './Patient/manageprof';
-
+import AppoinHist from './Patient/appoin_hist';
 
 
 import reportWebVitals from './reportWebVitals';
@@ -13,14 +14,14 @@ import Homepat from './Patient/homepat';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
 
-    <App />
+    <div>
+      <App />
     {/* <AddProf/> */}
     {/* <DoctorList/> */}
     {/* <Modal/> */}
-    
-  </React.StrictMode>
+    </div>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

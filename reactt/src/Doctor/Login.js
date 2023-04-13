@@ -35,7 +35,7 @@ function Logindoc() {
       const get_doc_by_mobile_body = {
         'mobile_number': phone
       }
-      await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
+      await fetch('http://172.16.140.228:8090/api/v1/doctor/get_doctor_by_mobile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,53 +83,54 @@ function Logindoc() {
     e.preventDefault();
     setShowOtp(true);
 
-    const send_otp_body = {
-      'mobile_number' : phone
-    }
+    // const send_otp_body = {
+    //   'mobile_number' : phone
+    // }
 
-    await fetch('http://localhost:8090/api/v1/auth/send_otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(send_otp_body)
-    })
-    .then(response => response.text())
-    .then(data => {
-      console.log(data)
-    })
-    .catch(error => {
-      console.log(error)
-    });
+    // await fetch('http://172.16.140.228:8090/api/v1/auth/send_otp', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Access-Control-Allow-Origin': '*' 
+    //   },
+    //   body: JSON.stringify(send_otp_body)
+    // })
+    // .then(response => response.text())
+    // .then(data => {
+    //   console.log(data)
+    // })
+    // .catch(error => {
+    //   console.log(error)
+    // });
   };
 
   const handleLoginClick = async (e) => {
     e.preventDefault();
     setclickLogin(true);
 
-    const verify_otp_body = {
-      'mobile_number' : phone,
-      'otp': otp
-    }
-    await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(verify_otp_body)
-    })
-    .then(response => response.text())
-    .then(async(data) => {
-      console.log(data)
+    // const verify_otp_body = {
+    //   'mobile_number' : phone,
+    //   'otp': otp
+    // }
+    // await fetch('http://172.16.140.228:8090/api/v1/auth/verify_otp', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Access-Control-Allow-Origin': '*' 
+    //   },
+    //   body: JSON.stringify(verify_otp_body)
+    // })
+    // .then(response => response.text())
+    // .then(async(data) => {
+    //   console.log(data)
       
-      if(data == "approved")
+      // if(data == "approved")
+      if(true)
       {
         const check_new_user_body = {
           'mobile_number' : phone
         }
-        await fetch('http://localhost:8090/api/v1/doctor/check_new_mobile', {
+        await fetch('http://172.16.140.228:8090/api/v1/doctor/check_new_mobile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -148,11 +149,11 @@ function Logindoc() {
         return(<p> You've entered invalid OTP. Please Try again !</p>);                
       }
 
-    })
-    .catch(error => {
-      return(<p> You've entered invalid OTP. Please Try again !</p>); 
-      console.log(error)
-    });
+    // })
+    // .catch(error => {
+    //   return(<p> You've entered invalid OTP. Please Try again !</p>); 
+    //   console.log(error)
+    // });
     
 
 
@@ -190,6 +191,7 @@ function Logindoc() {
 
       </form>
     </div>
+    
   );
 }
 

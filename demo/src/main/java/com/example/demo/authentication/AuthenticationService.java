@@ -19,7 +19,7 @@ public class AuthenticationService {
     public String send_otp(String mobile_number) {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Verification verification = Verification.creator(
-                        "VA51ffd2a6430027e218308e0c36d71f50",
+                        "VA490c2327d9803b20f2dbada192274a6b",
                         "+91"+mobile_number,
                         "sms")
                 .create();
@@ -30,7 +30,7 @@ public class AuthenticationService {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
         VerificationCheck verificationCheck = VerificationCheck.creator(
-                        "VA51ffd2a6430027e218308e0c36d71f50")
+                        "VA490c2327d9803b20f2dbada192274a6b")
                 .setTo("+91"+mobile_number)
                 .setCode(otp)
                 .create();

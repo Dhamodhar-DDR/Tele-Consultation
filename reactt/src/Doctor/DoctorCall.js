@@ -11,21 +11,21 @@ function DoctorCall() {
     const[searchParams] = useSearchParams();
     var appointmentId = -1;
     var patientId = -1;
-    
+    var chat = 0;
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
     let uid = "d_"+String(searchParams.get("doc_id"));
-    
+
     let client;
     let channel;
-    
+
     let roomId = searchParams.get("doc_id");
-    
+
     let localStream;
     let remoteStream;
     let peerConnection;
-    
+
     const servers = {
         // iceServers:[
         //     {
@@ -47,7 +47,7 @@ function DoctorCall() {
             ]
          }]
     }
-    
+
     let constraints = {
         video:{
             width:{min:640, ideal:1920, max:1920},
@@ -55,43 +55,51 @@ function DoctorCall() {
         },
         audio:true
     }
-    
-    let init = async () => {   
+
+    let init = async () => {
         client = await AgoraRTM.createInstance(APP_ID)
         await client.login({uid, token})
-    
+
         channel = client.createChannel(roomId)
         await channel.join()
-    
+
         channel.on('MemberJoined', handleUserJoined)
         channel.on('MemberLeft', handleUserLeft)
-        
+        channel.on('ChannelMessage', handleMyChat)
+
         client.on('MessageFromPeer', handleMessageFromPeer)
-    
+
         localStream = await navigator.mediaDevices.getUserMedia(constraints)
         document.getElementById('user-1').srcObject = localStream
-        
+
     }
-     
-    
+
+    let handleMyChat = async(chat, memeberId) => {
+        console.log('New message received')
+        let messages = JSON.parse(chat.text)
+        console.log('Message: ', messages)
+        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
+    }
+
+
     let handleUserLeft = (MemberId) => {
         console.log("User left: ", MemberId)
         document.getElementById('user-2').style.display = 'none'
         document.getElementById('user-1').classList.remove('smallFrame')
     }
-    
+
     let handleMessageFromPeer = async (message, MemberId) => {
-    
+
         message = JSON.parse(message.text)
-    
+
         if(message.type === 'offer'){
             createAnswer(MemberId, message.offer)
         }
-    
+
         if(message.type === 'answer'){
             addAnswer(message.answer)
         }
-    
+
         if(message.type === 'candidate'){
             if(peerConnection){
                 peerConnection.addIceCandidate(message.candidate)
@@ -99,83 +107,83 @@ function DoctorCall() {
             }
         }
     }
-    
+
     let handleUserJoined = async (MemberId) => {
         console.log('A new user joined the channel:', MemberId)
         createOffer(MemberId)
     }
-    
-    
+
+
     let createPeerConnection = async (MemberId) => {
         peerConnection = new RTCPeerConnection(servers)
         // setPatientConnection(peerConnection);
         remoteStream = new MediaStream()
         document.getElementById('user-2').srcObject = remoteStream
         document.getElementById('user-2').style.display = 'block'
-    
+
         document.getElementById('user-1').classList.add('smallFrame')
-    
-    
+
+
         if(!localStream){
             localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false})
             document.getElementById('user-1').srcObject = localStream
         }
-    
+
         localStream.getTracks().forEach((track) => {
             peerConnection.addTrack(track, localStream)
         })
-    
+
         peerConnection.ontrack = (event) => {
             event.streams[0].getTracks().forEach((track) => {
                 remoteStream.addTrack(track)
             })
         }
-    
+
         peerConnection.onicecandidate = async (event) => {
             if(event.candidate){
                 client.sendMessageToPeer({text:JSON.stringify({'type':'candidate', 'candidate':event.candidate})}, MemberId)
             }
         }
     }
-    
+
     let createOffer = async (MemberId) => {
         await createPeerConnection(MemberId)
-    
+
         let offer = await peerConnection.createOffer()
         await peerConnection.setLocalDescription(offer)
-    
+
         client.sendMessageToPeer({text:JSON.stringify({'type':'offer', 'offer':offer})}, MemberId)
     }
-    
-    
+
+
     let createAnswer = async (MemberId, offer) => {
         await createPeerConnection(MemberId)
-    
+
         await peerConnection.setRemoteDescription(offer)
-    
+
         let answer = await peerConnection.createAnswer()
         await peerConnection.setLocalDescription(answer)
-    
+
         client.sendMessageToPeer({text:JSON.stringify({'type':'answer', 'answer':answer})}, MemberId)
     }
-    
-    
+
+
     let addAnswer = async (answer) => {
         if(!peerConnection.currentRemoteDescription){
             peerConnection.setRemoteDescription(answer)
         }
     }
-    
-    
+
+
     let leaveChannel = async () => {
         await channel.leave()
         await client.logout()
         // await peerConnection.close();
     }
-    
+
     let toggleCamera = async () => {
         let videoTrack = localStream.getTracks().find(track => track.kind === 'video')
-    
+
         if(videoTrack.enabled){
             videoTrack.enabled = false
             document.getElementById('camera-btn').style.backgroundColor = 'rgb(255, 80, 80)'
@@ -184,10 +192,10 @@ function DoctorCall() {
             document.getElementById('camera-btn').style.backgroundColor = 'rgb(179, 102, 249, .9)'
         }
     }
-    
+
     let toggleMic = async () => {
         let audioTrack = localStream.getTracks().find(track => track.kind === 'audio')
-    
+
         if(audioTrack.enabled){
             audioTrack.enabled = false
             document.getElementById('mic-btn').style.backgroundColor = 'rgb(255, 80, 80)'
@@ -196,18 +204,59 @@ function DoctorCall() {
             document.getElementById('mic-btn').style.backgroundColor = 'rgb(179, 102, 249, .9)'
         }
     }
-      
+
+    let toggleChat = async () =>{
+
+        if (chat){
+            chat = 0
+            document.getElementById('myChat').style.display = 'block'
+            console.log(document.getElementById('myChat'))
+            document.getElementById('cont').addEventListener('submit', sendMessage)
+        }
+        else{
+            chat = 1
+            document.getElementById('myChat').style.display = 'none'
+        }
+    }
+
+    let displayChat = async () =>{
+        console.log("closed")
+        console.log(document.getElementById('txt').value);
+        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + document.getElementById('txt').value;
+        document.getElementById('cont').scrollTop = document.getElementById('cont').scrollHeight;
+        document.getElementById('txt').value = "";
+
+    }
+
+    let sendMessage = async(e) => {
+        e.preventDefault()
+        let message = document.getElementById('txt').value;
+        //let message = e.target.msg.value
+        //console.log("e: ", e)
+        channel.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
+        console.log("message sent")
+    }
+
+
+    window.addEventListener('mousemove', (e) => {
+        e.preventDefault()
+        let  myChat = document.getElementById('but')
+        myChat.addEventListener('click', sendMessage)
+    })
+
     window.addEventListener('beforeunload', leaveChannel)
+
 
     const get_online_stat = async(doc_id_param) => {
         const check_status_body = {
             'doctorID': doc_id_param
         }
-        await fetch('http://172.16.140.228:8090/api/v1/doctor/check_online_status', {
+        await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
+                'Authorization': localStorage.getItem('doc jwt token'),
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*' 
+            'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(check_status_body)
         })
@@ -227,15 +276,16 @@ function DoctorCall() {
 
         const set_online_status_body = {
             'doctorID' : searchParams.get("doc_id"),
-            'online_status': param      
+            'online_status': param
         }
         console.log("bef await isconsulatationactive", param)
-    
-        await fetch('http://172.16.140.228:8090/api/v1/doctor/set_online_status', {
+
+        await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
             method: 'POST',
             headers: {
+                'Authorization': localStorage.getItem('doc jwt token'),
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*' 
+                'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(set_online_status_body)
         })
@@ -253,9 +303,9 @@ function DoctorCall() {
         init();
     },[]);
 
-    const Consultation_Button = () => 
+    const Consultation_Button = () =>
     {
-        const toggleConsultation = async() => 
+        const toggleConsultation = async() =>
         {
             await set_status(false);
             nav({
@@ -296,35 +346,37 @@ function DoctorCall() {
                         client.sendMessageToPeer({text:JSON.stringify({'type':'leave', 'answer':'none'})}, "p_"+String(patientId))
                         break;
                     }
-                }            
-            });    
-            
+                }
+            });
+
             handleUserLeft(String(patientId));
-            
+
             const set_app_status_body = {
                 appId : appointmentId,
                 value : "completed"
             }
-            const set_status_response = await fetch('http://172.16.140.228:8090/api/v1/appointment/set_status', {
+            const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
+                    'Authorization': localStorage.getItem('doc jwt token'),
                     'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*' 
+                    'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(set_app_status_body)
             })
-            if(set_status_response.status != 200) console.log(set_status_response)    
+            if(set_status_response.status != 200) console.log(set_status_response)
             else console.log("Changed previous appointment status to completed!")
         }
-        
+
         const earliest_app_response_body = {
             docId: searchParams.get("doc_id")
         }
-        const earliest_app_response = await fetch('http://172.16.140.228:8090/api/v1/appointment/get_earliest_waiting_app', {
+        const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
             headers: {
+                'Authorization': localStorage.getItem('doc jwt token'),
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*' 
+                'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(earliest_app_response_body)
         })
@@ -333,46 +385,48 @@ function DoctorCall() {
         else {
             const earliest_app = await earliest_app_response.json();
             console.log(earliest_app.appointmentId)
-            
-            //Change this appointment to live and connect the patient    
+
+            //Change this appointment to live and connect the patient
             const set_app_status_body = {
                 appId : earliest_app.appointmentId,
                 value : "live"
             }
-            const set_status_response = await fetch('http://172.16.140.228:8090/api/v1/appointment/set_status', {
+            const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
+                    'Authorization': localStorage.getItem('doc jwt token'),
                     'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*' 
+                    'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(set_app_status_body)
             })
-            if(set_status_response.status != 200) console.log(set_status_response)    
+            if(set_status_response.status != 200) console.log(set_status_response)
             else{
                 const now = new Date(); // get current date and time
                 const timestamp = now.toISOString(); // convert to ISO string
                 const set_start_time_body = {
                     appId : earliest_app.appointmentId,
                     value : timestamp
-                }    
-                const set_start_time_response = await fetch('http://172.16.140.228:8090/api/v1/appointment/set_start_time', {
+                }
+                const set_start_time_response = await fetch('http://localhost:8090/api/v1/appointment/set_start_time', {
                     method: 'POST',
                     headers: {
+                        'Authorization': localStorage.getItem('doc jwt token'),
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*' 
+                        'Access-Control-Allow-Origin': '*'
                     },
                     body: JSON.stringify(set_start_time_body)
                 })
-    
+
                 console.log("Next patient status changed!")
                 appointmentId = earliest_app.appointmentId;
                 patientId = earliest_app.patientId;
             }
         }
-    }   
+    }
 
     const handleGetMembers = () =>
-    {        
+    {
         channel.getMembers().then((members) => {
             console.log(`There are ${members.length} members in the channel`);
             console.log(members)
@@ -383,8 +437,8 @@ function DoctorCall() {
                     console.log('Doctor exists')
                     break;
                 }
-            }            
-        });    
+            }
+        });
     }
     return (
         <div>
@@ -402,9 +456,20 @@ function DoctorCall() {
                 <div onClick={toggleMic} className="control-container" id="mic-btn">
                     <img src={mic_icon}/>
                 </div>
-                
+
                 <button style = {{backgroundColor: "green"}}onClick={handlenextPatient}>Next patient</button>
+                <button style = {{backgroundColor: "cyan"}} onClick={toggleChat}>chat</button>
             </div>
+            <div class="chat-popup" id="myChat">
+  <form class="form-container" id="cont">
+    <h1>Chat</h1>
+    <small id="ch">Welcome to tele-consultation app</small>
+    <label for="msg"><b>Message</b></label>
+    <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
+
+    <button id="but" type="submit" class="btn" onClick={displayChat}>Send</button>
+  </form>
+</div>
             {/* <div className="vid-cb">{Consultation_Button()} </div> */}
             
             

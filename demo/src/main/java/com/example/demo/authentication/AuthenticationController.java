@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping(value = "/api/v1/auth")
+@RequestMapping(value = "/api/v1/auth") //check apv1doctor request
 
 public class AuthenticationController {
     private final AuthenticationService authenticationService;

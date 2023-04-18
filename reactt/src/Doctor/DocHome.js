@@ -3,7 +3,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
-import './DocHome.css'
+import './styles/DocHome.css'
 
 function DocHome() {
   const [isConsultationActive, setIsConsultationActive] = useState(false);
@@ -16,7 +16,7 @@ function DocHome() {
     const check_status_body = {
       'doctorID': doc_id_param
     }
-    await fetch('http://172.16.140.228:8090/api/v1/doctor/check_online_status', {
+    await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ function DocHome() {
       'online_status': param      
     }
     console.log("bef await isconsulatationactive", param)
-    await fetch('http://172.16.140.228:8090/api/v1/doctor/set_online_status', {
+    await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,8 +1,8 @@
 import React,{ useState, useEffect} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
-//import './vc.css'
-import './PatientCall.css'
+import './styles/vc.css'
+import './styles/PatientCall.css'
 import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 
@@ -267,7 +267,7 @@ function PatientCall() {
         await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
-                'Authorization': localStorage.getItem('jwt token'),
+                
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
             },
@@ -293,7 +293,7 @@ function PatientCall() {
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
             method: 'POST',
             headers: {
-                'Authorization': localStorage.getItem('jwt token'),
+                
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },
@@ -319,7 +319,7 @@ function PatientCall() {
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
             method: 'POST',
             headers: {
-                'Authorization': localStorage.getItem('jwt token'),
+                
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },

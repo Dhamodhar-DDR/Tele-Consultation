@@ -1,7 +1,7 @@
 import React,{ useState, useEffect, Component} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
-import './vc.css'
+import './styles/vc.css'
 import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 
@@ -254,7 +254,7 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
-                'Authorization': localStorage.getItem('doc jwt token'),
+                
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
             },
@@ -283,7 +283,7 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
             method: 'POST',
             headers: {
-                'Authorization': localStorage.getItem('doc jwt token'),
+                
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
@@ -358,7 +358,7 @@ function DoctorCall() {
             const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
-                    'Authorization': localStorage.getItem('doc jwt token'),
+                    
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
@@ -374,7 +374,7 @@ function DoctorCall() {
         const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
             headers: {
-                'Authorization': localStorage.getItem('doc jwt token'),
+                
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
@@ -394,7 +394,7 @@ function DoctorCall() {
             const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
-                    'Authorization': localStorage.getItem('doc jwt token'),
+                    
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
@@ -411,7 +411,7 @@ function DoctorCall() {
                 const set_start_time_response = await fetch('http://localhost:8090/api/v1/appointment/set_start_time', {
                     method: 'POST',
                     headers: {
-                        'Authorization': localStorage.getItem('doc jwt token'),
+                        
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*'
                     },
@@ -440,40 +440,56 @@ function DoctorCall() {
             }
         });
     }
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleSidebar = () => {
+      setIsOpen(!isOpen);
+    };
+  
+  
+
     return (
-        <div>
+        <div className={`content ${isOpen ? 'open' : ''}`}>
             {/* <button onClick={init}>Start connection</button> */}
             <div id="videos" style={{height:'100vh'}}>
                 <video className="video-player" id="user-1" autoPlay playsInline></video>
                 <video className="video-player" id="user-2" autoPlay playsInline></video>
             </div>
             <div id="controls">
+                <div className="vid-cb">{Consultation_Button()} </div>
+                    <div onClick={toggleCamera} className="control-container" id="camera-btn">
+                        <img src={cam_icon} />
+                    </div>
+                    <div onClick={toggleMic} className="control-container" id="mic-btn">
+                        <img src={mic_icon}/>
+                    </div>
 
-            <div className="vid-cb">{Consultation_Button()} </div>
-                <div onClick={toggleCamera} className="control-container" id="camera-btn">
-                    <img src={cam_icon} />
+                    <button style = {{backgroundColor: "green"}}onClick={handlenextPatient}>Next patient</button>
+                    <button style = {{backgroundColor: "cyan"}} onClick={toggleChat}>chat</button>
                 </div>
-                <div onClick={toggleMic} className="control-container" id="mic-btn">
-                    <img src={mic_icon}/>
-                </div>
+            <div className="chat-popup" id="myChat">
+                <form className="form-container" id="cont">
+                    <h1>Chat</h1>
+                    <small id="ch">Welcome to tele-consultation app</small>
+                    <label for="msg"><b>Message</b></label>
+                    <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
 
-                <button style = {{backgroundColor: "green"}}onClick={handlenextPatient}>Next patient</button>
-                <button style = {{backgroundColor: "cyan"}} onClick={toggleChat}>chat</button>
+                    <button id="but" type="submit" className="btn" onClick={displayChat}>Send</button>
+                </form>
             </div>
-            <div class="chat-popup" id="myChat">
-  <form class="form-container" id="cont">
-    <h1>Chat</h1>
-    <small id="ch">Welcome to tele-consultation app</small>
-    <label for="msg"><b>Message</b></label>
-    <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
+            {/* <div className={isOpen ? "sidebar open" : "sidebar"}>
+                <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                </ul>
+            </div>
+            <button onClick={toggleSidebar} className="menu-button">
+                Menu
+            </button> */}
 
-    <button id="but" type="submit" class="btn" onClick={displayChat}>Send</button>
-  </form>
-</div>
             {/* <div className="vid-cb">{Consultation_Button()} </div> */}
-            
-            
-            
         </div>
     );
 }

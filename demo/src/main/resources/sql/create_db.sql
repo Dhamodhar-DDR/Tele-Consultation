@@ -40,7 +40,7 @@ CREATE TABLE `Appointment` (
 CREATE TABLE `Health_Record` (
 	`hr_id` INT NOT NULL AUTO_INCREMENT,
 	`patient_id` INT NOT NULL,
-	`app_id` INT NOT NULL,
+	`app_id` INT,
 	`name` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255),
 	`file` blob NOT NULL,

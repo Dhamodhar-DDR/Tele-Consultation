@@ -103,8 +103,9 @@
   background-color: #249d1c;
   color: #fff;
   cursor: pointer;
-  font-size: 25px;
+  font-size: 20px;
   border-radius: 0%;
+  font-family: 'Google Sans', sans-serif;
   transition: background-color 0.3s ease-in-out;
   border-color: black;
 }

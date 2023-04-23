@@ -1,4 +1,4 @@
-import React,{ useState, useEffect, Component} from "react";
+import React,{ useState, useEffect, useRef ,Component} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
 import './styles/vc.css'
@@ -21,11 +21,11 @@ function DoctorCall() {
     let channel;
 
     let roomId = searchParams.get("doc_id");
-
-    let localStream;
+    // const [localStream, setLocalStream] = useState(null);
+    let localStream = useRef(null);
     let remoteStream;
     let peerConnection;
-
+    let x = useRef(0);;
     const servers = {
         // iceServers:[
         //     {
@@ -69,8 +69,11 @@ function DoctorCall() {
 
         client.on('MessageFromPeer', handleMessageFromPeer)
 
-        localStream = await navigator.mediaDevices.getUserMedia(constraints)
-        document.getElementById('user-1').srcObject = localStream
+        localStream.current = await navigator.mediaDevices.getUserMedia(constraints)
+
+        // const x = await navigator.mediaDevices.getUserMedia(constraints)
+        // setLocalStream(x);
+        document.getElementById('user-1').srcObject = localStream.current
 
     }
 
@@ -79,6 +82,8 @@ function DoctorCall() {
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
         document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
+        var elem = document.getElementById('ch');
+        elem.scrollTop = elem.scrollHeight;
     }
 
 
@@ -124,13 +129,13 @@ function DoctorCall() {
         document.getElementById('user-1').classList.add('smallFrame')
 
 
-        if(!localStream){
-            localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false})
-            document.getElementById('user-1').srcObject = localStream
+        if(!localStream.current){
+            localStream.current = await navigator.mediaDevices.getUserMedia({video:true, audio:false})
+            document.getElementById('user-1').srcObject = localStream.current
         }
 
-        localStream.getTracks().forEach((track) => {
-            peerConnection.addTrack(track, localStream)
+        localStream.current.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, localStream.current)
         })
 
         peerConnection.ontrack = (event) => {
@@ -182,7 +187,9 @@ function DoctorCall() {
     }
 
     let toggleCamera = async () => {
-        let videoTrack = localStream.getTracks().find(track => track.kind === 'video')
+        console.log(localStream)
+        console.log(x)    
+        let videoTrack = localStream.current.getTracks().find(track => track.kind === 'video')
 
         if(videoTrack.enabled){
             videoTrack.enabled = false
@@ -194,7 +201,7 @@ function DoctorCall() {
     }
 
     let toggleMic = async () => {
-        let audioTrack = localStream.getTracks().find(track => track.kind === 'audio')
+        let audioTrack = localStream.current.getTracks().find(track => track.kind === 'audio')
 
         if(audioTrack.enabled){
             audioTrack.enabled = false
@@ -298,9 +305,17 @@ function DoctorCall() {
             console.log(error)
         });
     }
+    
+    useEffect(()=>{
+        document.body.classList.add('doc-call-body');
+    },[])
 
     useEffect(() => {
-        init();
+        init().then(()=>{
+            console.log(localStream)
+        });
+        
+        // console.log("SD")
     },[]);
 
     const Consultation_Button = () =>
@@ -441,55 +456,250 @@ function DoctorCall() {
         });
     }
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [isLeftSideBarOpen, setIsLeftSideBarOpen] = useState("");
+    const [isRightSideBarOpen, setisRightSideBarOpen] = useState(false);
+    const [markForFollowUp, setMarkForFollowUp] = useState(false);
+    const [isWritePres, setIsWritePres] = useState(false);
+    const [isHealthRec, setIsHealthRec] = useState(false);
+    const [inputFields, setInputFields] = useState([{ value: "" }]);
 
-    const toggleSidebar = () => {
-      setIsOpen(!isOpen);
+
+    const toggleLeftSidebar = () => {
+        let menu_elem = document.getElementById("left-sidebar-menu");
+        let writePres_elem = document.getElementById("left-sidebar-writePres");
+        let healthRec_elem = document.getElementById("left-sidebar-healthRec");
+        let elem = document.getElementById("toggle-menu-call-btn-id");
+        if(isLeftSideBarOpen==="")
+        {
+            menu_elem.style.display = 'block';
+            writePres_elem.style.display = 'none'
+            healthRec_elem.style.display = 'none'
+            elem.style.display = 'none'; 
+            setIsLeftSideBarOpen("open");
+        }
+        else {
+            elem.style.display = 'block'
+            setIsLeftSideBarOpen("");
+            setIsWritePres(false);
+            setIsHealthRec(false);
+        }
+    };
+
+    const toggleRightSidebar = () => {
+        setisRightSideBarOpen(!isRightSideBarOpen);
+    };
+
+    const toggleFollowUp = () => {
+        setMarkForFollowUp(!markForFollowUp);
+    }
+
+    const toggleWritePres = () =>{
+        let menu_elem = document.getElementById("left-sidebar-menu");
+        let writePres_elem = document.getElementById("left-sidebar-writePres");
+        
+        if(!isWritePres) {
+            menu_elem.style.display = 'none'
+            writePres_elem.style.display = 'block'
+            setIsLeftSideBarOpen("writePres");
+        }
+        else {
+            menu_elem.style.display = 'block';
+            writePres_elem.style.display = 'none'
+            setIsLeftSideBarOpen("open");
+        }
+        setIsWritePres(!isWritePres);
+    }
+
+    
+    const toggleHealthRec = () =>{
+        let menu_elem = document.getElementById("left-sidebar-menu");
+        let healthRec_elem = document.getElementById("left-sidebar-healthRec");
+        console.log(isHealthRec)
+        if(!isHealthRec) {
+            menu_elem.style.display = 'none'
+            healthRec_elem.style.display = 'block'
+            setIsLeftSideBarOpen("healthRec");
+        }
+        else {
+            menu_elem.style.display = 'block';
+            healthRec_elem.style.display = 'none'
+            setIsLeftSideBarOpen("open");
+        }
+        setIsHealthRec(!isHealthRec)
+    }
+
+
+    const handleAddFields = () => {
+        const values = [...inputFields];
+        values.push({ value: "" });
+        setInputFields(values);
     };
   
+    const handleInputChange = (index, event) => {
+        const values = [...inputFields];
+        values[index].value = event.target.value;
+        setInputFields(values);
+    };
+
+    const handleRemoveFields = (index) => {
+        const values = [...inputFields];
+        values.splice(index, 1);
+        setInputFields(values);
+    };
+
+    const [files,setFiles] = useState([]);
+    useEffect(() => {
+      display_file();
+    }, [])
   
+    const display_file = async() => {
+      const formData = new FormData();
+      formData.append('pat_id', 1)
+      await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
+        method: 'POST',
+        headers: {
+          // 'Content-Type': 'multipart/form-data',
+          'Access-Control-Allow-Origin': '*' 
+        },
+        // responseType: "json",
+        body: formData
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log(response)
+        return response.json();
+      })
+      .then((list) => {
+        for(const element of list)
+        {
+          fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'])
+          .then(async(res)=>{
+            const blob = await res.blob()
+            console.log(blob)
+            const fileReader = new FileReader();
+            fileReader.onloadend = () => {
+              setFiles(current => [...current, {name : 'file', type: blob.type , url : fileReader.result}])
+            };
+            fileReader.readAsDataURL(blob);
+          })
+        }
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+  
+    const [selectedFile, setSelectedFile] = useState(null);
+  
+    const handleFileClick = (file) => {
+      setSelectedFile(file);
+    }
+  
+    const handleCloseModal = () => {
+      setSelectedFile(null);
+    }
+    
 
     return (
-        <div className={`content ${isOpen ? 'open' : ''}`}>
-            {/* <button onClick={init}>Start connection</button> */}
-            <div id="videos" style={{height:'100vh'}}>
-                <video className="video-player" id="user-1" autoPlay playsInline></video>
-                <video className="video-player" id="user-2" autoPlay playsInline></video>
-            </div>
-            <div id="controls">
-                <div className="vid-cb">{Consultation_Button()} </div>
-                    <div onClick={toggleCamera} className="control-container" id="camera-btn">
-                        <img src={cam_icon} />
+        <div>
+            <div className="doc-call-main-content">
+                {/* <button>asdasd</button> */}
+                <button className="toggle-menu-call-btn" id="toggle-menu-call-btn-id" onClick={toggleLeftSidebar}>
+                    ☰
+                </button>
+                <div className={`left-sidebar ${isLeftSideBarOpen}`}>
+                    <button className="close-left-sidebar-btn" onClick={toggleLeftSidebar}>X</button>
+                    <div className="left-sidebar-menu" id="left-sidebar-menu">
+                        <h1 className="left-sidebar-menu-heading">Patient Details</h1>
+                        <ul>
+                            <li className="first-elem">View patient profile </li>
+                            <li onClick={toggleHealthRec}>View health records</li>
+                            <li classname="write-pres" onClick={toggleWritePres} >Write prescriptions</li>
+                            <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
+                        </ul>
                     </div>
-                    <div onClick={toggleMic} className="control-container" id="mic-btn">
-                        <img src={mic_icon}/>
+                    <div className="left-sidebar-writePres" id="left-sidebar-writePres">
+                        <div className="go-back" >
+                            <a href="#" onClick={toggleWritePres} className="previous">&#8249;</a>
+                        </div>
+                        {inputFields.map((inputField, index) => (
+                            <div className = "field" key={index}>
+                                <div className="inputs">
+                                    <input type="text" placeholder="Medicine Name" value={inputField.value} onChange={(event) => handleInputChange(index, event)}/> 
+                                    <input type="text" placeholder="Frequency" value={inputField.value} onChange={(event) => handleInputChange(index, event)}/>
+                                    <textarea rows="4" cols="56" type="text-area" placeholder="Description (if any)" value={inputField.value} onChange={(event) => handleInputChange(index, event)}> </textarea>
+                                </div>
+                                <button className="bin" onClick={() => handleRemoveFields(index)}>🗑</button>
+                            </div>
+                        ))}
+                        <button className="writePres-add-btn"onClick={handleAddFields}>New prescription</button>
                     </div>
 
-                    <button style = {{backgroundColor: "green"}}onClick={handlenextPatient}>Next patient</button>
-                    <button style = {{backgroundColor: "cyan"}} onClick={toggleChat}>chat</button>
+                    <div className="left-sidebar-healthRec" id="left-sidebar-healthRec">
+                        <div className="go-back" >
+                            <a href="#" onClick={toggleHealthRec} className="previous">&#8249;</a>
+                        </div>
+                        <div className="doc-call-file-list">
+                            <h1>Health records</h1>
+                            <ul className="file-list">
+                                {files.map((file, index) => (
+                                <li key={index} onClick={() => handleFileClick(file)}>
+                                    {file.name}
+                                </li>
+                                ))}
+                                Load More
+                            </ul>
+                            {selectedFile && (
+                                <div className="modal">
+                                {selectedFile.type.substr(0,5) === 'image' ? (
+                                    <img className="image-viewer" src={selectedFile.url} alt={selectedFile.name} />
+                                ) : (
+                                    <iframe className="pdf-viewer" src={`${selectedFile.url}`} type="application/pdf" title={selectedFile.name} />
+                                )}
+                                <button className="close-modal-btn" onClick={handleCloseModal}>X</button>
+                                </div>
+                            )}
+                            <br/>
+                        </div>
+                    </div>
+
                 </div>
-            <div className="chat-popup" id="myChat">
-                <form className="form-container" id="cont">
-                    <h1>Chat</h1>
-                    <small id="ch">Welcome to tele-consultation app</small>
-                    <label for="msg"><b>Message</b></label>
-                    <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
-
-                    <button id="but" type="submit" className="btn" onClick={displayChat}>Send</button>
-                </form>
+                {/* <button onClick={init}>Start connection</button> */}
+                <div className={`content ${isLeftSideBarOpen}`}>
+                    <div id="videos" className={`videos ${isLeftSideBarOpen}`} style={{height:'100vh'}}>
+                        <video className="doc-video-player" id="user-1" autoPlay playsInline></video>
+                        <video className="doc-video-player" id="user-2" autoPlay playsInline></video>
+                    </div>
+                    <div id="doc-video-controls" className={`controls ${isLeftSideBarOpen}`}>
+                        <div className={`vid-cb ${isLeftSideBarOpen}`}>
+                            {Consultation_Button()} 
+                        </div>
+                        <div onClick={toggleCamera} className="control-container" id="camera-btn">
+                            <img src={cam_icon} />
+                        </div>
+                        <div onClick={toggleMic} className="control-container" id="mic-btn">
+                            <img src={mic_icon}/>
+                        </div>
+                        <button className="next-patient-btn" onClick={handlenextPatient}>Next patient</button>
+                    </div>
+                </div>
+                <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>
             </div>
-            {/* <div className={isOpen ? "sidebar open" : "sidebar"}>
-                <ul>
-                <li>Item 1</li>
-                <li>Item 2</li>
-                <li>Item 3</li>
-                </ul>
-            </div>
-            <button onClick={toggleSidebar} className="menu-button">
-                Menu
-            </button> */}
-
-            {/* <div className="vid-cb">{Consultation_Button()} </div> */}
+            <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
+                <button style = {{backgroundColor: "red"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
+                    <div className="chat-popup" id="myChat">
+                        <form className="form-container" id="cont">
+                            <h1>Chat</h1>
+                            <small id="ch">Welcome to tele-consultation app</small>
+                            <label for="msg"><b>Message</b></label>
+                            <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
+                            <button id="but" type="submit" className="btn" onClick={displayChat}>Send</button>
+                        </form>
+                    </div>
+            </div> 
         </div>
     );
 }

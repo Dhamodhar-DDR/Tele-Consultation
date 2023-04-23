@@ -6,7 +6,7 @@ CREATE TABLE `Patient` (
 	`gender` VARCHAR(255) NOT NULL,
 	`consent` BOOLEAN NOT NULL,
 	`email` VARCHAR(255),
-	`profile_pic` blob,
+	`profile_pic` MEDIUMBLOB ,
 	PRIMARY KEY (`patient_id`)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE `Doctor` (
 	`experience` VARCHAR(255),
 	`specialization` VARCHAR(255) NOT NULL,
 	`email` VARCHAR(255),
-	`profile_pic` blob,
+	`profile_pic` MEDIUMBLOB ,
 	PRIMARY KEY (`doctor_id`)
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE `Health_Record` (
 	`app_id` INT,
 	`name` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255),
-	`file` blob NOT NULL,
+	`file` MEDIUMBLOB  NOT NULL,
 	PRIMARY KEY (`hr_id`)
 );
 

@@ -124,7 +124,7 @@ function Regdoc() {
 
 
   return (
-    <div className="container">
+    <div className="doc-reg-container">
       <h1>Doctor Registration</h1>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>

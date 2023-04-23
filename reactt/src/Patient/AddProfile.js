@@ -153,7 +153,7 @@ function AddProf() {
       </div>
 
 
-    <div className="container">
+    <div className="addprof-container">
       <h1>Add Profile</h1>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>

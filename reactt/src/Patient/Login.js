@@ -47,7 +47,9 @@ function Logincg() {
   const handleOtpChange = (e) => {
     setOtp(e.target.value);
   };
-
+  const goBack = () =>{
+    nav('/')
+  }
   const handleSendOtpClick = async (e) => {
     // startTimer();
     e.preventDefault();
@@ -132,8 +134,8 @@ function Logincg() {
   };
 
   return (
-    <div className="container">
-      <h1>Patient Login</h1>
+    <div >
+      {/* <h1>Patient Login</h1>
       <form>
         <label>Phone Number:</label>
         <input type="number" value={phone} onChange={handlePhoneChange} />
@@ -167,14 +169,58 @@ function Logincg() {
            ):null
 
            }
-          {/* {console.log(timerout)} */}
+          {console.log(timerout)}
           </>
           
         ): null}
 
 
 
-      </form>
+      </form> */}
+      <button className="login-go-back-btn" onClick={goBack}>Go back</button>
+        <div className="login-center">
+          <h1>Patient Login</h1>
+          <form  method="post">
+            <div className="txt_field">
+              <input type="number" value={phone} onChange={handlePhoneChange}  required/>
+              <span></span>
+              <label>Mobile Number</label>
+            </div>
+            {showOtp? (
+              <>
+                <div className="txt_field">
+                  <input type="password"  required/>
+                  <span></span>
+                  <label>OTP</label>
+                </div>
+              </>
+            ):null}
+
+            
+            {/* <input type="submit" value="Login"/> */}
+
+            {(!showOtp)?(
+                <button className="login-otp-button" onClick={handleSendOtpClick}>Send OTP</button>
+              ):null}
+
+          {showOtp? (
+          <>
+            <button className="login-otp-button" onClick={handleLoginClick}>Login</button>
+            <div className="signup_link"><a href="#" onClick={handleSendOtpClick}>Resend OTP ?</a></div>
+          {
+           (login_approved == 2)?(
+            <>
+            <br/>
+              <p style={{color:"red"}}> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  You've entered invalid OTP. Please Try again !</p>
+            </>
+           ):null
+
+           }
+          {/* {console.log(timerout)} */}
+          </>): null}
+          </form>
+        </div>
+
     </div>
   );
 }

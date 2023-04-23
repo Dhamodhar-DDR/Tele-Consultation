@@ -90,7 +90,7 @@ function Regc() {
 
 
   return (
-    <div className="container">
+    <div className="pat-reg-container">
       <h1>User Registration</h1>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>

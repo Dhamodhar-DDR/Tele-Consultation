@@ -80,24 +80,23 @@ function Logincg() {
     e.preventDefault();
     setclickLogin(true);
 
-    // const verify_otp_body = {
-    //   'mobile_number' : phone,
-    //   'otp': otp
-    // }
-    // await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': '*' 
-    //   },
-    //   body: JSON.stringify(verify_otp_body)
-    // })
-    // .then(response => response.text())
-    // .then(async(data) => {
-    //   console.log(data)
-    
-      if(true)
-      // if(data == "approved")
+    const verify_otp_body = {
+      'mobile_number' : phone,
+      'otp': otp
+    }
+    console.log(verify_otp_body)
+    await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(verify_otp_body)
+    })
+    .then(response => response.text())
+    .then(async(data) => {
+      console.log(data)
+          if(data == "approved")
       {
         setloginapproved(1);
       
@@ -123,60 +122,18 @@ function Logincg() {
       else 
       {
         setloginapproved(2);
-        return(<p> You've entered invalid OTP. Please Try again !</p>);                
+        return(<p> You've entered invalid OTP!</p>);                
       }
 
-    // })
-    // .catch(error => {
-    //   return(<p> You've entered invalid OTP. Please Try again !</p>); 
-    //   console.log(error)
-    // });
+    })
+    .catch(error => {
+      return(<p> You've entered invalid OTP!</p>); 
+      console.log(error)
+    });
   };
 
   return (
     <div >
-      {/* <h1>Patient Login</h1>
-      <form>
-        <label>Phone Number:</label>
-        <input type="number" value={phone} onChange={handlePhoneChange} />
-
-        {showOtp? (
-          <>
-            <label>OTP:</label>
-            <input type="number" value={otp} onChange={handleOtpChange} />
-          </>
-        ):null}
-
-        {(!showOtp)?(
-          <button className="Login-doc-button" onClick={handleSendOtpClick}>Send OTP</button>
-        ):null}
-
-        {showOtp? (
-          <>
-          <button className="Login-doc-button" onClick={handleLoginClick}>Login</button> <br/>
-          <button className="Login-doc-button" onClick={handleSendOtpClick}>Resend OTP</button>
-
-          {
-           (login_approved == 2)?(
-            
-            <>
-            
-            <br/>
-            <p style={{color:"red"}}> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  You've entered invalid OTP. Please Try again !</p>
-
-            </>
-
-           ):null
-
-           }
-          {console.log(timerout)}
-          </>
-          
-        ): null}
-
-
-
-      </form> */}
       <button className="login-go-back-btn" onClick={goBack}>Go back</button>
         <div className="login-center">
           <h1>Patient Login</h1>
@@ -189,7 +146,7 @@ function Logincg() {
             {showOtp? (
               <>
                 <div className="txt_field">
-                  <input type="password"  required/>
+                  <input value={otp} onChange={handleOtpChange} type="password"  required/>
                   <span></span>
                   <label>OTP</label>
                 </div>

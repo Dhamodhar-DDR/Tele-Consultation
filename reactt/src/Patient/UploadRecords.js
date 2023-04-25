@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react';
 import file_icon from './imgs/fileicon.svg';
 import './styles/UploadRecords.css';
 
-function Modal ({toggle, upload_type})  {
+function Modal ({toggle, upload_type, pat_id, app_id})  {
   const [files, setFiles] = useState([]);
   const [names, setNames] = useState([]);
   const [descriptions, setDescriptions] = useState([]);
@@ -66,8 +66,8 @@ function Modal ({toggle, upload_type})  {
     }
     formData.append('names',names)
     formData.append('descriptions', descriptions)
-    formData.append('patId', 1)
-    formData.append('appId', 1)
+    formData.append('patId', parseInt(pat_id))
+    formData.append('appId', app_id)
     console.log(names)
     console.log(descriptions)
   
@@ -82,12 +82,13 @@ function Modal ({toggle, upload_type})  {
     .then(response => {
       // Handle the response from the server
       console.log(response);
+      toggle("close");
     })
     .catch(error => {
       // Handle any errors that occurred during the request
       console.error(error);
     });
-    console.log(formData);
+
   };
 
 

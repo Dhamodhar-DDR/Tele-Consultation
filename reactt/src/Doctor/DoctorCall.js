@@ -6,12 +6,28 @@ import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 
 function DoctorCall() {
-    const nav = useNavigate();
+    const [markForFollowUp, setMarkForFollowUp] = useState(false);
+    
     const [isConsultationActive, setIsConsultationActive] = useState(true);    
+    const [isLeftSideBarOpen, setIsLeftSideBarOpen] = useState("");
+    const [isRightSideBarOpen, setisRightSideBarOpen] = useState(false);
+    
+    const [isPatProf, setIsPatProf] = useState(false);
+    const [isWritePres, setIsWritePres] = useState(false);
+    const [isHealthRec, setIsHealthRec] = useState(false);
+    const [isPresSent, setIsPresSent] = useState(false);
+    
+    const [inputFields, setInputFields] = useState([{ med_name : "", frequency: "", description : ""}]);
+    const[appointmentId,setAppointmentId] = useState(-1);
+    const[patientId,setPatientId]  = useState(-1);
+    const[patientName,setPatientName]  = useState("");
+    const[patientAge,setPatientAge]  = useState("");
+    const[patientGender,setPatientGender]  = useState("");
+
+
+    const nav = useNavigate();
     const[searchParams] = useSearchParams();
-    var appointmentId = -1;
-    var patientId = -1;
-    var chat = 0;
+    let chat = 0;
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
@@ -21,11 +37,10 @@ function DoctorCall() {
     let channel;
 
     let roomId = searchParams.get("doc_id");
-    // const [localStream, setLocalStream] = useState(null);
+
     let localStream = useRef(null);
     let remoteStream;
     let peerConnection;
-    let x = useRef(0);;
     const servers = {
         // iceServers:[
         //     {
@@ -71,8 +86,6 @@ function DoctorCall() {
 
         localStream.current = await navigator.mediaDevices.getUserMedia(constraints)
 
-        // const x = await navigator.mediaDevices.getUserMedia(constraints)
-        // setLocalStream(x);
         document.getElementById('user-1').srcObject = localStream.current
 
     }
@@ -82,7 +95,7 @@ function DoctorCall() {
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
         document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
-        var elem = document.getElementById('ch');
+        let elem = document.getElementById('ch');
         elem.scrollTop = elem.scrollHeight;
     }
 
@@ -91,6 +104,9 @@ function DoctorCall() {
         console.log("User left: ", MemberId)
         document.getElementById('user-2').style.display = 'none'
         document.getElementById('user-1').classList.remove('smallFrame')
+        setPatientAge("")
+        setPatientGender("")
+        setPatientName("")
     }
 
     let handleMessageFromPeer = async (message, MemberId) => {
@@ -121,7 +137,6 @@ function DoctorCall() {
 
     let createPeerConnection = async (MemberId) => {
         peerConnection = new RTCPeerConnection(servers)
-        // setPatientConnection(peerConnection);
         remoteStream = new MediaStream()
         document.getElementById('user-2').srcObject = remoteStream
         document.getElementById('user-2').style.display = 'block'
@@ -187,8 +202,6 @@ function DoctorCall() {
     }
 
     let toggleCamera = async () => {
-        console.log(localStream)
-        console.log(x)    
         let videoTrack = localStream.current.getTracks().find(track => track.kind === 'video')
 
         if(videoTrack.enabled){
@@ -238,8 +251,6 @@ function DoctorCall() {
     let sendMessage = async(e) => {
         e.preventDefault()
         let message = document.getElementById('txt').value;
-        //let message = e.target.msg.value
-        //console.log("e: ", e)
         channel.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
         console.log("message sent")
     }
@@ -269,8 +280,6 @@ function DoctorCall() {
         })
         .then(response => response.json())
         .then(data => {
-            // console.log(check_status_body);
-            // console.log("Online Status: ",data)
             setIsConsultationActive(data);
         })
         .catch(error => {
@@ -314,8 +323,6 @@ function DoctorCall() {
         init().then(()=>{
             console.log(localStream)
         });
-        
-        // console.log("SD")
     },[]);
 
     const Consultation_Button = () =>
@@ -399,7 +406,25 @@ function DoctorCall() {
         if(earliest_app_response.status != 200) console.log(earliest_app_response)
         else {
             const earliest_app = await earliest_app_response.json();
-            console.log(earliest_app.appointmentId)
+            
+            setAppointmentId(earliest_app.appointmentId);
+            setPatientId(earliest_app.patientId);
+            display_file(earliest_app.patientId);
+            
+            const get_pat_body_response = await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
+                method: 'POST',
+                headers: {
+                    
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify({pat_id: earliest_app.patientId})
+            })
+            const pat_details = await get_pat_body_response.json();
+            setPatientName(pat_details.name);
+            setPatientAge(pat_details.age);
+            setPatientGender(pat_details.gender);
+
 
             //Change this appointment to live and connect the patient
             const set_app_status_body = {
@@ -432,14 +457,14 @@ function DoctorCall() {
                     },
                     body: JSON.stringify(set_start_time_body)
                 })
-
+                setIsPresSent(false)
                 console.log("Next patient status changed!")
-                appointmentId = earliest_app.appointmentId;
-                patientId = earliest_app.patientId;
             }
         }
     }
-
+    const consl = () =>{
+        console.log('YYUUII',appointmentId);
+    }
     const handleGetMembers = () =>
     {
         channel.getMembers().then((members) => {
@@ -456,24 +481,18 @@ function DoctorCall() {
         });
     }
 
-    const [isLeftSideBarOpen, setIsLeftSideBarOpen] = useState("");
-    const [isRightSideBarOpen, setisRightSideBarOpen] = useState(false);
-    const [markForFollowUp, setMarkForFollowUp] = useState(false);
-    const [isWritePres, setIsWritePres] = useState(false);
-    const [isHealthRec, setIsHealthRec] = useState(false);
-    const [inputFields, setInputFields] = useState([{ value: "" }]);
-
-
     const toggleLeftSidebar = () => {
         let menu_elem = document.getElementById("left-sidebar-menu");
         let writePres_elem = document.getElementById("left-sidebar-writePres");
         let healthRec_elem = document.getElementById("left-sidebar-healthRec");
+        let patProf_elem = document.getElementById("left-sidebar-patProf");
         let elem = document.getElementById("toggle-menu-call-btn-id");
         if(isLeftSideBarOpen==="")
         {
             menu_elem.style.display = 'block';
             writePres_elem.style.display = 'none'
             healthRec_elem.style.display = 'none'
+            patProf_elem.style.display = 'none'
             elem.style.display = 'none'; 
             setIsLeftSideBarOpen("open");
         }
@@ -482,6 +501,7 @@ function DoctorCall() {
             setIsLeftSideBarOpen("");
             setIsWritePres(false);
             setIsHealthRec(false);
+            setIsPatProf(false);
         }
     };
 
@@ -528,16 +548,46 @@ function DoctorCall() {
         setIsHealthRec(!isHealthRec)
     }
 
+    const togglePatientProf = () =>{
+        let menu_elem = document.getElementById("left-sidebar-menu");
+        let patProf_elem = document.getElementById("left-sidebar-patProf");
+
+        if(!isPatProf) {
+            menu_elem.style.display = 'none'
+            patProf_elem.style.display = 'block'
+            setIsLeftSideBarOpen("patProf");
+        }
+        else {
+            menu_elem.style.display = 'block';
+            patProf_elem.style.display = 'none'
+            setIsLeftSideBarOpen("open");
+        }
+        setIsPatProf(!isPatProf)
+    }
 
     const handleAddFields = () => {
         const values = [...inputFields];
-        values.push({ value: "" });
+        values.push({ med_name : "", frequency: "", description : "" });
         setInputFields(values);
     };
   
-    const handleInputChange = (index, event) => {
+    const handleInput1Change = (index, event) => {
         const values = [...inputFields];
-        values[index].value = event.target.value;
+        values[index].med_name = event.target.value;
+        setInputFields(values);
+    };
+
+
+    const handleInput2Change = (index, event) => {
+        const values = [...inputFields];
+        values[index].frequency = event.target.value;
+        setInputFields(values);
+    };
+
+
+    const handleInput3Change = (index, event) => {
+        const values = [...inputFields];
+        values[index].description = event.target.value;
         setInputFields(values);
     };
 
@@ -548,13 +598,13 @@ function DoctorCall() {
     };
 
     const [files,setFiles] = useState([]);
-    useEffect(() => {
-      display_file();
-    }, [])
+    // useEffect(() => {
+    //   display_file();
+    // }, [])
   
-    const display_file = async() => {
+    const display_file = async(pat_id) => {
       const formData = new FormData();
-      formData.append('pat_id', 1)
+      formData.append('pat_id', pat_id)
       await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
         method: 'POST',
         headers: {
@@ -572,18 +622,19 @@ function DoctorCall() {
         return response.json();
       })
       .then((list) => {
-        for(const element of list)
-        {
-          fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'])
+          for(const element of list)
+          {
+            console.log(element)
+          fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'].data)
           .then(async(res)=>{
             const blob = await res.blob()
             console.log(blob)
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
-              setFiles(current => [...current, {name : 'file', type: blob.type , url : fileReader.result}])
+              setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
             };
             fileReader.readAsDataURL(blob);
-          })
+          })  
         }
         
       })
@@ -602,6 +653,45 @@ function DoctorCall() {
       setSelectedFile(null);
     }
     
+    const sendPres = async() => {
+        const medNames_l = []
+        const frequencies_l = []
+        const descriptions_l = []
+        for(const element of inputFields)
+        {
+            if(element.medName === "" || element.frequency === "") continue;
+            else {
+                medNames_l.push(element.med_name);
+                frequencies_l.push(element.frequency);
+                descriptions_l.push(element.description);
+            }
+        }
+        console.log(appointmentId)
+
+        const send_pres_body = {
+            appId : appointmentId,
+            medNames : medNames_l,
+            frequencies : frequencies_l,
+            descriptions : descriptions_l
+        }
+        await fetch('http://localhost:8090/api/v1/prescription/add_prescription',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*' 
+            },
+            body: JSON.stringify(send_pres_body)
+        })
+        .then((response) => {
+            setIsPresSent(true);
+            console.log(response);
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+    
+    }
+    
 
     return (
         <div>
@@ -615,28 +705,48 @@ function DoctorCall() {
                     <div className="left-sidebar-menu" id="left-sidebar-menu">
                         <h1 className="left-sidebar-menu-heading">Patient Details</h1>
                         <ul>
-                            <li className="first-elem">View patient profile </li>
+                            <li onClick={togglePatientProf} className="first-elem">View patient profile </li>
                             <li onClick={toggleHealthRec}>View health records</li>
                             <li classname="write-pres" onClick={toggleWritePres} >Write prescriptions</li>
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
                     </div>
+                    <div className="left-sidebar-patProf" id="left-sidebar-patProf">
+                        <div className="go-back" >
+                            <a href="#" onClick={togglePatientProf} className="previous">&#8249;</a>
+                        </div>
+                        <div>
+                            <h2>Patient details</h2>
+                            <div><b>Name</b> : {patientName}</div>
+                            <div><b>Age</b> : {patientAge}</div>
+                            <div><b>Gender</b> : {patientGender}</div>
+                            {/* <h4>Description provided by patient: </h4> */}
+                        </div>
+                    </div> 
+
                     <div className="left-sidebar-writePres" id="left-sidebar-writePres">
                         <div className="go-back" >
                             <a href="#" onClick={toggleWritePres} className="previous">&#8249;</a>
                         </div>
+                        {!isPresSent ? 
+                        (
+                        <div>
                         {inputFields.map((inputField, index) => (
                             <div className = "field" key={index}>
                                 <div className="inputs">
-                                    <input type="text" placeholder="Medicine Name" value={inputField.value} onChange={(event) => handleInputChange(index, event)}/> 
-                                    <input type="text" placeholder="Frequency" value={inputField.value} onChange={(event) => handleInputChange(index, event)}/>
-                                    <textarea rows="4" cols="56" type="text-area" placeholder="Description (if any)" value={inputField.value} onChange={(event) => handleInputChange(index, event)}> </textarea>
+                                    <input type="text" placeholder="Medicine Name" value={inputField.med_name} onChange={(event) => handleInput1Change(index, event)}/> 
+                                    <input type="text" placeholder="Frequency" value={inputField.frequency} onChange={(event) => handleInput2Change(index, event)}/>
+                                    <textarea rows="4" cols="56" type="text-area" placeholder="Description (if any)" value={inputField.description} onChange={(event) => handleInput3Change(index, event)}> </textarea>
                                 </div>
                                 <button className="bin" onClick={() => handleRemoveFields(index)}>🗑</button>
                             </div>
                         ))}
-                        <button className="writePres-add-btn"onClick={handleAddFields}>New prescription</button>
-                    </div>
+                        {inputFields.length > 0 ?<p>Prescriptions are auto saved</p>:""}
+                        <div className="writePres-btn-div">
+                            <button className="writePres-add-btn"onClick={handleAddFields}>Add prescription</button>
+                            {inputFields.length > 0 ? <button className="writePres-add-btn" onClick={sendPres}>Send prescriptions</button> : ""}
+                        </div></div>) : "Prescriptions are already sent!"}
+                    </div> 
 
                     <div className="left-sidebar-healthRec" id="left-sidebar-healthRec">
                         <div className="go-back" >

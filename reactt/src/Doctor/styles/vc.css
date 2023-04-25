@@ -31,7 +31,10 @@
   transform: translateY(0%);
   overflow: hidden;
 }
-
+.videos.patProf {
+  transform: translateY(0%);
+  overflow: hidden;
+}
 .doc-video-player{
     background-color: rgb(0, 0, 0);
     width: 100%;
@@ -149,6 +152,11 @@
   transition: 0.2s ease-in-out;
 }
 
+#doc-video-controls.patProf{
+  left: 50%;
+  transition: 0.2s ease-in-out;
+}
+
 #doc-video-controls.healthRec{
   left: 56%;
   transition: 0.2s ease-in-out;
@@ -251,6 +259,9 @@
   width: 45%;
 }
 
+.left-sidebar.patProf {
+  width: 35%;
+}
 
 .left-sidebar.healthRec {
   width: 80vw;
@@ -365,8 +376,6 @@
 }
 
 .writePres-add-btn{
-  display: flex;
-  align-items: center;
   margin-left: auto;
   margin-right: auto;
   font-family: 'Google Sans', sans-serif;
@@ -401,7 +410,9 @@
   display: none;
 }
 
-
+.left-sidebar-patProf{
+  display: none;
+}
 
 
 .doc-call-file-list .file-list {
@@ -469,4 +480,9 @@
 
 .doc-call-file-list .modal .close-modal-btn:hover {
   color: #ccc;
+}
+
+.writePres-btn-div{
+  display: flex;
+  align-items: center;
 }

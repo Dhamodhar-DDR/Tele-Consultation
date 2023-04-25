@@ -35,7 +35,10 @@ public class HealthRecordService {
         try{
             for(int i = 0;i<files.toArray().length;i++)
             {
-                HealthRecord healthRecord = new HealthRecord(patientId, appointmentId, names.get(i), descriptions.get(i), files.get(i).getBytes());
+                HealthRecord healthRecord;
+                System.out.println(appointmentId);
+                if(appointmentId==-1) healthRecord = new HealthRecord(patientId, null, names.get(i), descriptions.get(i), files.get(i).getBytes());
+                else healthRecord = new HealthRecord(patientId, appointmentId, names.get(i), descriptions.get(i), files.get(i).getBytes());
                 healthRecordRepository.save(healthRecord);
             }
             return true;
@@ -59,17 +62,79 @@ public class HealthRecordService {
         }
     }
 
-    public List<ResponseEntity<byte[]>> getRecordByAppId(Integer hr_id){
-        List<ResponseEntity<byte[]>> list = new ArrayList<ResponseEntity<byte[]>>();
+    class fileObj{
+        String name;
+        String description;
+        Integer appId;
+        int patId;
+        byte[] data;
+        fileObj(){};
+        fileObj(String name, String description, Integer appId,int patId, byte[] data){
+            this.name = name;
+            this.description = description;
+            this.appId = appId;
+            this.patId = patId;
+            this.data = data;
+        };
+
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Integer getAppId() {
+            return appId;
+        }
+
+        public void setAppId(Integer appId) {
+            this.appId = appId;
+        }
+
+        public int getPatId() {
+            return patId;
+        }
+
+        public void setPatId(int patId) {
+            this.patId = patId;
+        }
+
+        public byte[] getData() {
+            return data;
+        }
+
+        public void setData(byte[] data) {
+            this.data = data;
+        }
+    }
+    public List<ResponseEntity<fileObj>> getRecordByAppId(Integer hr_id){
+        List<ResponseEntity<fileObj>> list = new ArrayList<ResponseEntity<fileObj>>();
         List<HealthRecord> list_hr = healthRecordRepository.findByAppId(hr_id);
         for(int i = 0;i<list_hr.toArray().length;i++)
         {
+            fileObj fo = new fileObj();
+            fo.name = list_hr.get(i).getName();
+            fo.description = list_hr.get(i).getDescription();
+            fo.appId = list_hr.get(i).getAppId();
+            fo.patId = list_hr.get(i).getPatientId();
             byte[] fileData = list_hr.get(i).getFile();
+            fo.data = fileData;
             String fileType = getFileType(fileData);
             if (fileType != null) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType(fileType));
-                list.add(new ResponseEntity<>(fileData, headers, HttpStatus.OK));
+                list.add(new ResponseEntity<>(fo, headers, HttpStatus.OK));
             } else {
                 list.add(new ResponseEntity<>(HttpStatus.NOT_FOUND));
             }
@@ -77,17 +142,25 @@ public class HealthRecordService {
         return list;
     }
 
-    public List<ResponseEntity<byte[]>> getRecordByPatId(Integer hr_id){
-        List<ResponseEntity<byte[]>> list = new ArrayList<ResponseEntity<byte[]>>();
+    public List<ResponseEntity<fileObj>> getRecordByPatId(Integer hr_id){
+        List<ResponseEntity<fileObj>> list = new ArrayList<ResponseEntity<fileObj>>();
         List<HealthRecord> list_hr = healthRecordRepository.findByPatientId(hr_id);
+
+
         for(int i = 0;i<list_hr.toArray().length;i++)
         {
             byte[] fileData = list_hr.get(i).getFile();
+            fileObj fo = new fileObj();
+            fo.name = list_hr.get(i).getName();
+            fo.description = list_hr.get(i).getDescription();
+            fo.appId = list_hr.get(i).getAppId();
+            fo.patId = list_hr.get(i).getPatientId();
+            fo.data = fileData;
             String fileType = getFileType(fileData);
             if (fileType != null) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType(fileType));
-                list.add(new ResponseEntity<>(fileData, headers, HttpStatus.OK));
+                list.add(new ResponseEntity<>(fo, headers, HttpStatus.OK));
             } else {
                 list.add(new ResponseEntity<>(HttpStatus.NOT_FOUND));
             }

@@ -42,13 +42,13 @@ public class HealthRecordController {
 
     @CrossOrigin
     @PostMapping("/get_record_by_app_id")
-    public List<ResponseEntity<byte[]>> getRecordByAppId(@RequestParam("app_id") Integer app_id) {
+    public List<ResponseEntity<HealthRecordService.fileObj>> getRecordByAppId(@RequestParam("app_id") Integer app_id) {
         return healthRecordService.getRecordByAppId(app_id);
     }
 
     @CrossOrigin
     @PostMapping("/get_record_by_pat_id")
-    public List<ResponseEntity<byte[]>> getRecordByPatId(@RequestParam("pat_id") Integer pat_id) {
+    public List<ResponseEntity<HealthRecordService.fileObj>> getRecordByPatId(@RequestParam("pat_id") Integer pat_id) {
             return healthRecordService.getRecordByPatId(pat_id);
     }
 

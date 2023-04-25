@@ -23,19 +23,18 @@ const DisplayFiles = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      console.log(response)
       return response.json();
     })
     .then((list) => {
       for(const element of list)
       {
-        fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'])
+        fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'].data)
         .then(async(res)=>{
           const blob = await res.blob()
           console.log(blob)
           const fileReader = new FileReader();
           fileReader.onloadend = () => {
-            setFiles(current => [...current, {name : 'file', type: blob.type , url : fileReader.result}])
+            setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
           };
           fileReader.readAsDataURL(blob);
         })

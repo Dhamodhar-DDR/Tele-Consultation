@@ -14,7 +14,7 @@ public class HealthRecord {
     private int patientId;
 
     @Column(name = "app_id")
-    private int appId;
+    private Integer appId;
 
     @Column(name = "name")
     private String name;
@@ -31,7 +31,7 @@ public class HealthRecord {
     public HealthRecord() {
     }
 
-    public HealthRecord(int patientId, int appId, String name, String description, byte[] file) {
+    public HealthRecord(int patientId, Integer appId, String name, String description, byte[] file) {
         this.patientId = patientId;
         this.appId = appId;
         this.name = name;
@@ -57,11 +57,11 @@ public class HealthRecord {
         this.patientId = patientId;
     }
 
-    public int getAppId() {
+    public Integer getAppId() {
         return appId;
     }
 
-    public void setAppId(int appId) {
+    public void setAppId(Integer appId) {
         this.appId = appId;
     }
 

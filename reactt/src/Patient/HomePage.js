@@ -189,7 +189,7 @@ function Homepat(){
       
       <div className="button" onClick={handleAppoinHist}>Appointment History</div>
     </div>
-          {showModal && (<Modal toggle={toggleModal} upload_type={uploadType}/>)}
+          {showModal && (<Modal toggle={toggleModal} upload_type={uploadType} pat_id={searchParams.get("pat_id")} app_id={-1}/>)}
     </div>
     );
   }

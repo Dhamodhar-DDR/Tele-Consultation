@@ -48,11 +48,12 @@ CREATE TABLE `Health_Record` (
 );
 
 CREATE TABLE `Prescription` (
+	`pres_id` INT NOT NULL AUTO_INCREMENT,
 	`app_id` INT NOT NULL,
 	`med_name` VARCHAR(255) NOT NULL,
 	`quantity` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255) NOT NULL,
-	PRIMARY KEY (`app_id`)
+	PRIMARY KEY (`pres_id`)
 );
 
 ALTER TABLE `Appointment` ADD CONSTRAINT `Appointment_fk0` FOREIGN KEY (`patient_id`) REFERENCES `Patient`(`patient_id`);

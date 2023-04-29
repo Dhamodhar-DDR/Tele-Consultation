@@ -41,11 +41,18 @@ const WaitingPage = () => {
                     body: JSON.stringify(set_status_body)
                   }).then((response)=>{
                     nav({
-                      pathname: '/select_doc',
+                      // pathname: '/select_doc',
+                      // search: createSearchParams({
+                      //   pat_id: searchParams.get("pat_id")
+                      // }).toString()
+                      pathname: '/call_summary',
                       search: createSearchParams({
-                        pat_id: searchParams.get("pat_id")
+                          pat_id: searchParams.get("pat_id"),
+                          doc_id: searchParams.get("doc_id"),
+                          app_id: searchParams.get("app_id")
                       }).toString()
                     });
+                    
                   })
                   
                 }  

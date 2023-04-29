@@ -195,7 +195,7 @@ function Homepat(){
           <button className="dropdown-item" onClick={handleViewRecords}>View health records</button>
         </div>
       </div>  
-      <button onClick={goToSummary}> SUmmary Page</button>
+      {/* <button onClick={goToSummary}> SUmmary Page</button> */}
       <div className="button" onClick={handleAppoinHist}>Appointment History</div>
     </div>
           {showModal && (<Modal toggle={toggleModal} upload_type={uploadType} pat_id={searchParams.get("pat_id")} app_id={-1}/>)}

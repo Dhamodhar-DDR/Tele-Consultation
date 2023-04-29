@@ -119,4 +119,50 @@
   background-color: rgb(175, 45, 45);
   /* background-color: #c0392b; */
 }
+.doctor-profile{
+  position: relative;
+}
+.followup-apphis-close-btn{
+  position: absolute;
+  top: 0;
+  right: 10px;
+  background-color: rgb(222, 71, 71);
+}
 
+.followup-apphis-btn{
+  font-family: 'Google Sans', sans-serif;
+  background-color:#3174d8;
+  transition: 0.2s ease-in-out;
+}
+
+.followup-apphis-btn:hover{
+  background-color:#085fe2;
+  transition: 0.2s ease-in-out;
+}
+
+.foll-pat-details-popup{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.foll-pat-details-popup-content{
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.foll-pat-details-close-popup-btn{
+  position: absolute;
+  top: 0;
+  right: 10px;
+  background-color: rgb(222, 71, 71);
+}

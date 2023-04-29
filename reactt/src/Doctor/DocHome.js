@@ -11,7 +11,8 @@ function DocHome() {
   const [isConsultationActive, setIsConsultationActive] = useState(false);
   const [doc_id, setDoc_id] = useState(-1);
   const[appoinlist, settappoinlist] = useState([])
-
+  const [patient,setPatient] = useState({name : 'loading...', age : 'loading...', gender : 'loading...', mobile: 'loading...', email: 'loading...'})
+  const [showPopup, setShowPopup] = useState(false);
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
   const did = searchParams.get('doc_id')
@@ -136,6 +137,54 @@ function DocHome() {
     get_online_stat(searchParams.get("doc_id"));
   }, []);
 
+  const removeFollowUp = async(app,index) => {
+    console.log(app)
+    const values = [...appoinlist];
+    values.splice(index, 1);
+    settappoinlist(values);
+    
+    const set_follow_up_body = {
+        appId :  app.appointment.appointmentId,
+        mark : false,
+        followupReason : app.appointment.followupReason
+    }
+    await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(set_follow_up_body)
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log("Online status: ",data)
+    })
+    .catch(error => {
+        console.log(error)
+    });
+  }
+
+
+  const getPatientDetails = async(pat_id) => {
+    setShowPopup(!showPopup);
+    await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
+        method: 'POST',
+        headers: {
+            
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({pat_id: pat_id})
+    }).then(async(response)=>{
+      const pat = await response.json();
+      console.log(pat)
+      setPatient({name : pat.name, age : pat.age, gender : pat.gender, mobile: pat.mobileNumber, email: pat.email})
+    })
+    .catch(error=>{
+      console.log(error)
+    })
+  }
 
   return (
     <div>
@@ -165,11 +214,12 @@ function DocHome() {
           <h1>Patients marked for follow up</h1>
           {appoinlist.length == 0? "No follow up reminders":
             <ul className="doctor-list">
-              {appoinlist.map(appointment => (
+              {appoinlist.map((appointment,index) => (
                 <li key={appointment.appointment.appointmentId}>
                   <div className="doctor-profile">
                     <img className="doctor-photo" src={def_pp} alt="Doctor" />
                     <div className="doctor-info">
+                      
                       <div className="doctor-name">{appointment.name}</div>
                       <div className="info-label"><b>Call Start Time:</b> {appointment.appointment.startTime}</div>
                       {/* <div className="info-value">{doctor.startTime}</div> */}
@@ -179,7 +229,24 @@ function DocHome() {
                       <div className="info-label"><b>Reason for Follow Up: </b>{appointment.appointment.followupReason}</div>
                       {/* <div className="info-value">{doctor.endTime}</div> */}
                       <span>
-                        <button>View Patient Details</button>
+                        <button onClick={()=>getPatientDetails(appointment.appointment.patientId)} className='followup-apphis-btn'>View Patient Details</button>
+                        {showPopup && (
+                          <div className="foll-pat-details-popup">
+                            <div className="foll-pat-details-popup-content">
+                              <h2>Patient details</h2>
+                              <img className="doctor-photo" src={def_pp} alt="Doctor" />
+                              <div className="info-label"><b>Name: </b>{patient.name}</div>
+                              <div className="info-label"><b>Gender: </b>{patient.gender}</div>
+                              <div className="info-label"><b>Age: </b>{patient.age}</div>
+                              <div className="info-label"><b>Mobile number: </b>{patient.mobile}</div>
+                              <div className="info-label"><b>Email ID: </b>{patient.email}</div>
+                              <button className="foll-pat-details-close-popup-btn" onClick={()=>setShowPopup(!showPopup)} >
+                                X
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        <button onClick={()=>removeFollowUp(appointment,index)} className='followup-apphis-close-btn'>X</button>
                       </span>
                     </div>
                   </div>

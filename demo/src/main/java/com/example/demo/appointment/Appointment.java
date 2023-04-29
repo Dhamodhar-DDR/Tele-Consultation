@@ -22,6 +22,9 @@ public class Appointment {
     @Column(name = "start_time")
     private Timestamp startTime;
 
+    @Column(name = "followup_reason")
+    private String followupReason;
+
     @Column(name = "end_time")
     private Timestamp endTime;
 
@@ -38,7 +41,7 @@ public class Appointment {
     private String description;
     public Appointment(){};
 
-    public Appointment(Timestamp bookingTime, int patientId, String doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String status, String description) {
+    public Appointment(Timestamp bookingTime, int patientId, String doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason,String status, String description) {
         this.bookingTime = bookingTime;
         this.patientId = patientId;
         this.doctorId = doctorId;
@@ -46,15 +49,19 @@ public class Appointment {
         this.endTime = endTime;
         this.isFollowup = isFollowup;
         this.markForFollowup = markForFollowup;
+        this.followupReason = followupReason;
         this.status = status;
         this.description = description;
 
     }
 
+    public String getFollowupReason() {return followupReason;}
+    public void setFollowupReason(String followupReason) {
+        this.followupReason = followupReason;
+    }
     public int getAppointmentId() {
         return appointmentId;
     }
-
     public void setAppointmentId(int appointmentId) {
         this.appointmentId = appointmentId;
     }

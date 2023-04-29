@@ -4,13 +4,44 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import './styles/DocHome.css'
+import def_pp from '../imgs/profile.png'
+
 
 function DocHome() {
   const [isConsultationActive, setIsConsultationActive] = useState(false);
   const [doc_id, setDoc_id] = useState(-1);
+  const[appoinlist, settappoinlist] = useState([])
+
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
   const did = searchParams.get('doc_id')
+  useEffect(() => {
+    get_appoin_history()    
+  }, [])
+
+  const get_appoin_history = async() =>{
+
+    const getappoinhist = {docId: searchParams.get("doc_id")}
+    await fetch('http://localhost:8090/api/v1/appointment/get_doctor_followup_appointments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(getappoinhist)
+  
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Online docs apoin list get profff: ",data)
+      settappoinlist(data)  
+     // console.log("After set profname ",prof_name)     
+    })
+    .catch(error => {
+      console.log(error)
+    });
+  }
+
 
   const get_online_stat = async(doc_id_param) => {
     const check_status_body = {
@@ -44,9 +75,6 @@ function DocHome() {
         doc_id: did
       }).toString()
     });
-
-
-
   }
 
   const HandleLogout = () =>{
@@ -133,6 +161,34 @@ function DocHome() {
       }
 
       {/* Patients marked for follow up */}
+      <div className="appointment-history">
+          <h1>Patients marked for follow up</h1>
+          {appoinlist.length == 0? "No follow up reminders":
+            <ul className="doctor-list">
+              {appoinlist.map(appointment => (
+                <li key={appointment.appointment.appointmentId}>
+                  <div className="doctor-profile">
+                    <img className="doctor-photo" src={def_pp} alt="Doctor" />
+                    <div className="doctor-info">
+                      <div className="doctor-name">{appointment.name}</div>
+                      <div className="info-label"><b>Call Start Time:</b> {appointment.appointment.startTime}</div>
+                      {/* <div className="info-value">{doctor.startTime}</div> */}
+                      <div className="info-label"><b>Call End Time:</b> {appointment.appointment.endTime}</div>
+                      {/* <div className="info-value">{doctor.endTime}</div> */}
+                      <div className="info-label"><b>Status: </b>{appointment.appointment.status}</div>
+                      <div className="info-label"><b>Reason for Follow Up: </b>{appointment.appointment.followupReason}</div>
+                      {/* <div className="info-value">{doctor.endTime}</div> */}
+                      <span>
+                        <button>View Patient Details</button>
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          }
+        </div>
+      
     </div>
   );
 }

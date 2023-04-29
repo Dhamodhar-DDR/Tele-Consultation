@@ -24,6 +24,7 @@ public class AppointmentController {
          Timestamp endTime,
          boolean isFollowup,
          boolean markForFollowup,
+         String followupReason,
          String status,
          String description
     ){}
@@ -37,6 +38,8 @@ public class AppointmentController {
     record getPatAppReqBod(Integer patId){}
     record getDocAppReqBod(Integer docId){}
 
+    record getAppFollowById(Integer appId, Boolean mark, String followupReason){}
+
     public AppointmentController(AppointmentService appointmentService)
     {
         this.appointmentService = appointmentService;
@@ -45,7 +48,7 @@ public class AppointmentController {
     @CrossOrigin
     @PostMapping("/create_appointment")
     public Appointment createAppointment(@RequestBody createNewAppReqbod reqbod) {
-        Appointment newAppointment = appointmentService.createAppointment(reqbod.bookingTime, reqbod.patientId, reqbod.doctorId, reqbod.startTime, reqbod.endTime, reqbod.isFollowup, reqbod.markForFollowup, reqbod.status, reqbod.description);
+        Appointment newAppointment = appointmentService.createAppointment(reqbod.bookingTime, reqbod.patientId, reqbod.doctorId, reqbod.startTime, reqbod.endTime, reqbod.isFollowup, reqbod.markForFollowup, reqbod.followupReason, reqbod.status, reqbod.description);
         return newAppointment;
     }
     @CrossOrigin
@@ -117,7 +120,6 @@ public class AppointmentController {
         public String getName() {
             return name;
         }
-
         public void setName(String name) {
             this.name = name;
         }
@@ -170,6 +172,29 @@ public class AppointmentController {
             list.add(temp);
         }
         return list;
+    }
+
+    @CrossOrigin
+    @PostMapping("/get_doctor_followup_appointments")
+    public List<AppointmentHistoryObj> get_doctor_followup_appointments(@RequestBody getDocAppReqBod req_bod) {
+        List<AppointmentHistoryObj> list = new ArrayList<AppointmentHistoryObj>();
+        List<Appointment> aps_list = appointmentService.get_doctor_followup_appointments(req_bod.docId);
+        List<String> name_list = appointmentService.get_patient_names(req_bod.docId);
+        for (int i = 0; i < aps_list.size(); i++) {
+            AppointmentHistoryObj temp = new AppointmentHistoryObj();
+            temp.appointment = aps_list.get(i);
+            temp.name = name_list.get(i);
+            temp.specialization = "";
+
+            list.add(temp);
+        }
+        return list;
+    }
+
+    @CrossOrigin
+    @PostMapping("/set_appointment_for_followup")
+    public Boolean set_appointment_for_followup(@RequestBody getAppFollowById req_bod) {
+        return appointmentService.set_appointment_for_followup(req_bod.appId,req_bod.mark, req_bod.followupReason);
     }
 
 

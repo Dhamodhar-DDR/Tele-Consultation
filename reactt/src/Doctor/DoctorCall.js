@@ -18,6 +18,7 @@ function DoctorCall() {
     const [isPresSent, setIsPresSent] = useState(false);
     
     const [inputFields, setInputFields] = useState([{ med_name : "", frequency: "", description : ""}]);
+    const[followUpReason,setFollowUpReason]  = useState("");
     const[appointmentId,setAppointmentId] = useState(-1);
     const[patientId,setPatientId]  = useState(-1);
     const[patientName,setPatientName]  = useState("");
@@ -509,8 +510,56 @@ function DoctorCall() {
         setisRightSideBarOpen(!isRightSideBarOpen);
     };
 
-    const toggleFollowUp = () => {
-        setMarkForFollowUp(!markForFollowUp);
+    const toggleFollowUp = async() => {
+        if (markForFollowUp) setFollowUpReason(""); 
+        const set_follow_up_body = {
+            appId :  appointmentId,
+            mark : !markForFollowUp,
+            followupReason : followUpReason
+        }
+        await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
+            method: 'POST',
+            headers: {
+                
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(set_follow_up_body)
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Online status: ",data)
+            setMarkForFollowUp(!markForFollowUp);
+        })
+        .catch(error => {
+            console.log(error)
+        });
+    }
+    
+    const saveFollowup = async() => {
+        const set_follow_up_body = {
+            appId :  appointmentId,
+            mark : true,
+            followupReason : followUpReason
+        }
+        console.log(followUpReason)
+        await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
+            method: 'POST',
+            headers: {
+                
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(set_follow_up_body)
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Online status: ",data)
+        })
+        .catch(error => {
+            console.log(error)
+        });
+
     }
 
     const toggleWritePres = () =>{
@@ -565,6 +614,9 @@ function DoctorCall() {
         setIsPatProf(!isPatProf)
     }
 
+    const handleFollowUpReason = (event)=>{
+        setFollowUpReason(event.target.value)
+    }
     const handleAddFields = () => {
         const values = [...inputFields];
         values.push({ med_name : "", frequency: "", description : "" });
@@ -644,7 +696,8 @@ function DoctorCall() {
     }
   
     const [selectedFile, setSelectedFile] = useState(null);
-  
+
+
     const handleFileClick = (file) => {
       setSelectedFile(file);
     }
@@ -711,6 +764,7 @@ function DoctorCall() {
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
                     </div>
+                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button onClick={saveFollowup}>Save</button></div></div>  : <></>}
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
                             <a href="#" onClick={togglePatientProf} className="previous">&#8249;</a>
@@ -739,7 +793,7 @@ function DoctorCall() {
                                     <textarea rows="4" cols="56" type="text-area" placeholder="Description (if any)" value={inputField.description} onChange={(event) => handleInput3Change(index, event)}> </textarea>
                                 </div>
                                 <button className="bin" onClick={() => handleRemoveFields(index)}>🗑</button>
-                            </div>
+                            </div> 
                         ))}
                         {inputFields.length > 0 ?<p>Prescriptions are auto saved</p>:""}
                         <div className="writePres-btn-div">
@@ -775,7 +829,6 @@ function DoctorCall() {
                             <br/>
                         </div>
                     </div>
-
                 </div>
                 {/* <button onClick={init}>Start connection</button> */}
                 <div className={`content ${isLeftSideBarOpen}`}>

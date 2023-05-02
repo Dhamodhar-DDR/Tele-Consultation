@@ -12,6 +12,7 @@ function Logincg() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
+  const [data, setData] = useState([]);
   const [valid, setvalid] = useState(false);
   const[clickLogin, setclickLogin] = useState(false);
   const[timerout, settimrout] = useState(true);
@@ -54,57 +55,58 @@ function Logincg() {
     setShowOtp(true);
 
     const send_otp_body = {
-      'mobile_number' : phone
-    }
-
-    await fetch('http://localhost:8090/api/v1/auth/send_otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(send_otp_body)
-    })
-    .then(response => response.text())
-    .then(data => {
-      console.log(data)
-    })
-    .catch(error => {
-      console.log(error)
-    });
+       'mobile_number' : phone
+     }
+     await fetch('http://localhost:8090/api/v1/auth/send_otp', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+         'Access-Control-Allow-Origin': '*' 
+       },
+       body: JSON.stringify(send_otp_body)
+     })
+     .then(response => response.text())
+     .then(data => {
+       console.log(data)
+     })
+     .catch(error => {
+       console.log(error)
+     });
   };
-
   const handleLoginClick = async (e) => {
     e.preventDefault();
     setclickLogin(true);
+     const verify_otp_body = {
+       'mobile_number' : phone,
+       'otp': otp
+     }
 
-    const verify_otp_body = {
-      'mobile_number' : phone,
-      'otp': otp
-    }
-    await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: JSON.stringify(verify_otp_body)
-    })
-    .then(response => response.text())
-    .then(async(data) => {
-      console.log(data)
-    
-      if(data == "approved")
+     await fetch('http://localhost:8090/api/v1/auth/verify_otp', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+         'Access-Control-Allow-Origin': '*' 
+       },
+       body: JSON.stringify(verify_otp_body)
+     })
+     .then(response => response.text())
+     .then(async(data) => {
+       console.log(data)
+      //if(true)
+      if(data !== "not")
       {
+        
         setloginapproved(1);
       
         const check_new_user_body = {
           'mobile_number' : phone
         }
     
-        await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
+        //await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
+          await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
           method: 'POST',
           headers: {
+            'Authorization': data,
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
@@ -121,15 +123,12 @@ function Logincg() {
         setloginapproved(2);
         return(<p> You've entered invalid OTP. Please Try again !</p>);                
       }
-
-    })
-    .catch(error => {
-      return(<p> You've entered invalid OTP. Please Try again !</p>); 
-      console.log(error)
-    });
-    
-
-
+      localStorage.setItem('jwt token', data);
+     })
+     .catch(error => {
+       return(<p> You've entered invalid OTP. Please Try again !</p>); 
+       console.log(error)
+     });
   };
 
   return (

@@ -12,6 +12,7 @@ import female_def_pp from '../imgs/fem_def_pp.png';
 function ProfileSelector() {
   const [pat_id, setPatId] = useState(-1);
   const[searchParams] = useSearchParams();
+  const [data, setData] = useState("");
 
    const p1 = {id: 1, avatar: male_def_pp,name:"Veer", age: 21}
    const p2 = {id: 2, avatar: female_def_pp,name:"Nancy", age: 47}
@@ -33,9 +34,12 @@ function ProfileSelector() {
     const get_profiles_body = {
       'mobile_number' : searchParams.get("mobile")
     }
+    const dataq = localStorage.getItem('jwt token');
+    console.log(dataq);
     await fetch('http://localhost:8090/api/v1/patient/display_profiles', {
       method: 'POST',
       headers: {
+        'Authorization': dataq,
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },

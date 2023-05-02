@@ -23,7 +23,7 @@ function Regc() {
   const [email, setEmail] = useState("");
   const [gender, setgender] = useState("");
   const [Age, setAge] = useState("");
-  
+  const [data, setData] = useState("");
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -62,10 +62,11 @@ function Regc() {
         'email' : email,
         'consent' : false
       }
-  
+      localStorage.getItem('jwt token', data);
       await fetch('http://localhost:8090/api/v1/patient/create', {
         method: 'POST',
         headers: {
+          'Authorization': data,
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },

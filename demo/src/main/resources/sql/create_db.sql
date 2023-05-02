@@ -6,7 +6,7 @@ CREATE TABLE `Patient` (
 	`gender` VARCHAR(255) NOT NULL,
 	`consent` BOOLEAN NOT NULL,
 	`email` VARCHAR(255),
-	`profile_pic` blob,
+	`profile_pic` MEDIUMBLOB ,
 	PRIMARY KEY (`patient_id`)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE `Doctor` (
 	`experience` VARCHAR(255),
 	`specialization` VARCHAR(255) NOT NULL,
 	`email` VARCHAR(255),
-	`profile_pic` blob,
+	`profile_pic` MEDIUMBLOB ,
 	PRIMARY KEY (`doctor_id`)
 );
 
@@ -34,25 +34,27 @@ CREATE TABLE `Appointment` (
 	`mark_for_followup` BOOLEAN NOT NULL,
 	`status` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255),
+	`followup_reason` TEXT,
 	PRIMARY KEY (`appointment_id`)
 );
 
 CREATE TABLE `Health_Record` (
 	`hr_id` INT NOT NULL AUTO_INCREMENT,
 	`patient_id` INT NOT NULL,
-	`app_id` INT NOT NULL,
+	`app_id` INT,
 	`name` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255),
-	`file` blob NOT NULL,
+	`file` MEDIUMBLOB  NOT NULL,
 	PRIMARY KEY (`hr_id`)
 );
 
 CREATE TABLE `Prescription` (
+	`pres_id` INT NOT NULL AUTO_INCREMENT,
 	`app_id` INT NOT NULL,
 	`med_name` VARCHAR(255) NOT NULL,
 	`quantity` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255) NOT NULL,
-	PRIMARY KEY (`app_id`)
+	PRIMARY KEY (`pres_id`)
 );
 
 ALTER TABLE `Appointment` ADD CONSTRAINT `Appointment_fk0` FOREIGN KEY (`patient_id`) REFERENCES `Patient`(`patient_id`);

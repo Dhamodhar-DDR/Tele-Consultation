@@ -10,6 +10,7 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
     List<Patient> get_all_patients();
     List<Patient> findByMobileNumber(String mobileNumber);
     Patient findByPatientId(Integer PatientId);
+
 }
 
 

@@ -51,6 +51,7 @@ function DoctorList() {
         endTime : null,
         isFollowup: false,
         markForFollowup : false,
+        FollowupReason: '',
         status : 'waiting',
         description : ''
       }

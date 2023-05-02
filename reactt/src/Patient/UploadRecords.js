@@ -15,7 +15,6 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
   const[proceed, setpro] = useState(false);
 
   const nav = useNavigate();
-
   const handleFileUpload = (event) => {
     const newFiles = [...files];
     const newNames = [...names];

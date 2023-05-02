@@ -11,6 +11,10 @@
     overflow:hidden;
 }
 
+.followup-reason{
+  margin: 40px;
+}
+
 .video-player{
     background-color: black;
     width: 100%;

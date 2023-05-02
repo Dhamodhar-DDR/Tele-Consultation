@@ -28,6 +28,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     @Query(value = "SELECT * FROM Appointment where doctor_id = :docId ORDER BY booking_time ASC",nativeQuery = true)
     List<Appointment> get_doctor_appointments(@Param("docId") Integer docId);
+
+    @Query(value = "SELECT * FROM Appointment where doctor_id = :docId AND mark_for_followup = true ORDER BY booking_time ASC",nativeQuery = true)
+    List<Appointment> get_doctor_followup_appointments(@Param("docId") Integer docId);
     Appointment findByAppointmentId(Integer appId);
 }
 

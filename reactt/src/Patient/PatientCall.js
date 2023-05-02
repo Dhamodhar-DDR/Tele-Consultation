@@ -339,11 +339,13 @@ function PatientCall() {
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
         nav({
-            pathname: '/select_doc',
+            pathname: '/call_summary',
             search: createSearchParams({
-              pat_id: searchParams.get("pat_id")
+                pat_id: searchParams.get("pat_id"),
+                doc_id: searchParams.get("doc_id"),
+                app_id: searchParams.get("app_id")
             }).toString()
-          });
+        });
         await leaveChannel();
         window.location.reload();
     }

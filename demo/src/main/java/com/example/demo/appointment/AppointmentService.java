@@ -13,8 +13,8 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public Appointment createAppointment(Timestamp bookingTime, int patientId, String doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String status, String description) {
-        Appointment appointment = new Appointment(bookingTime, patientId, doctorId, startTime, endTime, isFollowup, markForFollowup, status, description);
+    public Appointment createAppointment(Timestamp bookingTime, int patientId, String doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason, String status, String description) {
+        Appointment appointment = new Appointment(bookingTime, patientId, doctorId, startTime, endTime, isFollowup, markForFollowup, followupReason, status, description);
         return appointmentRepository.save(appointment);
     }
 
@@ -105,5 +105,21 @@ public class AppointmentService {
         return appointmentRepository.get_doctor_appointments(docId);
     }
 
+    public List<Appointment> get_doctor_followup_appointments(Integer docId){
+        return appointmentRepository.get_doctor_followup_appointments(docId);
+    }
 
+    public Boolean set_appointment_for_followup(Integer appId, Boolean mark, String reason){
+        Optional<Appointment> optionalAppointment = appointmentRepository.findById(appId);
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+            appointment.setMarkForFollowup(mark);
+            appointment.setFollowupReason(reason);
+            appointmentRepository.save(appointment);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 }

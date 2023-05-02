@@ -8,6 +8,9 @@ import cam_icon from '../imgs/icons/camera.png'
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
     
+    const [isLive, setIsLive] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
     const [isConsultationActive, setIsConsultationActive] = useState(true);    
     const [isLeftSideBarOpen, setIsLeftSideBarOpen] = useState("");
     const [isRightSideBarOpen, setisRightSideBarOpen] = useState(false);
@@ -18,6 +21,7 @@ function DoctorCall() {
     const [isPresSent, setIsPresSent] = useState(false);
     
     const [inputFields, setInputFields] = useState([{ med_name : "", frequency: "", description : ""}]);
+    const[followUpReason,setFollowUpReason]  = useState("");
     const[appointmentId,setAppointmentId] = useState(-1);
     const[patientId,setPatientId]  = useState(-1);
     const[patientName,setPatientName]  = useState("");
@@ -33,8 +37,8 @@ function DoctorCall() {
     let token = null;
     let uid = "d_"+String(searchParams.get("doc_id"));
 
-    let client;
-    let channel;
+    let client = useRef(null);
+    let channel = useRef(null);
 
     let roomId = searchParams.get("doc_id");
 
@@ -72,17 +76,17 @@ function DoctorCall() {
     }
 
     let init = async () => {
-        client = await AgoraRTM.createInstance(APP_ID)
-        await client.login({uid, token})
+        client.current = await AgoraRTM.createInstance(APP_ID)
+        await client.current.login({uid, token})
 
-        channel = client.createChannel(roomId)
-        await channel.join()
+        channel.current = client.current.createChannel(roomId)
+        await channel.current.join()
 
-        channel.on('MemberJoined', handleUserJoined)
-        channel.on('MemberLeft', handleUserLeft)
-        channel.on('ChannelMessage', handleMyChat)
+        channel.current.on('MemberJoined', handleUserJoined)
+        channel.current.on('MemberLeft', handleUserLeft)
+        channel.current.on('ChannelMessage', handleMyChat)
 
-        client.on('MessageFromPeer', handleMessageFromPeer)
+        client.current.on('MessageFromPeer', handleMessageFromPeer)
 
         localStream.current = await navigator.mediaDevices.getUserMedia(constraints)
 
@@ -161,7 +165,7 @@ function DoctorCall() {
 
         peerConnection.onicecandidate = async (event) => {
             if(event.candidate){
-                client.sendMessageToPeer({text:JSON.stringify({'type':'candidate', 'candidate':event.candidate})}, MemberId)
+                client.current.sendMessageToPeer({text:JSON.stringify({'type':'candidate', 'candidate':event.candidate})}, MemberId)
             }
         }
     }
@@ -172,7 +176,7 @@ function DoctorCall() {
         let offer = await peerConnection.createOffer()
         await peerConnection.setLocalDescription(offer)
 
-        client.sendMessageToPeer({text:JSON.stringify({'type':'offer', 'offer':offer})}, MemberId)
+        client.current.sendMessageToPeer({text:JSON.stringify({'type':'offer', 'offer':offer})}, MemberId)
     }
 
 
@@ -184,7 +188,7 @@ function DoctorCall() {
         let answer = await peerConnection.createAnswer()
         await peerConnection.setLocalDescription(answer)
 
-        client.sendMessageToPeer({text:JSON.stringify({'type':'answer', 'answer':answer})}, MemberId)
+        client.current.sendMessageToPeer({text:JSON.stringify({'type':'answer', 'answer':answer})}, MemberId)
     }
 
 
@@ -196,8 +200,8 @@ function DoctorCall() {
 
 
     let leaveChannel = async () => {
-        await channel.leave()
-        await client.logout()
+        await channel.current.leave()
+        await client.current.logout()
         // await peerConnection.close();
     }
 
@@ -251,7 +255,7 @@ function DoctorCall() {
     let sendMessage = async(e) => {
         e.preventDefault()
         let message = document.getElementById('txt').value;
-        channel.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
+        channel.current.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
         console.log("message sent")
     }
 
@@ -320,6 +324,13 @@ function DoctorCall() {
     },[])
 
     useEffect(() => {
+      const interval = setInterval(() => {
+        if(isLoading) handlenextPatient();
+      }, 3000);
+      return () => clearInterval(interval);
+    }, [isLoading]);
+
+    useEffect(() => {
         init().then(()=>{
             console.log(localStream)
         });
@@ -357,7 +368,7 @@ function DoctorCall() {
         //Api call to set appointment to completed status
         if(appointmentId != -1)
         {
-            await channel.getMembers().then((members) => {
+            await channel.current.getMembers().then((members) => {
                 console.log(`There are ${members.length} members in the channel`);
                 console.log(members)
                 for(const element of members)
@@ -365,7 +376,7 @@ function DoctorCall() {
                     if(element === "p_"+String(patientId))
                     {
                         console.log("Removing patientId--------------------------------------");
-                        client.sendMessageToPeer({text:JSON.stringify({'type':'leave', 'answer':'none'})}, "p_"+String(patientId))
+                        client.current.sendMessageToPeer({text:JSON.stringify({'type':'leave', 'answer':'none'})}, "p_"+String(patientId))
                         break;
                     }
                 }
@@ -403,14 +414,14 @@ function DoctorCall() {
             body: JSON.stringify(earliest_app_response_body)
         })
         console.log(earliest_app_response)
-        if(earliest_app_response.status != 200) console.log(earliest_app_response)
-        else {
+        try{
             const earliest_app = await earliest_app_response.json();
             
             setAppointmentId(earliest_app.appointmentId);
             setPatientId(earliest_app.patientId);
             display_file(earliest_app.patientId);
             
+            setIsLoading(false);
             const get_pat_body_response = await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
                 method: 'POST',
                 headers: {
@@ -460,6 +471,10 @@ function DoctorCall() {
                 setIsPresSent(false)
                 console.log("Next patient status changed!")
             }
+        } catch(err) {
+            console.log("No users!")
+            setAppointmentId(-1);
+            console.log(err)
         }
     }
     const consl = () =>{
@@ -467,7 +482,7 @@ function DoctorCall() {
     }
     const handleGetMembers = () =>
     {
-        channel.getMembers().then((members) => {
+        channel.current.getMembers().then((members) => {
             console.log(`There are ${members.length} members in the channel`);
             console.log(members)
             for(let i = 0;i<members.length;i++)
@@ -509,8 +524,56 @@ function DoctorCall() {
         setisRightSideBarOpen(!isRightSideBarOpen);
     };
 
-    const toggleFollowUp = () => {
-        setMarkForFollowUp(!markForFollowUp);
+    const toggleFollowUp = async() => {
+        if (markForFollowUp) setFollowUpReason(""); 
+        const set_follow_up_body = {
+            appId :  appointmentId,
+            mark : !markForFollowUp,
+            followupReason : followUpReason
+        }
+        await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
+            method: 'POST',
+            headers: {
+                
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(set_follow_up_body)
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Online status: ",data)
+            setMarkForFollowUp(!markForFollowUp);
+        })
+        .catch(error => {
+            console.log(error)
+        });
+    }
+    
+    const saveFollowup = async() => {
+        const set_follow_up_body = {
+            appId :  appointmentId,
+            mark : true,
+            followupReason : followUpReason
+        }
+        console.log(followUpReason)
+        await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
+            method: 'POST',
+            headers: {
+                
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(set_follow_up_body)
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log("Online status: ",data)
+        })
+        .catch(error => {
+            console.log(error)
+        });
+
     }
 
     const toggleWritePres = () =>{
@@ -565,6 +628,9 @@ function DoctorCall() {
         setIsPatProf(!isPatProf)
     }
 
+    const handleFollowUpReason = (event)=>{
+        setFollowUpReason(event.target.value)
+    }
     const handleAddFields = () => {
         const values = [...inputFields];
         values.push({ med_name : "", frequency: "", description : "" });
@@ -644,7 +710,8 @@ function DoctorCall() {
     }
   
     const [selectedFile, setSelectedFile] = useState(null);
-  
+
+
     const handleFileClick = (file) => {
       setSelectedFile(file);
     }
@@ -692,6 +759,24 @@ function DoctorCall() {
     
     }
     
+    
+
+    function handleClick() {
+      setIsLoading(!isLoading);
+      console.log("SD")
+    //   Perform the action that triggers loading
+    //   For example, fetch data from an API
+    //   fetch("https://example.com/api/data")
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       // Handle the data
+    //       setIsLoading(false);
+    //     })
+    //     .catch((error) => {
+    //       // Handle the error
+    //       setIsLoading(false);
+    //     });
+    }
 
     return (
         <div>
@@ -711,6 +796,7 @@ function DoctorCall() {
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
                     </div>
+                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button onClick={saveFollowup}>Save</button></div></div>  : <></>}
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
                             <a href="#" onClick={togglePatientProf} className="previous">&#8249;</a>
@@ -739,7 +825,7 @@ function DoctorCall() {
                                     <textarea rows="4" cols="56" type="text-area" placeholder="Description (if any)" value={inputField.description} onChange={(event) => handleInput3Change(index, event)}> </textarea>
                                 </div>
                                 <button className="bin" onClick={() => handleRemoveFields(index)}>🗑</button>
-                            </div>
+                            </div> 
                         ))}
                         {inputFields.length > 0 ?<p>Prescriptions are auto saved</p>:""}
                         <div className="writePres-btn-div">
@@ -775,7 +861,6 @@ function DoctorCall() {
                             <br/>
                         </div>
                     </div>
-
                 </div>
                 {/* <button onClick={init}>Start connection</button> */}
                 <div className={`content ${isLeftSideBarOpen}`}>
@@ -793,7 +878,10 @@ function DoctorCall() {
                         <div onClick={toggleMic} className="control-container" id="mic-btn">
                             <img src={mic_icon}/>
                         </div>
-                        <button className="next-patient-btn" onClick={handlenextPatient}>Next patient</button>
+                        {/* <button className="next-patient-btn" onClick={handlenextPatient}>Next patient</button> */}
+                        <button className={`np-button ${isLoading ? "loading" : ""}`} onClick={handleClick}>
+                        {isLoading ? <div className="spinner"></div> : "Next Patient"}
+                        </button>
                     </div>
                 </div>
                 <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>

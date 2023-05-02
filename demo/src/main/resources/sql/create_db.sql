@@ -34,6 +34,7 @@ CREATE TABLE `Appointment` (
 	`mark_for_followup` BOOLEAN NOT NULL,
 	`status` VARCHAR(255) NOT NULL,
 	`description` VARCHAR(255),
+	`followup_reason` TEXT,
 	PRIMARY KEY (`appointment_id`)
 );
 

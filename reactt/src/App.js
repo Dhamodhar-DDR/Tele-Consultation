@@ -18,6 +18,7 @@ import AppoinHist from './Patient/AppHistory';
 import WaitingPage from './Patient/WaitingPage'
 import DocAppoinHist from './Doctor/AppHistory';
 import DisplayFiles  from './Patient/ViewRecords';
+import CallSummary from './Patient/CallSummary';
 
 function App() 
 {
@@ -42,6 +43,7 @@ function App()
       <Route path="/waiting_page" element={<WaitingPage/>}/> 
       <Route path="/DocAppoinHist" element={<DocAppoinHist/>}/> 
       <Route path="/view_records" element={<DisplayFiles/>}/>
+      <Route path="/call_summary" element={<CallSummary/>}/>
     </Routes>
   </Router>    
   );

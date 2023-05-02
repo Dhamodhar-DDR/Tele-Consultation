@@ -50,10 +50,6 @@ function DocAppoinHist() {
     .catch(error => {
       console.log(error)
     });
-
-
-
-
   }
 
     const navToHome = () =>{
@@ -104,6 +100,7 @@ function DocAppoinHist() {
       </div>
           <div className="appointment-history">
           <h1>Patient Appointment History</h1>
+          {appoinlist.length == 0? "No appointments":
             <ul className="doctor-list">
               {appoinlist.map(appointment => (
                 <li key={appointment.appointment.appointmentId}>
@@ -124,7 +121,7 @@ function DocAppoinHist() {
                   </div>
                 </li>
               ))}
-            </ul>
+            </ul>}
           </div>
         </div>
       );

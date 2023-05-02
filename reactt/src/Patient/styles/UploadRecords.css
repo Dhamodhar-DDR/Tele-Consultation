@@ -28,8 +28,12 @@
   background-color: transparent;
   cursor: pointer;
   font-size: 16px;
-  color: #555;
+  color: #bc0505;
 }
+.upload-files-modal-closer button:hover {
+  background-color: #9a0404;
+}
+
 
 .FileUploader {
   display: flex;
@@ -74,6 +78,7 @@
   align-items: center;
   width: 100%;
   margin-bottom: 10px;
+  margin-right: auto ; 
   padding-top: 10px;
   padding-right: 10px;
   border: 2px solid #e8e7e7;
@@ -84,7 +89,7 @@
   width: 120px;
   height: 120px;
   object-fit: cover;
-  margin-right: 16px;
+  margin-right: auto;
 }
 
 .FileUploader-details {
@@ -93,13 +98,31 @@
   flex-direction: column;
   justify-content: center;
   text-align: left;
+  margin-right: auto;
+  margin-left: auto;
   width: 100%;
+}
+
+textarea{
+  display: flex;
+  margin-right: auto;
 }
 
 .FileUploader-detail {
   display: flex;
   align-items: center;
+  margin-right: auto;
+  /* right: 0px; */
   margin-bottom: 8px;
+}
+
+.desc{
+  align-items: center;
+  position: relative;
+  display: flex;
+  margin-right: auto;
+  max-width: 420px;
+  
 }
 
 .FileUploader-detail label {

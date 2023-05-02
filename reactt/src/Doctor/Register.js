@@ -124,42 +124,170 @@ function Regdoc() {
 
 
   return (
-    <div className="doc-reg-container">
-      <h1>Doctor Registration</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Name:</label>
-        <input type="text" value={Name} onChange={handleFirstNameChange} />
+
+    <div>
+    <button className="login-go-back-btn" >Go back</button>
+    <div className="login-center">
+        <h1>Doctor Login</h1>
+        <form  method="post">
+
+        <div className="txt_field">
+              <input type="number" required/>
+              <span></span>
+              <label>Mobile Number</label>
+            </div>
 
 
-        <label>Age:</label>
-        <input type="number" value={Age} onChange={handleAgeChange} />
-
-        <label id="gen">Gender:</label>
-        <select id="gender_dropdown" onChange={handlegender}>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="others">Others</option>
-            <option value="Prefer not to say">Prefer not to say</option>
-        </select><br/>
-        {/* <input type="radio" value="Male" id="male" onChange={handleAgeChange} />
-        <label for="male">Male</label>
-        <input type="radio" value="Female" id="male" onChange={handleAgeChange} />
-        <label for="female">Female</label> */}
-
-
-
-        <label>Email:</label>
-        <input type="email" value={email} placeholder="(optional)" onChange={handleEmailChange} />
-
-        <label>Specialization:</label>
-        <input type="text" value={spec} placeholder="" onChange={handlespec} />
-
-        <label>Experience:</label>
-        <input type="" value={exp} placeholder="(in years)" onChange={handleexp} />
+          <div className="txt_field">
  
-        <button className="Login-doc-button" type="submit">Register</button>
-      </form>
-    </div>
+               
+               
+               <input type="text" value={Name} onChange={handleFirstNameChange} required/>
+               <span></span>
+
+               <label>Name</label>
+          </div>
+
+          <div className="txt_field">
+          <input type="number" value={Age} onChange={handleAgeChange} required/>
+          <span></span>
+ 
+              <label>Age:</label>
+          </div>
+
+          <select class="custom-select" onChange={handlegender}>
+            <option disabled>Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="others">Others</option>
+          <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+
+          {/* <label id="gen">Gender:</label> */}
+          {/* <div className="txt_field">
+
+          
+           
+           <select id="gender_dropdown" onChange={handlegender} required>
+              <option value="male">Male</option>
+                <option value="female">Female</option>
+              <option value="others">Others</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+           </select>
+
+          
+
+           
+
+ 
+          </div> */}
+
+          <div className="txt_field">
+
+          
+          <input type="email(optional)" value={email}  onChange={handleEmailChange} required/>
+          <span></span>
+          <label>Email:</label>
+
+
+ 
+
+          </div>
+
+          <div className="txt_field">
+
+          <input type="text" value={spec} placeholder="" onChange={handlespec} required/>
+
+          <span></span>
+
+
+            <label>Specialization:</label>
+
+ 
+          </div>
+
+          <div className="txt_field">
+
+          <input type="" value={exp} onChange={handleexp} required/>
+
+          <span></span>
+
+
+          <label>Experience(in years):</label>
+
+ 
+          </div>
+
+
+
+
+  {/* <input type="radio" value="Male" id="male" onChange={handleAgeChange} />
+  <label for="male">Male</label>
+  <input type="radio" value="Female" id="male" onChange={handleAgeChange} />
+  <label for="female">Female</label> */}
+
+
+
+  <button className="login-otp-button" type="submit">Register</button>
+
+
+         </form>
+       </div>
+   </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // <div className="doc-reg-container">
+    //   <h1>Doctor Registration</h1>
+    //   <form onSubmit={handleSubmit}>
+    //     <label>Name:</label>
+    //     <input type="text" value={Name} onChange={handleFirstNameChange} />
+
+
+    //     <label>Age:</label>
+    //     <input type="number" value={Age} onChange={handleAgeChange} />
+
+    //     <label id="gen">Gender:</label>
+    //     <select id="gender_dropdown" onChange={handlegender}>
+    //         <option value="male">Male</option>
+    //         <option value="female">Female</option>
+    //         <option value="others">Others</option>
+    //         <option value="Prefer not to say">Prefer not to say</option>
+    //     </select><br/>
+    //     {/* <input type="radio" value="Male" id="male" onChange={handleAgeChange} />
+    //     <label for="male">Male</label>
+    //     <input type="radio" value="Female" id="male" onChange={handleAgeChange} />
+    //     <label for="female">Female</label> */}
+
+
+
+    //     <label>Email:</label>
+    //     <input type="email" value={email} placeholder="(optional)" onChange={handleEmailChange} />
+
+    //     <label>Specialization:</label>
+    //     <input type="text" value={spec} placeholder="" onChange={handlespec} />
+
+    //     <label>Experience:</label>
+    //     <input type="" value={exp} placeholder="(in years)" onChange={handleexp} />
+ 
+    //     <button className="Login-doc-button" type="submit">Register</button>
+    //   </form>
+    // </div>
   );
 }
 

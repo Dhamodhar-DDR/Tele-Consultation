@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./styles/displayFiles.css";
+import { useSearchParams } from "react-router-dom";
 
 const DisplayFiles = () => {
   const [files,setFiles] = useState([]);
   useEffect(() => {
     display_file();
   }, [])
+  const[searchParams] = useSearchParams();
 
   const display_file = async() => {
     const formData = new FormData();
-    formData.append('pat_id', 1)
+    formData.append('pat_id', searchParams.get('pat_id'))
     await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
       method: 'POST',
       headers: {

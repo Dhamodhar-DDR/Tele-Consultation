@@ -2,6 +2,7 @@ import React from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import './styles/select_doc.css'
 import def_pp from '../imgs/profile.png'
+import Modal from "./UploadRecords"
 
 import { useState, useEffect } from "react";
 
@@ -11,6 +12,29 @@ function DoctorList() {
   const [doclist, setdoclist] = useState([])
   const[searchParams] = useSearchParams();
   const [prof_name, setprofname] = useState('')
+  const [showModal, setShowModal] = useState(false);
+  const [uploadType, setUploadType] = useState('sd');
+
+  const[send_did, setdid] = useState(-1)
+
+
+
+  const toggleModal = (param, did) => {
+    return (()=>{
+
+      
+      if(param!="close") 
+      {
+        setUploadType(param)
+        setdid(did)
+      }
+      setShowModal(!showModal);
+
+      
+
+    })
+  };
+
 
 
    function handleBookAppointment (doc_id) {
@@ -69,7 +93,9 @@ function DoctorList() {
           </div>
         </div>
         <div className="book-appointment">
-          <button onClick={handleBookAppointment(props.id)}>Book Appointment</button>
+          {/* <button onClick={handleBookAppointment(props.id)}>Book Appointment</button> */}
+          <button onClick={toggleModal('sd',props.id)}>Book Appointment</button>
+          
         </div>
       </div>
     );
@@ -195,7 +221,11 @@ const get_prof_name_by_id = async() => {
         ))}
 
       </div>
+
+      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={searchParams.get("pat_id")} app_id={-1} docto_id={send_did}/>)}
+      
     </div>
+    
   );
 }
 

@@ -62,6 +62,7 @@ function Homepat(){
     nav({
       pathname: '/upload_records',
       search: createSearchParams({
+        upload_t: 0,
         pat_id: pat_id
       }).toString()
     });

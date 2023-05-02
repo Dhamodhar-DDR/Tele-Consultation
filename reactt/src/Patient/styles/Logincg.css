@@ -56,6 +56,8 @@ form .txt_field{
   border-bottom: 2px solid #adadad;
   margin: 20px 0;
 }
+
+
 .txt_field input{
 width: 100%;
 padding: 0 5px;
@@ -189,4 +191,33 @@ text-decoration: underline;
   left: 10px;
   font-family: 'Google Sans', sans-serif;
   position: absolute;
+}
+
+
+
+
+
+.custom-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 57px;
+  padding: 10px 38px 10px 16px;
+  background: #fff url no-repeat right 16px center;
+  background-size: 10px;
+  transition: border-color .1s ease-in-out,box-shadow .1s ease-in-out;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+.custom-select:hover {
+  border: 1px solid #999;
+}
+.custom-select:focus {
+  border: 1px solid #999;
+  box-shadow: 0 3px 5px 0 rgba(0,0,0,.2);
+  outline: none;
+}
+/* remove default arrow in IE */
+select::-ms-expand {
+  display:none;
 }

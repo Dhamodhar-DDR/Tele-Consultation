@@ -63,6 +63,13 @@
   min-height: 200px;
 }
 
+#patnam
+{
+  background-color: #04AA6D;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* When the textarea gets focus, do something */
 .form-container textarea:focus {
   background-color: #ddd;

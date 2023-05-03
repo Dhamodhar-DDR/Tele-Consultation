@@ -43,6 +43,19 @@
     display: flex;
     gap: 1em;
 }
+#patnam
+{
+
+  background-color: #2b01a7;
+  left: 100px;
+  top: 92%;
+  flex-direction: column;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+  
+}
+
 
 
 .control-container{

@@ -7,6 +7,7 @@ import cam_icon from '../imgs/icons/camera.png'
 
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
+
     
     const [isLive, setIsLive] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -664,6 +665,7 @@ function DoctorCall() {
     };
 
     const [files,setFiles] = useState([]);
+    const [init_files, setinitFiles] = useState([]);
     // useEffect(() => {
     //   display_file();
     // }, [])
@@ -698,8 +700,12 @@ function DoctorCall() {
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
               setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
+              setinitFiles(files.slice(1, 3))
             };
             fileReader.readAsDataURL(blob);
+            console.log("files are ", files)
+            console.log("init files are ", init_files)
+
           })  
         }
         
@@ -758,7 +764,17 @@ function DoctorCall() {
         })
     
     }
+
+    const [lm, setlm] = useState(false);
     
+    const handleLoadMore = () => 
+    {
+
+
+        setlm(!lm)
+
+
+    }
     
 
     function handleClick() {
@@ -785,6 +801,10 @@ function DoctorCall() {
                 <button className="toggle-menu-call-btn" id="toggle-menu-call-btn-id" onClick={toggleLeftSidebar}>
                     ☰
                 </button>
+                <button className="toggle-menu-call-btn" id="patnam" onClick={toggleLeftSidebar}>
+                    Patient Name : {patientName}
+                </button>
+
                 <div className={`left-sidebar ${isLeftSideBarOpen}`}>
                     <button className="close-left-sidebar-btn" onClick={toggleLeftSidebar}>X</button>
                     <div className="left-sidebar-menu" id="left-sidebar-menu">
@@ -841,12 +861,31 @@ function DoctorCall() {
                         <div className="doc-call-file-list">
                             <h1>Health records</h1>
                             <ul className="file-list">
-                                {files.map((file, index) => (
+                                {/* {files.map((file, index) => (
+                                <li key={index} onClick={() => handleFileClick(file)}>
+                                    {file.name}
+                                </li>
+                                ))} */}
+                                <button onClick={handleLoadMore}> {lm ? 'Show Less' : 'Show More'}</button><br/>
+                                {
+                                    lm && (
+                                        files.map((file, index) => (
+                                            <li key={index} onClick={() => handleFileClick(file)}>
+                                                {file.name}
+                                            </li>
+                                            ))
+            
+
+                                    )
+
+                                }
+
+                                {files.slice(0,3).map((file, index) => (
                                 <li key={index} onClick={() => handleFileClick(file)}>
                                     {file.name}
                                 </li>
                                 ))}
-                                Load More
+
                             </ul>
                             {selectedFile && (
                                 <div className="modal">
@@ -888,13 +927,14 @@ function DoctorCall() {
             </div>
             <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
                 <button style = {{backgroundColor: "red"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
+                <h1 id="hch" className="headchat"> Chat </h1>
+
                     <div className="chat-popup" id="myChat">
                         <form className="form-container" id="cont">
-                            <h1>Chat</h1>
                             <small id="ch">Welcome to tele-consultation app</small>
                             <label for="msg"><b>Message</b></label>
-                            <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
-                            <button id="but" type="submit" className="btn" onClick={displayChat}>Send</button>
+                            <textarea placeholder="Type message.." name="msg" className="ta" required></textarea>
+                            <button id="sndbt" className="chatsend" type="submit"  onClick={displayChat}>Send</button>
                         </form>
                     </div>
             </div> 

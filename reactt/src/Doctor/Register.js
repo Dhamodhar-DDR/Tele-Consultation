@@ -194,17 +194,14 @@ function Regdoc() {
 
           </div>
 
-          <div className="txt_field">
+          <select class="custom-select" onChange={handlespec}>
+            <option disabled>Select Specialisation</option>
+            <option value="General">General</option>
+          <option value="Cardiologist">Cardiologist</option>
 
-          <input type="text" value={spec} placeholder="" onChange={handlespec} required/>
-
-          <span></span>
-
-
-            <label>Specialization:</label>
-
- 
-          </div>
+          <option value="Pulmonologist">Pulmonologist</option>
+          <option value="Dentist">Dentist</option>
+          </select>
 
           <div className="txt_field">
 

@@ -12,8 +12,8 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
   const [descriptions, setDescriptions] = useState([]);
   const [fileUrl, setFileUrl] = useState(null);
   const [fileType, setFileType] = useState(null);
-  const [spec,setSpec] = useState('');
   const[proceed, setpro] = useState(false);
+  const [spec, setspec] = useState("General");
 
   const nav = useNavigate();
   const handleFileUpload = (event) => {
@@ -189,26 +189,13 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
           .catch(error => {
             console.log(error);
           });
-<<<<<<< HEAD
         }
         else{
           //Write normal file upload api
         }
     }
     
-  const handleUpload = (event) => {
-=======
-        })
-        .catch(error => {
-          console.log(error);
-        });
-  
-      // }
-  
-  
-      }
 
-      const [spec, setspec] = useState("General");
 
   const handlespec = (e) => {
 
@@ -219,11 +206,10 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
   }
 
 
-  const handleSubmit = (event) => {
+  const handleUpload = (event) => {
 
     console.log('into handle submutx');
 
->>>>>>> 12c3db96926d3a2f2b53817eb5408edc45769a3b
     event.preventDefault();
 
     const formData = new FormData();
@@ -258,13 +244,20 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       <div className="upload-files-modal-content">
         <form className="FileUploader" encType="multipart/form-data" >
           <div className="FileUploader-header">
-<<<<<<< HEAD
-            <h2>Upload Health Records</h2>
-=======
             <h2>Choose Specialisation and Upload Health Records</h2>
->>>>>>> 12c3db96926d3a2f2b53817eb5408edc45769a3b
           </div>
-          {upload_type==="upload-follow-auto" || upload_type==="upload-auto"?<span><label >Select doctor specialization &nbsp; &nbsp;&nbsp;</label> <input onChange={(e)=>{setSpec(e.target.value)}}  type="text" placeholder="Specialization"/></span>:""}
+          {upload_type==="upload-follow-auto" || upload_type==="upload-auto"?
+          <div className='selectspec-div'>
+            <h3 className="selectspec-head">Select Specialisation </h3>
+            <select className="selectspec" onChange={handlespec}>
+              <option disabled>Select Specialisation</option>
+              <option value="General">General</option>
+              <option value="Cardiologist">Cardiologist</option>
+              <option value="Pulmonologist">Pulmonologist</option>
+              <option value="Dentist">Dentist</option>
+            </select>
+          </div>:""}
+          {/* {upload_type==="upload-follow-auto" || upload_type==="upload-auto"?<span><label >Select doctor specialization &nbsp; &nbsp;&nbsp;</label> <input onChange={(e)=>{setSpec(e.target.value)}}  type="text" placeholder="Specialization"/></span>:""} */}
           <div className='FileUploader-list'>
           {files.map((file, index) => (
             <div className="FileUploader-file" key={index}>
@@ -302,28 +295,13 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
               </div>
             </div>
           ))}
-<<<<<<< HEAD
           </div>
             <div className="FileUploader-btn-div">
+
           <button className="FileUploader-submit" type="button" onClick={handleAddFiles}> Add file</button>
           {upload_type!=="upload-normal"?<button className="FileUploader-submit" type="submit" onClick={handleBookApp}> Book appointment </button>:<button className="FileUploader-submit" type="submit" onClick={handleUpload}>Upload Records</button>}
           </div>
-=======
-          
-          <select class="selectspec" onChange={handlespec}>
-            <option disabled>Select Specialisation</option>
-            <option value="General">General</option>
-          <option value="Cardiologist">Cardiologist</option>
 
-          <option value="Pulmonologist">Pulmonologist</option>
-          <option value="Dentist">Dentist</option>
-          </select>
-
-          <button type="button" onClick={handleAddFiles}> Add Files</button>
-          <button className="FileUploader-submit" type="submit" onClick={handleSubmit}>
-            Submit
-          </button>
->>>>>>> 12c3db96926d3a2f2b53817eb5408edc45769a3b
         </form>
         <button className="upload-files-modal-close" onClick={toggle("close")}>
             X

@@ -8,7 +8,7 @@ import cam_icon from '../imgs/icons/camera.png'
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
 
-    
+
     const [isLive, setIsLive] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +30,8 @@ function DoctorCall() {
     const[patientGender,setPatientGender]  = useState("");
     const[diagnosis,setDiagnosis] = useState("");
     const[patpresent, setpatpresent] = useState(false);
-
+    const[prevDiagnosis,setPrevDiagnosis] = useState("");
+    
 
 
     const nav = useNavigate();
@@ -422,7 +423,6 @@ function DoctorCall() {
         console.log(earliest_app_response)
         try{
             const earliest_app = await earliest_app_response.json();
-            
             setAppointmentId(earliest_app.appointmentId);
             setPatientId(earliest_app.patientId);
             display_file(earliest_app.patientId);
@@ -437,12 +437,28 @@ function DoctorCall() {
                 },
                 body: JSON.stringify({pat_id: earliest_app.patientId})
             })
+
             const pat_details = await get_pat_body_response.json();
+            setfollowup(earliest_app.followup)
             setPatientName(pat_details.name);
             setPatientAge(pat_details.age);
             setPatientGender(pat_details.gender);
             setpatpresent(true);
 
+            // await fetch('http://localhost:8090/api/v1/patient/get_appointment_by_id',{
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Access-Control-Allow-Origin': '*'
+            //     },
+            //     body: JSON.stringify({appId: earliest_app.appointmentId})
+            // }).then(async(response)=>{
+            //     const data = await response.json();
+            // })
+            setPrevDiagnosis(earliest_app.description);
+
+
+            
 
             //Change this appointment to live and connect the patient
             const set_app_status_body = {
@@ -705,16 +721,15 @@ function DoctorCall() {
           fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'].data)
           .then(async(res)=>{
             const blob = await res.blob()
-            console.log(blob)
+            // console.log(blob)
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
               setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
               setinitFiles(files.slice(1, 3))
             };
             fileReader.readAsDataURL(blob);
-            console.log("files are ", files)
-            console.log("init files are ", init_files)
-
+            // console.log("files are ", files)
+            // console.log("init files are ", init_files)
           })  
         }
         
@@ -734,7 +749,8 @@ function DoctorCall() {
       setSelectedFile(null);
     }
     
-    const sendPres = async() => {
+    const sendPres = async(e) => {
+        e.preventDefault();
         const medNames_l = []
         const frequencies_l = []
         const descriptions_l = []
@@ -768,7 +784,7 @@ function DoctorCall() {
                 appId: appointmentId,
                 description: diagnosis 
             }
-            await fetch('http://localhost:8090/api/v1/prescription/set_app_description',{
+            await fetch('http://localhost:8090/api/v1/appointment/set_app_description',{
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -840,15 +856,11 @@ function DoctorCall() {
                           <div className="details-item"><b>Name</b>: {patientName}</div>
                           <div className="details-item"><b>Age</b>: {patientAge}</div>
                           <div className="details-item"><b>Gender</b>: {patientGender}</div>
-                          {true && <div className="details-item"><b>Diagnosis:</b></div>}
-
                     </div>
-                    <div className="patient-details" style={{marginTop:"30px"}}>
+                    {isfollowup && <div className="patient-details" style={{marginTop:"30px"}}>
                        <h2 className="details-header">Previous Appointment Diagnosis</h2>
-
-                          {true && <div className="details-item"><b></b></div>}
-
-                    </div>
+                          <div className="details-item">{prevDiagnosis}</div>
+                    </div>}
 
 
                         {/* <div>
@@ -984,13 +996,12 @@ function DoctorCall() {
             <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
                 <button style = {{backgroundColor: "red"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
                 <h1 id="hch" className="headchat"> Chat </h1>
-
                     <div className="chat-popup" id="myChat">
                         <form className="form-container" id="cont">
                             <small id="ch">Welcome to tele-consultation app</small>
                             <label for="msg"><b>Message</b></label>
-                            <textarea placeholder="Type message.." name="msg" className="ta" required></textarea>
-                            <button id="sndbt" className="chatsend" type="submit"  onClick={displayChat}>Send</button>
+                            <textarea placeholder="Type message.." name="msg" id="txt" className="ta" required></textarea>
+                            <button id="but" className="chatsend" type="submit"  onClick={displayChat}>Send</button>
                         </form>
                     </div>
             </div> 

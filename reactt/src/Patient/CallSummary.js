@@ -18,12 +18,17 @@ function CallSummary(){
         await fetch('http://localhost:8090/api/v1/appointment/get_appointment_by_id', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(body)
         })
-        .then(response => response.json())
+        .then(response => {if( !response.ok )
+
+          console.log( response );
+          else
+          response.json();})
         .then(data => {
             console.log("Appointment details ",data)
             setAppointment(data)
@@ -39,12 +44,17 @@ function CallSummary(){
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_id', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(body2)
         })
-        .then(response => response.json())
+        .then(response => {if( !response.ok )
+
+          console.log( response );
+          else
+          response.json();})
         .then(data => {
             console.log("Doctor details ",data)
             setDoctor(data)
@@ -64,13 +74,18 @@ function CallSummary(){
         await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(getpatidbody)
       
         })
-        .then(response => response.json())
+        .then(response => {if( !response.ok )
+
+          console.log( response );
+          else
+          response.json();})
         .then(data => {
           console.log("Online docs list get profff: ",data)
           setprofname(data.name)  
@@ -137,12 +152,17 @@ function CallSummary(){
           await fetch('http://localhost:8090/api/v1/prescription/get_prescription', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(getpresbody)
           })
-          .then(response => response.json())
+          .then(response => {if( !response.ok )
+
+            console.log( response );
+            else
+            response.json();})
           .then(data => {
             console.log("Prescriptions: ",data)
             generatePDF(data,appId, doc_name, doc_spec);

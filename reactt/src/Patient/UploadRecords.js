@@ -92,12 +92,17 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
         await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(create_app_body)
         })
-        .then(response => response.json())
+        .then(response =>{if( !response.ok )
+
+          console.log( response );
+          else
+          response.json();})
         .then(data => {
           console.log(data);
           console.log(data.appointmentId);
@@ -140,6 +145,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
     fetch('http://localhost:8090/api/v1/health_records/upload', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         // 'Content-Type': 'multipart/form-data',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -147,6 +153,11 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
     })
     .then(response => {
       // Handle the response from the server
+      if( !response.ok )
+
+      console.log( response );
+        else
+        response.json();
       console.log(response);
       toggle("close");
     })

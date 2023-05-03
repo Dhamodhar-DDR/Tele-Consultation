@@ -15,6 +15,7 @@ const DisplayFiles = () => {
     await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         // 'Content-Type': 'multipart/form-data',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -22,6 +23,11 @@ const DisplayFiles = () => {
       body: formData
     })
     .then((response) => {
+      if( !response.ok )
+
+      console.log( response );
+        else
+        response.json();
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

@@ -276,7 +276,7 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
-                
+        'Authorization': localStorage.getItem('jwtToken_doc'),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
             },
@@ -303,7 +303,7 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
             method: 'POST',
             headers: {
-                
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
@@ -391,7 +391,7 @@ function DoctorCall() {
             const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
-                    
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
@@ -407,6 +407,7 @@ function DoctorCall() {
         const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -445,6 +446,7 @@ function DoctorCall() {
             const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                     
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
@@ -462,6 +464,7 @@ function DoctorCall() {
                 const set_start_time_response = await fetch('http://localhost:8090/api/v1/appointment/set_start_time', {
                     method: 'POST',
                     headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                         
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*'
@@ -534,6 +537,7 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -560,6 +564,7 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -674,6 +679,8 @@ function DoctorCall() {
       await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
           // 'Content-Type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -744,6 +751,8 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/prescription/add_prescription',{
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*' 
             },

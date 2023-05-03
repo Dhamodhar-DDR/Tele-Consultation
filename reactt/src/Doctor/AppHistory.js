@@ -35,6 +35,7 @@ function DocAppoinHist() {
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_appointments', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },

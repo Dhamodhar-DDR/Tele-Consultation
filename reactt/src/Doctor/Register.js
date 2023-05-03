@@ -75,6 +75,8 @@ function Regdoc() {
       await fetch('http://localhost:8090/api/v1/doctor/add_doctor', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -88,6 +90,8 @@ function Regdoc() {
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
           method: 'POST',
           headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },

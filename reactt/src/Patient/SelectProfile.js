@@ -32,6 +32,7 @@ function ProfileSelector() {
       await fetch('http://localhost:8090/api/v1/patient/display_profiles', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -54,6 +55,7 @@ function ProfileSelector() {
         await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },

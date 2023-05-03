@@ -31,12 +31,17 @@ async function HandleBookApp({doc_id,p_id}) {
       await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(create_app_body)
       })
-      .then(response => response.json())
+      .then(response => {if( !response.ok )
+
+        console.log( response );
+        else
+        response.json();})
       .then(data => {
         console.log(data);
         console.log(data.appointmentId);

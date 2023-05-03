@@ -26,6 +26,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_followup_appointments', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -51,6 +52,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -94,6 +96,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -151,6 +154,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
@@ -171,7 +175,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
         method: 'POST',
         headers: {
-            
+        'Authorization': localStorage.getItem('jwtToken_doc'), //patient jwt token
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },

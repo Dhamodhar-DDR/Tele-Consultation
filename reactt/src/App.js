@@ -25,7 +25,7 @@ function App()
   return (
   <Router>
     <Routes>
-      <Route exact path="/" element={<Page1 />} />
+      <Route exact path="/" element={<Page1 />}/>
       <Route exact path="/login_p" element={<Logincg />} />     
       <Route exact path="/register_p" element={<Regc />} />
       <Route exact path="/login_doc" element={<Logindoc />} />

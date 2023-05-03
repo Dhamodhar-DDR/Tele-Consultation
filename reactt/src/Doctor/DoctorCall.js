@@ -27,7 +27,7 @@ function DoctorCall() {
     const[patientName,setPatientName]  = useState("");
     const[patientAge,setPatientAge]  = useState("");
     const[patientGender,setPatientGender]  = useState("");
-
+    const[diagnosis,setDiagnosis] = useState("");
 
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
@@ -331,6 +331,7 @@ function DoctorCall() {
     }, [isLoading]);
 
     useEffect(() => {
+        console.log(searchParams.get("pat_id"),searchParams.get("doc_id"),searchParams.get("app_id"))
         init().then(()=>{
             console.log(localStream)
         });
@@ -650,7 +651,10 @@ function DoctorCall() {
         setInputFields(values);
     };
 
-
+    const handleDiagChange = (event) => {
+        event.preventDefault;
+        setDiagnosis(event.target.value);
+    };
     const handleInput3Change = (index, event) => {
         const values = [...inputFields];
         values[index].description = event.target.value;
@@ -711,7 +715,6 @@ function DoctorCall() {
   
     const [selectedFile, setSelectedFile] = useState(null);
 
-
     const handleFileClick = (file) => {
       setSelectedFile(file);
     }
@@ -749,33 +752,32 @@ function DoctorCall() {
             },
             body: JSON.stringify(send_pres_body)
         })
-        .then((response) => {
+        .then(async(response) => {
+            const send_pres_diag = {
+                appId: appointmentId,
+                description: diagnosis 
+            }
+            await fetch('http://localhost:8090/api/v1/prescription/set_app_description',{
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*' 
+                },
+                body: JSON.stringify(send_pres_diag )
+            })
+            .then(response2=>console.log(response2))
+            .catch(err=>console.log(err))
             setIsPresSent(true);
             console.log(response);
         })
         .catch((err)=>{
             console.log(err);
         })
-    
     }
     
     
-
     function handleClick() {
       setIsLoading(!isLoading);
-      console.log("SD")
-    //   Perform the action that triggers loading
-    //   For example, fetch data from an API
-    //   fetch("https://example.com/api/data")
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       // Handle the data
-    //       setIsLoading(false);
-    //     })
-    //     .catch((error) => {
-    //       // Handle the error
-    //       setIsLoading(false);
-    //     });
     }
 
     return (
@@ -817,6 +819,9 @@ function DoctorCall() {
                         {!isPresSent ? 
                         (
                         <div>
+                        {inputFields.length >= 0 ?<textarea required rows="5" cols="58" value={diagnosis} 
+                         onChange={(event) => handleDiagChange(event)} className="diagnosis-input" type="text-area" placeholder="Diagnosis"></textarea>:""}
+                        <div className="pres-scroll-unlock">
                         {inputFields.map((inputField, index) => (
                             <div className = "field" key={index}>
                                 <div className="inputs">
@@ -827,7 +832,8 @@ function DoctorCall() {
                                 <button className="bin" onClick={() => handleRemoveFields(index)}>🗑</button>
                             </div> 
                         ))}
-                        {inputFields.length > 0 ?<p>Prescriptions are auto saved</p>:""}
+                        </div>
+                        {inputFields.length > 0 ?<p>*Prescriptions are auto saved</p>:""}
                         <div className="writePres-btn-div">
                             <button className="writePres-add-btn"onClick={handleAddFields}>Add prescription</button>
                             {inputFields.length > 0 ? <button className="writePres-add-btn" onClick={sendPres}>Send prescriptions</button> : ""}

@@ -12,10 +12,62 @@ public class AppointmentService {
     public AppointmentService(AppointmentRepository appointmentRepository){
         this.appointmentRepository = appointmentRepository;
     }
-
-    public Appointment createAppointment(Timestamp bookingTime, int patientId, String doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason, String status, String description) {
+    public Appointment createAppointment_N(Timestamp bookingTime, int patientId, int doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason, String status, String description) {
         Appointment appointment = new Appointment(bookingTime, patientId, doctorId, startTime, endTime, isFollowup, markForFollowup, followupReason, status, description);
         return appointmentRepository.save(appointment);
+    }
+    private Integer find_prev_app_doc_id(int patientId) {
+        Integer docId = appointmentRepository.find_prev_app_doc_id(patientId);
+        if(docId == null) return -1;
+        else return docId;
+    }
+    public Appointment createAppointment_FP(Timestamp bookingTime, int patientId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason, String status, String description) {
+        int doctorId = find_prev_app_doc_id(patientId);
+        if(doctorId==-1) return null;
+        Appointment appointment = new Appointment(bookingTime, patientId, doctorId, startTime, endTime, isFollowup, markForFollowup, followupReason, status, description);
+        return appointmentRepository.save(appointment);
+    }
+
+    private Integer get_least_waiting_docId(String specialization) {
+        Integer docId = appointmentRepository.get_least_waiting_docId(specialization);
+        if(docId == null) return -1;
+        else return docId;
+    }
+    public Appointment createAppointment_FA(String specialization, Timestamp bookingTime, int patientId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason, String status, String description) {
+        int doctorId = get_least_waiting_docId(specialization);
+        if(doctorId==-1) return null;
+        Appointment appointment = new Appointment(bookingTime, patientId, doctorId, startTime, endTime, isFollowup, markForFollowup, followupReason, status, description);
+        return appointmentRepository.save(appointment);
+    }
+
+    public Appointment createAppointment_A(String specialization,Timestamp bookingTime, int patientId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason, String status, String description) {
+        int doctorId = get_least_waiting_docId(specialization);
+        if(doctorId==-1) return null;
+        Appointment appointment = new Appointment(bookingTime, patientId, doctorId,startTime, endTime, isFollowup, markForFollowup, followupReason, status, description);
+        return appointmentRepository.save(appointment);
+    }
+
+    public Integer get_next_best_doc(int id){
+        String spec = appointmentRepository.get_doc_spec_from_app(id);
+        Integer doctorId = get_least_waiting_docId(spec);
+        if(doctorId != -1) {
+            Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
+            if (optionalAppointment.isPresent()) {
+                Appointment appointment = optionalAppointment.get();
+                appointment.setDoctorId(doctorId);
+                appointmentRepository.save(appointment);
+            }
+            return doctorId;
+        }
+        else return null;
+    }
+    public void setAppDescription(int appId, String desc){
+        Optional<Appointment> optionalAppointment = appointmentRepository.findById(appId);
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+            appointment.setDescription(desc);
+            appointmentRepository.save(appointment);
+        }
     }
 
     public boolean setMarkForFollowup(int id, boolean value) {
@@ -58,6 +110,7 @@ public class AppointmentService {
             return false;
         }
     }
+
     public boolean setEndTime(int id, Timestamp value) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
         if (optionalAppointment.isPresent()) {

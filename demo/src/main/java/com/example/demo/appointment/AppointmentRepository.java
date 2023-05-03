@@ -32,5 +32,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     @Query(value = "SELECT * FROM Appointment where doctor_id = :docId AND mark_for_followup = true ORDER BY booking_time ASC",nativeQuery = true)
     List<Appointment> get_doctor_followup_appointments(@Param("docId") Integer docId);
     Appointment findByAppointmentId(Integer appId);
+    @Query(value = "SELECT a.doctor_id FROM Appointment a JOIN Doctor d ON a.doctor_id = d.doctor_id WHERE a.patient_id = :patId AND a.status = 'completed' AND d.online_status = 1 ORDER BY a.booking_time DESC LIMIT 1;",nativeQuery = true)
+    Integer find_prev_app_doc_id(@Param("patId") int patientId);
+    @Query(value = "SELECT d.doctor_id, d.name, COUNT(a.appointment_id) AS waiting_appointments FROM Doctor d LEFT JOIN Appointment a ON d.doctor_id = a.doctor_id AND a.status = 'waiting' WHERE d.online_status = 1 AND d.specialization = :spec GROUP BY d.doctor_id ORDER BY waiting_appointments ASC LIMIT 1", nativeQuery = true)
+    Integer get_least_waiting_docId(@Param("spec") String specialization);
+    @Query(value = "SELECT d.specialization FROM Doctor d JOIN Appointment a ON d.doctor_id = a.doctor_id WHERE a.appointment_id = :appId", nativeQuery = true)
+    String get_doc_spec_from_app(@Param("appId") int appId);
 }
 

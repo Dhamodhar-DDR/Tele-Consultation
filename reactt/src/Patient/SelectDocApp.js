@@ -21,23 +21,16 @@ function DoctorList() {
 
   const toggleModal = (param, did) => {
     return (()=>{
-
-      
       if(param!="close") 
       {
         setUploadType(param)
         setdid(did)
       }
       setShowModal(!showModal);
-
-      
-
     })
   };
 
-
-
-   function handleBookAppointment (doc_id) {
+  function handleBookAppointment (doc_id) {
     return async function() {
       const now = new Date(); // get current date and time
       const timestamp = now.toISOString(); // convert to ISO string
@@ -223,7 +216,7 @@ const get_prof_name_by_id = async() => {
 
       </div>
 
-      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={searchParams.get("pat_id")} app_id={-1} docto_id={send_did}/>)}
+      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={searchParams.get("pat_id")} app_id={-1} doctor_id={send_did}/>)}
       
     </div>
     

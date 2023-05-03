@@ -12,6 +12,7 @@ function Homepat(){
 
   const toggleModal = (param) => {
     return (()=>{
+      console.log("Close called!")
       if(param!="close") setUploadType(param)
       setShowModal(!showModal);
     })

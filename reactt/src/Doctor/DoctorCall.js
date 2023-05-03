@@ -7,6 +7,7 @@ import cam_icon from '../imgs/icons/camera.png'
 
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
+
     
     const [isLive, setIsLive] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -28,6 +29,9 @@ function DoctorCall() {
     const[patientAge,setPatientAge]  = useState("");
     const[patientGender,setPatientGender]  = useState("");
     const[diagnosis,setDiagnosis] = useState("");
+    const[patpresent, setpatpresent] = useState(false);
+
+
 
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
@@ -111,6 +115,7 @@ function DoctorCall() {
         setPatientAge("")
         setPatientGender("")
         setPatientName("")
+        setpatpresent(false)
     }
 
     let handleMessageFromPeer = async (message, MemberId) => {
@@ -436,6 +441,7 @@ function DoctorCall() {
             setPatientName(pat_details.name);
             setPatientAge(pat_details.age);
             setPatientGender(pat_details.gender);
+            setpatpresent(true);
 
 
             //Change this appointment to live and connect the patient
@@ -668,6 +674,7 @@ function DoctorCall() {
     };
 
     const [files,setFiles] = useState([]);
+    const [init_files, setinitFiles] = useState([]);
     // useEffect(() => {
     //   display_file();
     // }, [])
@@ -702,8 +709,12 @@ function DoctorCall() {
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
               setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
+              setinitFiles(files.slice(1, 3))
             };
             fileReader.readAsDataURL(blob);
+            console.log("files are ", files)
+            console.log("init files are ", init_files)
+
           })  
         }
         
@@ -774,8 +785,21 @@ function DoctorCall() {
             console.log(err);
         })
     }
+
+    const [lm, setlm] = useState(false);
     
+    const handleLoadMore = () => 
+    {
+
+
+        setlm(!lm)
+
+
+    }
+
+    const [isfollowup, setfollowup] = useState(false);
     
+
     function handleClick() {
       setIsLoading(!isLoading);
     }
@@ -787,6 +811,14 @@ function DoctorCall() {
                 <button className="toggle-menu-call-btn" id="toggle-menu-call-btn-id" onClick={toggleLeftSidebar}>
                     ☰
                 </button>
+                {/* <button className="toggle-menu-call-btn" id="patnam" onClick={toggleLeftSidebar}>
+                    Patient Name : {patientName}
+                </button>
+                <button id='pname' className={`controls ${isLeftSideBarOpen}`} >
+                    Patient Name : {patientName}
+                    </button> */}
+
+
                 <div className={`left-sidebar ${isLeftSideBarOpen}`}>
                     <button className="close-left-sidebar-btn" onClick={toggleLeftSidebar}>X</button>
                     <div className="left-sidebar-menu" id="left-sidebar-menu">
@@ -798,18 +830,34 @@ function DoctorCall() {
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
                     </div>
-                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button className="savemark" onClick={saveFollowup}>Save</button></div></div>  : <></>}
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
                             <a href="#" onClick={togglePatientProf} className="previous">&#8249;</a>
                         </div>
-                        <div>
+                    <div className="patient-details">
+                          <h2 className="details-header">Patient details</h2>
+                          <div className="details-item"><b>Name</b>: {patientName}</div>
+                          <div className="details-item"><b>Age</b>: {patientAge}</div>
+                          <div className="details-item"><b>Gender</b>: {patientGender}</div>
+                          {true && <div className="details-item"><b>Diagnosis:</b></div>}
+
+                    </div>
+                    <div className="patient-details" style={{marginTop:"30px"}}>
+                       <h2 className="details-header">Previous Appointment Diagnosis</h2>
+
+                          {true && <div className="details-item"><b></b></div>}
+
+                    </div>
+
+
+                        {/* <div>
                             <h2>Patient details</h2>
                             <div><b>Name</b> : {patientName}</div>
                             <div><b>Age</b> : {patientAge}</div>
                             <div><b>Gender</b> : {patientGender}</div>
-                            {/* <h4>Description provided by patient: </h4> */}
-                        </div>
+
+                        </div> */}
                     </div> 
 
                     <div className="left-sidebar-writePres" id="left-sidebar-writePres">
@@ -847,12 +895,31 @@ function DoctorCall() {
                         <div className="doc-call-file-list">
                             <h1>Health records</h1>
                             <ul className="file-list">
-                                {files.map((file, index) => (
+                                {/* {files.map((file, index) => (
+                                <li key={index} onClick={() => handleFileClick(file)}>
+                                    {file.name}
+                                </li>
+                                ))} */}
+                                <button onClick={handleLoadMore}> {lm ? 'Show Less' : 'Show More'}</button><br/>
+                                {
+                                    lm && (
+                                        files.map((file, index) => (
+                                            <li key={index} onClick={() => handleFileClick(file)}>
+                                                {file.name}
+                                            </li>
+                                            ))
+            
+
+                                    )
+
+                                }
+
+                                {files.slice(0,3).map((file, index) => (
                                 <li key={index} onClick={() => handleFileClick(file)}>
                                     {file.name}
                                 </li>
                                 ))}
-                                Load More
+
                             </ul>
                             {selectedFile && (
                                 <div className="modal">
@@ -868,13 +935,23 @@ function DoctorCall() {
                         </div>
                     </div>
                 </div>
-                {/* <button onClick={init}>Start connection</button> */}
+
                 <div className={`content ${isLeftSideBarOpen}`}>
                     <div id="videos" className={`videos ${isLeftSideBarOpen}`} style={{height:'100vh'}}>
+
+                {patpresent && (<div id='pname' className = "sttop" >
+                    Patient Name : {patientName}
+                    </div>)}
+
+
                         <video className="doc-video-player" id="user-1" autoPlay playsInline></video>
                         <video className="doc-video-player" id="user-2" autoPlay playsInline></video>
                     </div>
+
+
+
                     <div id="doc-video-controls" className={`controls ${isLeftSideBarOpen}`}>
+
                         <div className={`vid-cb ${isLeftSideBarOpen}`}>
                             {Consultation_Button()} 
                         </div>
@@ -884,23 +961,36 @@ function DoctorCall() {
                         <div onClick={toggleMic} className="control-container" id="mic-btn">
                             <img src={mic_icon}/>
                         </div>
+
                         {/* <button className="next-patient-btn" onClick={handlenextPatient}>Next patient</button> */}
                         <button className={`np-button ${isLoading ? "loading" : ""}`} onClick={handleClick}>
                         {isLoading ? <div className="spinner"></div> : "Next Patient"}
                         </button>
+
                     </div>
+
+                    <div id="patdetails" className={`controls ${isLeftSideBarOpen}`}>
+
+
+
+
+                    </div>
+
+
+
                 </div>
                 <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>
             </div>
             <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
                 <button style = {{backgroundColor: "red"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
+                <h1 id="hch" className="headchat"> Chat </h1>
+
                     <div className="chat-popup" id="myChat">
                         <form className="form-container" id="cont">
-                            <h1>Chat</h1>
                             <small id="ch">Welcome to tele-consultation app</small>
                             <label for="msg"><b>Message</b></label>
-                            <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
-                            <button id="but" type="submit" className="btn" onClick={displayChat}>Send</button>
+                            <textarea placeholder="Type message.." name="msg" className="ta" required></textarea>
+                            <button id="sndbt" className="chatsend" type="submit"  onClick={displayChat}>Send</button>
                         </form>
                     </div>
             </div> 

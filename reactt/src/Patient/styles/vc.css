@@ -5,6 +5,7 @@
 }
 
 #videos{
+    position: relative;
     display: grid;
     grid-template-columns: 1fr;
     height: 96vh;
@@ -43,6 +44,82 @@
     display: flex;
     gap: 1em;
 }
+#patnam
+{
+
+  background-color: #2b01a7;
+  left: 100px;
+  top: 89%;
+  flex-direction: column;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+  
+}
+
+#pname{
+    
+    text-shadow: 2px 2px #000000;
+    border: wheat;
+    background: transparent;
+    color: aliceblue;
+    left: 45vw;
+    right: auto;
+    position: absolute;
+    z-index: 999;
+    
+    background: transparent;
+    opacity: 0.85;
+    
+    
+    top: 2%;
+    flex-direction: column;
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
+  
+
+}
+.savemark{
+
+    background-color: #7a4eff;
+    margin-left: 110px;
+
+
+
+}
+
+
+.patient-details {
+    background-color: #ffc18377;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .details-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2f2f2f;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .details-item {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444444;
+  }
+  
+  .details-item b {
+    font-weight: 900;
+    color: #333333;
+    margin-right: 5px;
+  }
+  
+
 
 
 .control-container{

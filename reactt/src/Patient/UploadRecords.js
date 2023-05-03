@@ -120,6 +120,16 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
   
       }
 
+      const [spec, setspec] = useState("General");
+
+  const handlespec = (e) => {
+
+    setspec(e.target.value);
+    console.log("Selected Spec: ",spec)
+
+
+  }
+
 
   const handleSubmit = (event) => {
 
@@ -182,7 +192,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
       <div className="upload-files-modal-content">
         <form className="FileUploader" encType="multipart/form-data" onSubmit={handleSubmit}>
           <div className="FileUploader-header">
-            <h2>Upload Health Records {upload_type}</h2>
+            <h2>Choose Specialisation and Upload Health Records</h2>
           </div>
           {files.map((file, index) => (
             <div className="FileUploader-file" key={index}>
@@ -220,6 +230,16 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
               </div>
             </div>
           ))}
+          
+          <select class="selectspec" onChange={handlespec}>
+            <option disabled>Select Specialisation</option>
+            <option value="General">General</option>
+          <option value="Cardiologist">Cardiologist</option>
+
+          <option value="Pulmonologist">Pulmonologist</option>
+          <option value="Dentist">Dentist</option>
+          </select>
+
           <button type="button" onClick={handleAddFiles}> Add Files</button>
           <button className="FileUploader-submit" type="submit" onClick={handleSubmit}>
             Submit

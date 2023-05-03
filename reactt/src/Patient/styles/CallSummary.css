@@ -41,3 +41,13 @@
     border: 1px solid #ccc;
     display: none;
 }
+
+.closeX {
+    
+    margin-top: auto;
+    background-color: rgb(247, 96, 96);
+    flex-direction: column;
+    margin-left: 190px;
+    border-radius: 100%;
+}
+

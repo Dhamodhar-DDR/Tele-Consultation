@@ -16,7 +16,7 @@ function Regdoc() {
   const[searchParams] = useSearchParams();
   const [Name, setFirstName] = useState("");
   const [email, setEmail] = useState("");
-  const[spec, setSpec] = useState("");
+  const[spec, setSpec] = useState("General");
   const[exp, setExp] = useState("");
   const [gender, setgender] = useState("male");
   const [Age, setAge] = useState("");

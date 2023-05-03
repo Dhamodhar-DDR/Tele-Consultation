@@ -198,7 +198,7 @@ function CallSummary(){
                 </div>
             </div>
             <div id="pres-view-popup" className="appHis-popup">
-            <button onClick={closePopup}>Close</button>
+            <button className="closeX" onClick={closePopup}>x</button>
             <iframe id="pdf-frame" title="pdf" src="" width="100%" height="100%"></iframe>
           </div>
         </div>

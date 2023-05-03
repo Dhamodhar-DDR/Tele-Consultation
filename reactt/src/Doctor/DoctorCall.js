@@ -28,6 +28,9 @@ function DoctorCall() {
     const[patientName,setPatientName]  = useState("");
     const[patientAge,setPatientAge]  = useState("");
     const[patientGender,setPatientGender]  = useState("");
+    const[patpresent, setpatpresent] = useState(false);
+
+
 
 
     const nav = useNavigate();
@@ -112,6 +115,7 @@ function DoctorCall() {
         setPatientAge("")
         setPatientGender("")
         setPatientName("")
+        setpatpresent(false)
     }
 
     let handleMessageFromPeer = async (message, MemberId) => {
@@ -436,6 +440,7 @@ function DoctorCall() {
             setPatientName(pat_details.name);
             setPatientAge(pat_details.age);
             setPatientGender(pat_details.gender);
+            setpatpresent(true);
 
 
             //Change this appointment to live and connect the patient
@@ -775,6 +780,8 @@ function DoctorCall() {
 
 
     }
+
+    const [isfollowup, setfollowup] = useState(false);
     
 
     function handleClick() {
@@ -801,9 +808,13 @@ function DoctorCall() {
                 <button className="toggle-menu-call-btn" id="toggle-menu-call-btn-id" onClick={toggleLeftSidebar}>
                     ☰
                 </button>
-                <button className="toggle-menu-call-btn" id="patnam" onClick={toggleLeftSidebar}>
+                {/* <button className="toggle-menu-call-btn" id="patnam" onClick={toggleLeftSidebar}>
                     Patient Name : {patientName}
                 </button>
+                <button id='pname' className={`controls ${isLeftSideBarOpen}`} >
+                    Patient Name : {patientName}
+                    </button> */}
+
 
                 <div className={`left-sidebar ${isLeftSideBarOpen}`}>
                     <button className="close-left-sidebar-btn" onClick={toggleLeftSidebar}>X</button>
@@ -816,18 +827,34 @@ function DoctorCall() {
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
                     </div>
-                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button className="savemark" onClick={saveFollowup}>Save</button></div></div>  : <></>}
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
                             <a href="#" onClick={togglePatientProf} className="previous">&#8249;</a>
                         </div>
-                        <div>
+                    <div className="patient-details">
+                          <h2 className="details-header">Patient details</h2>
+                          <div className="details-item"><b>Name</b>: {patientName}</div>
+                          <div className="details-item"><b>Age</b>: {patientAge}</div>
+                          <div className="details-item"><b>Gender</b>: {patientGender}</div>
+                          {true && <div className="details-item"><b>Diagnosis:</b></div>}
+
+                    </div>
+                    <div className="patient-details" style={{marginTop:"30px"}}>
+                       <h2 className="details-header">Previous Appointment Diagnosis</h2>
+
+                          {true && <div className="details-item"><b></b></div>}
+
+                    </div>
+
+
+                        {/* <div>
                             <h2>Patient details</h2>
                             <div><b>Name</b> : {patientName}</div>
                             <div><b>Age</b> : {patientAge}</div>
                             <div><b>Gender</b> : {patientGender}</div>
-                            {/* <h4>Description provided by patient: </h4> */}
-                        </div>
+
+                        </div> */}
                     </div> 
 
                     <div className="left-sidebar-writePres" id="left-sidebar-writePres">
@@ -901,13 +928,23 @@ function DoctorCall() {
                         </div>
                     </div>
                 </div>
-                {/* <button onClick={init}>Start connection</button> */}
+
                 <div className={`content ${isLeftSideBarOpen}`}>
                     <div id="videos" className={`videos ${isLeftSideBarOpen}`} style={{height:'100vh'}}>
+
+                {patpresent && (<div id='pname' className = "sttop" >
+                    Patient Name : {patientName}
+                    </div>)}
+
+
                         <video className="doc-video-player" id="user-1" autoPlay playsInline></video>
                         <video className="doc-video-player" id="user-2" autoPlay playsInline></video>
                     </div>
+
+
+
                     <div id="doc-video-controls" className={`controls ${isLeftSideBarOpen}`}>
+
                         <div className={`vid-cb ${isLeftSideBarOpen}`}>
                             {Consultation_Button()} 
                         </div>
@@ -917,11 +954,23 @@ function DoctorCall() {
                         <div onClick={toggleMic} className="control-container" id="mic-btn">
                             <img src={mic_icon}/>
                         </div>
+
                         {/* <button className="next-patient-btn" onClick={handlenextPatient}>Next patient</button> */}
                         <button className={`np-button ${isLoading ? "loading" : ""}`} onClick={handleClick}>
                         {isLoading ? <div className="spinner"></div> : "Next Patient"}
                         </button>
+
                     </div>
+
+                    <div id="patdetails" className={`controls ${isLeftSideBarOpen}`}>
+
+
+
+
+                    </div>
+
+
+
                 </div>
                 <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>
             </div>

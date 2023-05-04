@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./styles/displayFiles.css";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams,createSearchParams, useNavigate} from "react-router-dom";
 
 const DisplayFiles = () => {
+
+  const nav = useNavigate();
   const [files,setFiles] = useState([]);
   useEffect(() => {
     display_file();

@@ -7,6 +7,7 @@ import cam_icon from '../imgs/icons/camera.png'
 
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
+    const [savefu, setsavefu] = useState(false)
 
 
     const [isLive, setIsLive] = useState("");
@@ -548,6 +549,9 @@ function DoctorCall() {
     };
 
     const toggleFollowUp = async() => {
+
+        
+        // setsavefu(!savefu)
         if (markForFollowUp) setFollowUpReason(""); 
         const set_follow_up_body = {
             appId :  appointmentId,
@@ -567,13 +571,21 @@ function DoctorCall() {
         .then(data => {
             console.log("Online status: ",data)
             setMarkForFollowUp(!markForFollowUp);
+            console.log("mark for followup is ,",markForFollowUp)
+            if(markForFollowUp)
+            {
+                setsavefu(!savefu)
+            }
         })
         .catch(error => {
             console.log(error)
         });
     }
+
+   
     
     const saveFollowup = async() => {
+        setsavefu(!savefu)
         const set_follow_up_body = {
             appId :  appointmentId,
             mark : true,
@@ -846,7 +858,9 @@ function DoctorCall() {
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
                     </div>
-                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button className="savemark" onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    {console.log("save state is : ", savefu)}
+                    {(markForFollowUp&&!savefu) ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button className="savemark" onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
                             <a href="#" onClick={togglePatientProf} className="previous">&#8249;</a>

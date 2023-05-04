@@ -129,7 +129,7 @@ function Regdoc() {
     <button className="login-go-back-btn" >Go back</button>
     <div className="login-center">
         <h1>Doctor Login</h1>
-        <form  method="post">
+        <form  method="post" onSubmit={handleSubmit}>
 
         <div className="txt_field">
               <input type="number" required/>

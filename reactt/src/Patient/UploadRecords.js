@@ -15,6 +15,8 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
   const[proceed, setpro] = useState(false);
   const [spec, setspec] = useState("General");
 
+  const [da, setda] = useState(true)
+
   const nav = useNavigate();
   const handleFileUpload = (event) => {
     const newFiles = [...files];
@@ -184,6 +186,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             }
             catch{
               console.log("NO doctor available with this specialization!")
+              setda(false)
             } 
           })
           .catch(error => {
@@ -200,7 +203,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
   const handlespec = (e) => {
 
     setspec(e.target.value);
-    console.log("Selected Spec: ",spec)
+    console.log("Selected Spec: ",e.target.value)
 
 
   }
@@ -300,6 +303,18 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
 
           <button className="FileUploader-submit" type="button" onClick={handleAddFiles}> Add file</button>
           {upload_type!=="upload-normal"?<button className="FileUploader-submit" type="submit" onClick={handleBookApp}> Book appointment </button>:<button className="FileUploader-submit" type="submit" onClick={handleUpload}>Upload Records</button>}
+
+
+          {
+           (da == false)?(
+            <>
+            <br/>
+            <br/>
+              <p style={{color:"red"}}> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Selected Specialization not available. </p>
+            </>
+           ):null
+
+           }
           </div>
 
         </form>

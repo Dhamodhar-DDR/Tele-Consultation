@@ -32,6 +32,17 @@ public class PatientController {
 
             Boolean consent
     ){}
+
+    record new_profile_request(
+            Integer pat_id,
+            String name,
+            int age,
+            String gender,
+
+            String email,
+
+            Boolean consent
+    ){}
     @CrossOrigin
     @PostMapping("/create")
     public Patient create_patient(@RequestBody new_patient_request npr) {
@@ -58,5 +69,17 @@ public class PatientController {
     @PostMapping("/get_patient_by_id")
     public Patient get_patient_by_id(@RequestBody get_patient_by_id_body gpbib) {
         return this.patientService.get_patient_by_id(gpbib.pat_id);
+    }
+
+    @CrossOrigin
+    @PostMapping("/get_all_profiles")
+    public List<Patient> get_all_profiles(@RequestBody get_patient_by_id_body reqbod) {
+        return this.patientService.get_all_profiles(reqbod.pat_id);
+    }
+
+    @CrossOrigin
+    @PostMapping("/add_new_profile")
+    public Patient add_new_profile(@RequestBody new_profile_request npr) {
+        return this.patientService.add_new_profile(npr.pat_id,npr.name,npr.age, npr.gender, npr.email, npr.consent);
     }
 }

@@ -1,10 +1,6 @@
 package com.example.demo.doctor;
 
-import com.example.demo.patient.Patient;
-import com.example.demo.patient.PatientController;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

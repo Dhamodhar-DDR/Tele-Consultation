@@ -2,7 +2,7 @@
 import React, { useState,useCallback,useEffect,Component, useRef} from "react";
 import { createSearchParams, useNavigate } from 'react-router-dom';
 
-import './Login.css'
+import './styles/Login.css'
 
 function Logindoc() {
 
@@ -73,7 +73,9 @@ function Logindoc() {
   const handlePhoneChange = (e) => {
     setPhone(e.target.value);
   };
-
+  const goBack = () =>{
+    nav('/')
+  }
   const handleOtpChange = (e) => {
     setOtp(e.target.value);
   };
@@ -125,6 +127,7 @@ function Logindoc() {
       console.log(data)
       
       if(data == "approved")
+      // if(true)
       {
         const check_new_user_body = {
           'mobile_number' : phone
@@ -159,37 +162,44 @@ function Logindoc() {
   };
 
   return (
-    <div className="container">
-      <h1>Doctor Login</h1>
-      <form>
-        <label>Phone Number:</label>
-        <input type="number" value={phone} onChange={handlePhoneChange} />
+    <div >
+      <button className="login-go-back-btn" onClick={goBack}>Go back</button>
+      <div className="login-center">
+          <h1>Doctor Login</h1>
+          <form  method="post">
+            <div className="txt_field">
+              <input type="number" value={phone} onChange={handlePhoneChange} required/>
+              <span></span>
+              <label>Mobile Number</label>
+            </div>
+            {showOtp? (
+              <>
+                <div className="txt_field">
+                  <input value={otp} onChange={handleOtpChange} type="password"  required/>
+                  <span></span>
+                  <label>OTP</label>
+                </div>
+              </>
+            ):null}
 
-        {showOtp? (
+            
+            {/* <input type="submit" value="Login"/> */}
+
+            {(!showOtp)?(
+                <button className="login-otp-button" onClick={handleSendOtpClick}>Send OTP</button>
+              ):null}
+
+          {showOtp? (
           <>
-            <label>OTP:</label>
-            <input type="number" value={otp} onChange={handleOtpChange} />
-          </>
-        ):null}
+            <button className="login-otp-button" onClick={handleLoginClick}>Login</button>
+            <div className="signup_link"><a href="#" onClick={handleSendOtpClick}>Resend OTP ?</a></div>
 
-        {(!showOtp)?(
-          <button className="Login-doc-button" onClick={handleSendOtpClick}>Send OTP</button>
-        ):null}
-
-        {showOtp? (
-          <>
-          <button className="Login-doc-button" onClick={handleLoginClick}>Login</button> <br/>
           {/* {console.log(timerout)} */}
-          
-          <button className="Login-doc-button" onClick={handleSendOtpClick} >Resend OTP</button>
-          </>
-          
-        ): null}
-
-
-
-      </form>
+          </>): null}
+          </form>
+        </div>
     </div>
+    
   );
 }
 

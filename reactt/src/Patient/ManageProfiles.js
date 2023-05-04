@@ -17,6 +17,7 @@ function PatList() {
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -52,7 +53,7 @@ function PatList() {
   const nav = useNavigate();
   
   const pat_id = searchParams.get("pat_id");
-  
+  console.log("loook ", pat_id)
   const get_all_profiles = async() => {
     const getProfilesBody = {
       pat_id : searchParams.get('pat_id')
@@ -60,8 +61,10 @@ function PatList() {
     await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
       method: 'POST',
       headers: {
+        'Access-Control-Allow-Origin': '*' ,
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
+        // 'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getProfilesBody)
     })

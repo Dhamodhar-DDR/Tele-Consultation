@@ -42,19 +42,19 @@ function Homepat(){
       },
       body: JSON.stringify(getpatidbody)
     })
-    .then(response =>  {
-      if( !response.ok ){
-console.log("yep");
-nav({
-  pathname: '/login_p',
+    .then(response =>  { response.json();
+//       if( !response.ok ){
+// console.log("yep");
+// nav({
+//   pathname: '/login_p',
   // search: createSearchParams({
   //   mobile: phone
   // }).toString()
-});
-alert("Please login again")
-        catchError( response );}
-        else
-        response.json();
+// });
+// alert("Please login again")
+//         catchError( response );}
+//         else
+//         response.json();
     })
     .then(data => {
       console.log("Online docs list get profff: ",data)

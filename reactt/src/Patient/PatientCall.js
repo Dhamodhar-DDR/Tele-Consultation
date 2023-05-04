@@ -348,8 +348,7 @@ function PatientCall() {
         return data;
     }
 
-    const handleLeaveCall = async(e) => {
-        e.preventDefault();
+    const handleLeaveCall = async() => {
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
         await leaveChannel();

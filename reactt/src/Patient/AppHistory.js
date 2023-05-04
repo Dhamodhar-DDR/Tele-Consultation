@@ -38,7 +38,7 @@ function AppoinHist() {
     })
     .then(response => response.json())
     .then(data => {
-      console.log("Online apoin list get profff: ",data)
+      // console.log("Online apoin list get profff: ",data)
       settappoinlist(data)  
     })
     .catch(error => {
@@ -97,31 +97,31 @@ function AppoinHist() {
         });
       }
 
-      const generatePDF = (data,appointment_id, doc_name, doc_spec) => {
+      const generatePDF = (data,appointment,appointment_id, doc_name, doc_spec) => {
         const doc = new jspdf();
-        let line_number = 0; 
+        let line_number = 1; 
         
         doc.setFont('Arial, sans-serif', 'bold');
         doc.setFontSize(24);
-        doc.text('Tele Consultation Platform - Prescriptions', 10, line_number*10+5 + 10);
+        doc.text('Tele Consultation Platform - Prescriptions', 10, line_number*10+10);
+        line_number+=1;
         doc.setLineWidth(0.5);
         doc.setDrawColor(180, 180, 180);
-        doc.line(10, 22, 200, 22); // x1, y1, x2, y2
-
+        doc.line(10, line_number*10+8, 200, line_number*10+8); // x1, y1, x2, y2
         doc.setFont('Arial, sans-serif', 'normal');
         doc.setFontSize(14);
-        
         line_number+=1;
+        doc.text('Appointment Id    : ' + appointment_id, 10, line_number*10 + 10);
         line_number+=1;
-        doc.text('Appointment Id: ' + appointment_id, 10, line_number*10 + 10);
+        doc.text('Patient Name        : ' + prof_name, 10, line_number*10 + 10);
         line_number+=1;
-        doc.text('Patient Name: ' + prof_name, 10, line_number*10 + 10);
-        line_number+=1;
-        // doc.text('Gender: ', 10, line_number*10 + 10);
+        // doc.text('Patient Age: ' , 10, line_number*10 + 10);
         // line_number+=1;
-        doc.text('Doctor Consulted: Dr.' + doc_name + ' (' + doc_spec +')', 10, line_number*10 + 10);
+        doc.text('Doctor Consulted : Dr.' + doc_name + ' (' + doc_spec +')', 10, line_number*10 + 10);
         line_number+=1;
-        doc.line(10, 54, 200, 54); // x1, y1, x2, y2
+        doc.text('Diagnosis              : ' + appointment.description, 10, line_number*10 + 10);
+        line_number+=1;
+        doc.line(10, line_number*10+5, 200, line_number*10+5); // x1, y1, x2, y2
         line_number+=1;
 
         if(data.length == 0) {
@@ -144,10 +144,11 @@ function AppoinHist() {
         const iframe = document.querySelector('.appHis-popup iframe');
         iframe.src = pdfUrl;
         setShowPopup(true);
-        document.getElementById("pres-view-popup").style.display = 'block';
+        document.getElementById("pres-view-popup").style.display = 'flex';
+        // document.getElementById("pres-view-popup").style.display = 'block';
       };
       
-      const viewPrescription = async(appId, doc_name, doc_spec) =>{
+      const viewPrescription = async(appointment,appId, doc_name, doc_spec) =>{
           const getpresbody = {appId: appId}
           await fetch('http://localhost:8090/api/v1/prescription/get_prescription', {
             method: 'POST',
@@ -160,7 +161,7 @@ function AppoinHist() {
           .then(response => response.json())
           .then(data => {
             console.log("Prescriptions: ",data)
-            generatePDF(data,appId, doc_name, doc_spec);
+            generatePDF(data,appointment,appId, doc_name, doc_spec);
           })
           .catch(error => {
             console.log(error)
@@ -171,6 +172,16 @@ function AppoinHist() {
         setShowPopup(false);
         document.getElementById("pres-view-popup").style.display = 'none';
       };
+
+      const convertTime=(curr) =>{
+        if(curr!==null)
+        {
+          const df = new Date(curr);
+          const date_str = String(df);
+          return <>{date_str.substring(0,date_str.length-31)+" IST"}</>; //prints date in current locale
+        }
+        else return <></>
+      }
     
       return (
       <div>
@@ -199,22 +210,22 @@ function AppoinHist() {
                   <div className="doctor-info">
                     <p className="doctor-name">{appointment.name}</p>
                     <div className="doctor-spec"><b>{appointment.specialization}</b></div>
-                    <div className="info-label"><b>Call Start Time:</b> {appointment.appointment.startTime}</div>
+                    <div className="info-label"><b>Call Start Time:</b> {convertTime(appointment.appointment.startTime)}</div>
                     {/* <div className="info-value">{doctor.startTime}</div> */}
-                    <div className="info-label"><b>Call End Time:</b> {appointment.appointment.endTime}</div>
+                    <div className="info-label"><b>Call End Time:</b> {convertTime(appointment.appointment.endTime)}</div>
                     {/* <div className="info-value">{doctor.endTime}</div> */}
                     <div className="info-label"><b>Status: </b>{appointment.appointment.status}</div>
                     {/* <div className="info-value">{doctor.endTime}</div> */}
                     
-                    <button onClick={()=>viewPrescription(appointment.appointment.appointmentId,appointment.name,appointment.specialization)}>View Prescriptions</button>
+                    <button onClick={()=>viewPrescription(appointment.appointment,appointment.appointment.appointmentId,appointment.name,appointment.specialization)}>View Prescriptions</button>
                   </div>
                 </div>
               </li>
             ))}
           </ul>
           <div id="pres-view-popup" className="appHis-popup">
-            <button onClick={closePopup}>Close</button>
-            <iframe id="pdf-frame" title="pdf" src="" width="100%" height="100%"></iframe>
+            <button className="appHis-popup-btn" onClick={closePopup}>X</button>
+            <iframe id="pdf-frame" title="pdf" src="" width="90%" height="90%"></iframe>
           </div>
         </div>
       </div>

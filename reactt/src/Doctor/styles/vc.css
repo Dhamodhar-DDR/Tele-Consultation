@@ -18,6 +18,41 @@
   transition: 0.2s ease-in-out;
 }
 
+.chat-doc-msg{
+  border: 1px solid rgb(175, 175, 175);
+  border-radius: 10px;
+  padding: 5px;
+  white-space: pre-line;
+  right: 0px;
+  width: 70%;
+  margin-bottom: 10px;
+  background-color: #f4f4f4;
+}
+
+
+.chat-pat-msg{
+  border: 1px solid rgb(175, 175, 175);
+  border-radius: 10px;
+  padding: 5px;
+  white-space: pre-line;
+  width: 70%;
+  margin-left: 25%;
+  margin-bottom: 10px;
+}
+
+#ch2{
+  /* min-height: 500px; */
+  min-height: 50vh;
+  white-space: pre-line;
+  max-height: 50vh;
+  font-size: 14px;
+  /* overflow-y: scroll; */
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+
+}
+
 .videos.open {
   transform: translateY(0%);
   overflow: hidden;
@@ -79,30 +114,40 @@
 /* Full-width textarea */
 .form-container textarea {
   width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  border: none;
-  background: #f1f1f1;
+  padding: 10px;
+  /* margin: 5px 0 5px 0; */
+  background: #ddd;
+  font-family: 'Google Sans', sans-serif;
+  border: 1px solid rgb(177, 177, 177);
+  border-radius: 10px;
+  margin-bottom: 0px;
   resize: none;
-  min-height: 200px;
+  /* min-height: 200px; */
 }
 
 /* When the textarea gets focus, do something */
 .form-container textarea:focus {
-  background-color: #ddd;
+  background-color: #ffffff;
   outline: none;
 }
 
 /* Set a style for the submit/login button */
-.form-container .btn {
-  background-color: #04AA6D;
+.form-container .send-msg-btn {
+  font-family: 'Google Sans', sans-serif;
+  background-color: #3174d8;
   color: white;
   padding: 16px 20px;
   border: none;
   cursor: pointer;
   width: 100%;
-  margin-bottom:10px;
+  /* margin-bottom:10px; */
   opacity: 0.8;
+  transition: 0.2s ease-in-out;
+}
+
+.form-container .send-msg-btn:hover{
+  background-color:#085fe2;
+  transition: 0.2s ease-in-out;
 }
 
 /* Add a red background color to the cancel button */
@@ -177,9 +222,9 @@
     width: 30px;
 }
 
-#leave-btn{
+/* #leave-btn{
     background-color: rgb(255,80,80, 1);
-}
+} */
 
 @media screen and (max-width:600px) {
         .smallFrame{
@@ -290,9 +335,14 @@
 
 .chat-popup #ch{
   /* min-height: 500px; */
-  height: 500px;
-  overflow-y: auto;
+  /* height: 50vh;
+  /* overflow-y: scroll; */
+  /* overflow: auto;
+  display: flex;
+  flex-direction: column-reverse; */
+
 }
+
 
 .toggle-char-call-btn {
   z-index: 1000;

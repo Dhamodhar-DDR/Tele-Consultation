@@ -1,4 +1,4 @@
-import React,{ useState, useEffect, useRef ,Component} from "react";
+import React,{ useState, useEffect, useRef} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
 import './styles/vc.css'
@@ -104,9 +104,14 @@ function DoctorCall() {
         console.log('New message received')
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
-        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
-        let elem = document.getElementById('ch');
-        elem.scrollTop = elem.scrollHeight;
+        // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('chat-pat-msg');
+        const divText = document.createTextNode("Patient: " + messages['message']);
+        newDiv.appendChild(divText);
+        document.getElementById('ch2').appendChild(newDiv);
+        document.getElementById('ch2').scrollTop = document.getElementById('ch2').scrollHeight;
+
     }
 
 
@@ -250,28 +255,38 @@ function DoctorCall() {
         }
     }
 
-    let displayChat = async () =>{
+    let displayChat = async (e) =>{
+        e.preventDefault();
         console.log("closed")
-        console.log(document.getElementById('txt').value);
-        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + document.getElementById('txt').value;
+        const message = document.getElementById('txt').value;
+        // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + document.getElementById('txt').value;
+        
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('chat-doc-msg');
+        const divText = document.createTextNode("Doctor: " + message);
+        newDiv.appendChild(divText);
+        document.getElementById('ch2').appendChild(newDiv);
+        document.getElementById('ch2').scrollTop = document.getElementById('ch2').scrollHeight;
+        // document.getElementById('ch2').insertBefore(newDiv, parent.firstChild);
+        // document.getElementById('ch').appendChild(newDiv);
+        
+        sendMessage(message);
         document.getElementById('cont').scrollTop = document.getElementById('cont').scrollHeight;
         document.getElementById('txt').value = "";
-
     }
 
-    let sendMessage = async(e) => {
-        e.preventDefault()
-        let message = document.getElementById('txt').value;
+    let sendMessage = (message) => {
+        console.log('messagy',message)
         channel.current.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
         console.log("message sent")
     }
 
 
-    window.addEventListener('mousemove', (e) => {
-        e.preventDefault()
-        let  myChat = document.getElementById('but')
-        myChat.addEventListener('click', sendMessage)
-    })
+    // window.addEventListener('mousemove', (e) => {
+    //     e.preventDefault()
+    //     let  myChat = document.getElementById('but')
+    //     myChat.addEventListener('click', sendMessage)
+    // })
 
     window.addEventListener('beforeunload', leaveChannel)
 
@@ -426,7 +441,6 @@ function DoctorCall() {
             const earliest_app = await earliest_app_response.json();
             setAppointmentId(earliest_app.appointmentId);
             setPatientId(earliest_app.patientId);
-            display_file(earliest_app.patientId);
             
             setIsLoading(false);
             const get_pat_body_response = await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
@@ -495,6 +509,7 @@ function DoctorCall() {
                 setIsPresSent(false)
                 console.log("Next patient status changed!")
             }
+            display_file(earliest_app.patientId);
         } catch(err) {
             console.log("No users!")
             setAppointmentId(-1);
@@ -729,7 +744,7 @@ function DoctorCall() {
       .then((list) => {
           for(const element of list)
           {
-            console.log(element)
+            // console.log(element)
           fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'].data)
           .then(async(res)=>{
             const blob = await res.blob()
@@ -816,14 +831,7 @@ function DoctorCall() {
 
     const [lm, setlm] = useState(false);
     
-    const handleLoadMore = () => 
-    {
-
-
-        setlm(!lm)
-
-
-    }
+    const handleLoadMore = () => setlm(!lm);
 
     const [isfollowup, setfollowup] = useState(false);
     
@@ -921,11 +929,7 @@ function DoctorCall() {
                         <div className="doc-call-file-list">
                             <h1>Health records</h1>
                             <ul className="file-list">
-                                {/* {files.map((file, index) => (
-                                <li key={index} onClick={() => handleFileClick(file)}>
-                                    {file.name}
-                                </li>
-                                ))} */}
+
                                 <button onClick={handleLoadMore}> {lm ? 'Show Less' : 'Show More'}</button><br/>
                                 {
                                     lm && (
@@ -995,33 +999,26 @@ function DoctorCall() {
 
                     </div>
 
-                    <div id="patdetails" className={`controls ${isLeftSideBarOpen}`}>
-
-
-
-
-                    </div>
-
-
-
+                    <div id="patdetails" className={`controls ${isLeftSideBarOpen}`}></div>
                 </div>
                 <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>
             </div>
             <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
-                <button style = {{backgroundColor: "red"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
+                <button style = {{backgroundColor: "rgba(227, 43, 43, 0.919);"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
                 <h1 id="hch" className="headchat"> Chat </h1>
-                    <div className="chat-popup" id="myChat">
-                        <form className="form-container" id="cont">
-                            <small id="ch">Welcome to tele-consultation app</small>
-                            <label for="msg"><b>Message</b></label>
-                            <textarea placeholder="Type message.." name="msg" id="txt" className="ta" required></textarea>
-                            <button id="but" className="chatsend" type="submit"  onClick={displayChat}>Send</button>
-                        </form>
-                    </div>
+                <div className="chat-popup" id="myChat">
+                    <form className="form-container" id="cont">
+                        <div id="ch2"></div>
+                        {/* <small id="ch">Welcome to tele-consultation app</small> */}
+                        <label for="msg">Send a message</label>
+                        <textarea rows='4' placeholder="Type message.." name="msg" id="txt" className="chat-text-area" required></textarea>
+                        {/* <button id="but" className="chatsend" type="submit"  onClick={displayChat}>Send</button> */}
+                        <button id="but" type="submit" className="send-msg-btn" onClick={displayChat}>Send</button>
+                    </form>
+                </div>
             </div> 
         </div>
     );
 }
 
 export default DoctorCall;
-

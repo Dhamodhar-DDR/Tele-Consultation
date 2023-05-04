@@ -1,4 +1,4 @@
-import React,{ useState, useEffect} from "react";
+import React,{ useState, useEffect, useRef} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
 import './styles/vc.css'
@@ -9,6 +9,8 @@ import cam_icon from '../imgs/icons/camera.png'
 function PatientCall() {
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
+    const [isRightSideBarOpen, setisRightSideBarOpen] = useState(false);
+
     var isConsultationActive = false;    
     var chat = 0;
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
@@ -16,12 +18,13 @@ function PatientCall() {
     let token = null;
     let uid = "p_"+String(searchParams.get("pat_id"))
 
-    let client;
-    let channel;
+    let client = useRef(null);
+    let channel = useRef(null);
+
 
     let roomId = searchParams.get("doc_id")
 
-    let localStream;
+    let localStream = useRef(null);
     let remoteStream;
     let peerConnection;
 
@@ -62,24 +65,24 @@ function PatientCall() {
             if(isConsultationActive)
             {
                 console.log('Started !');
-                client = await AgoraRTM.createInstance(APP_ID)
-                await client.login({uid, token})
+                client.current = await AgoraRTM.createInstance(APP_ID)
+                await client.current.login({uid, token})
 
-                channel = client.createChannel(roomId)
-                await channel.join().then(() => {
-                    console.log('Joined channel', roomId);
-                    }).catch((err) => {
-                        console.log(`Error logging in to Agora RTM: ${err}`);
-                    });
+                channel.current = client.current.createChannel(roomId)
+                await channel.current.join().then(() => {
+                console.log('Joined channel', roomId);
+                }).catch((err) => {
+                    console.log(`Error logging in to Agora RTM: ${err}`);
+                });
 
-                channel.on('MemberJoined', handleUserJoined)
-                channel.on('MemberLeft', handleUserLeft)
-                channel.on('ChannelMessage', handleMyChat)
+                channel.current.on('MemberJoined', handleUserJoined)
+                channel.current.on('MemberLeft', handleUserLeft)
+                channel.current.on('ChannelMessage', handleMyChat)
 
-                client.on('MessageFromPeer', handleMessageFromPeer)
+                client.current.on('MessageFromPeer', handleMessageFromPeer)
 
-                localStream = await navigator.mediaDevices.getUserMedia(constraints)
-                document.getElementById('user-1').srcObject = localStream
+                localStream.current = await navigator.mediaDevices.getUserMedia(constraints)
+                document.getElementById('user-1').srcObject = localStream.current
             }
         })
     }
@@ -87,7 +90,14 @@ function PatientCall() {
         console.log('New message received')
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
-        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + messages['message'];
+        // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + messages['message'];
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('chat-doc-msg');
+        const divText = document.createTextNode("Doctor: " + messages['message']);
+        newDiv.appendChild(divText);
+        document.getElementById('ch2').appendChild(newDiv);
+        document.getElementById('ch2').scrollTop = document.getElementById('ch2').scrollHeight;
+        
     }
 
     let handleUserLeft = (MemberId) => {
@@ -140,13 +150,13 @@ function PatientCall() {
         document.getElementById('user-1').classList.add('smallFrame')
 
 
-        if(!localStream){
-            localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false})
-            document.getElementById('user-1').srcObject = localStream
+        if(!localStream.current){
+            localStream.current = await navigator.mediaDevices.getUserMedia({video:true, audio:false})
+            document.getElementById('user-1').srcObject = localStream.current
         }
 
-        localStream.getTracks().forEach((track) => {
-            peerConnection.addTrack(track, localStream)
+        localStream.current.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, localStream.current)
         })
 
         peerConnection.ontrack = (event) => {
@@ -157,7 +167,7 @@ function PatientCall() {
 
         peerConnection.onicecandidate = async (event) => {
             if(event.candidate){
-                client.sendMessageToPeer({text:JSON.stringify({'type':'candidate', 'candidate':event.candidate})}, MemberId)
+                client.current.sendMessageToPeer({text:JSON.stringify({'type':'candidate', 'candidate':event.candidate})}, MemberId)
             }
         }
     }
@@ -168,7 +178,7 @@ function PatientCall() {
         let offer = await peerConnection.createOffer()
         await peerConnection.setLocalDescription(offer)
 
-        client.sendMessageToPeer({text:JSON.stringify({'type':'offer', 'offer':offer})}, MemberId)
+        client.current.sendMessageToPeer({text:JSON.stringify({'type':'offer', 'offer':offer})}, MemberId)
     }
 
 
@@ -182,7 +192,7 @@ function PatientCall() {
 
         console.log("answer, ",answer," offer: ",offer)
 
-        client.sendMessageToPeer({text:JSON.stringify({'type':'answer', 'answer':answer})}, MemberId)
+        client.current.sendMessageToPeer({text:JSON.stringify({'type':'answer', 'answer':answer})}, MemberId)
     }
 
 
@@ -194,12 +204,12 @@ function PatientCall() {
 
 
     let leaveChannel = async () => {
-        await channel.leave()
-        await client.logout()
+        await channel.current.leave()
+        await client.current.logout()
     }
 
     let toggleCamera = async () => {
-        let videoTrack = localStream.getTracks().find(track => track.kind === 'video')
+        let videoTrack = localStream.current.getTracks().find(track => track.kind === 'video')
 
         if(videoTrack.enabled){
             videoTrack.enabled = false
@@ -211,7 +221,7 @@ function PatientCall() {
     }
 
     let toggleMic = async () => {
-        let audioTrack = localStream.getTracks().find(track => track.kind === 'audio')
+        let audioTrack = localStream.current.getTracks().find(track => track.kind === 'audio')
 
         if(audioTrack.enabled){
             audioTrack.enabled = false
@@ -235,28 +245,33 @@ function PatientCall() {
         }
     }
 
-    let displayChat = async () =>{
+    let displayChat = async (e) =>{
+        e.preventDefault();
         console.log("closed")
-        console.log(document.getElementById('txt').value);
-        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + document.getElementById('txt').value;
-        document.getElementById('cont').scrollTop = document.getElementById('cont').scrollHeight;
+        const message = document.getElementById('txt').value;
+        sendMessage(message);
+        // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + document.getElementById('txt').value;
+        // document.getElementById('cont').scrollTop = document.getElementById('cont').scrollHeight;
+        
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('chat-pat-msg');
+        const divText = document.createTextNode("Patient: " + message);
+        newDiv.appendChild(divText);
+        document.getElementById('ch2').appendChild(newDiv);
+        document.getElementById('ch2').scrollTop = document.getElementById('ch2').scrollHeight;
         document.getElementById('txt').value = "";
-        }
+    }
 
-        let sendMessage = async(e) => {
-            e.preventDefault()
-            let message = document.getElementById('txt').value;
-            //let message = e.target.msg.value
-            //console.log("e: ", e)
-            channel.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
-            console.log("message sent")
-        }
+    let sendMessage = (message) => {
+        channel.current.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
+        console.log("message sent")
+    }
 
-        window.addEventListener('mousemove', (e) => {
-            e.preventDefault()
-            let  myChat = document.getElementById('but')
-            myChat.addEventListener('click', sendMessage)
-        })
+    // window.addEventListener('mousemove', (e) => {
+    //     e.preventDefault()
+    //     let  myChat = document.getElementById('but')
+    //     myChat.addEventListener('click', sendMessage)
+    // })
 
     window.addEventListener('beforeunload', leaveChannel)
 
@@ -334,10 +349,10 @@ function PatientCall() {
     }
 
     const handleLeaveCall = async(e) => {
-        console.log(e);
-
+        e.preventDefault();
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
+        await leaveChannel();
         nav({
             pathname: '/call_summary',
             search: createSearchParams({
@@ -346,12 +361,17 @@ function PatientCall() {
                 app_id: searchParams.get("app_id")
             }).toString()
         });
-        await leaveChannel();
         window.location.reload();
     }
+    
+    const toggleRightSidebar = () => {
+        setisRightSideBarOpen(!isRightSideBarOpen);
+    };
 
     useEffect(() => {
-        init();
+        init().then(()=>{
+            console.log(localStream)
+        });
     },[]);
 
   return (
@@ -373,28 +393,31 @@ function PatientCall() {
 
 
             <div id="controls">
+            <button className="patcall-leave-button" id="leave-btn" onClick={handleLeaveCall}>
+              Leave Call
+            </button>
             <div onClick={toggleCamera} className="control-container" id="camera-btn">
                 <img src={cam_icon} />
             </div>
             <div onClick={toggleMic} className="control-container" id="mic-btn">
                 <img src={mic_icon}/>
             </div>
-            <button className="leave-button" id="leave-btn" onClick={handleLeaveCall}>
-              Leave Call
-            </button>
-            <button style = {{backgroundColor: "cyan"}} onClick={toggleChat}>chat</button>
+            <button className="pat-call-chat-open-btn" onClick={toggleRightSidebar}>Chat</button>
         </div>
         </div>
-        <div class="chat-popup" id="myChat">
-  <form class="form-container" id="cont">
-    <h1>Chat</h1>
-    <small id="ch">Welcome to tele-consultation app</small>
-    <label for="msg"><b>Message</b></label>
-    <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
-
-    <button id="but" type="submit" class="btn" onClick={displayChat}>Send</button>
-  </form>
-</div>
+        <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
+            <button style = {{backgroundColor: "red"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
+            {/* <h1 id="hch" className="headchat"> Chat </h1> */}
+            <h1>Chat</h1>
+            <div class="chat-popup" id="myChat">
+            <form class="form-container" id="cont">
+                <div id="ch2"></div>
+                <label for="msg">Send a message</label>
+                <textarea rows='4' id="txt" placeholder="Type message.." name="msg" required></textarea>
+                <button id="but" type="submit" className="send-msg-btn" onClick={displayChat}>Send</button>
+            </form>
+            </div>
+        </div>
     </div>
   );
 }

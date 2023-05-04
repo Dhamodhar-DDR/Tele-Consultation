@@ -19,6 +19,24 @@
     object-fit: cover;
 }
 
+.patcall-leave-button{
+  font-family: 'Google Sans', sans-serif;
+  background-color: rgba(227, 43, 43, 0.919);
+  
+}
+
+.patcall-leave-button:hover{
+  background-color: rgba(206, 6, 6, 0.919);
+}
+
+.pat-call-chat-open-btn{
+  font-family: 'Google Sans', sans-serif;
+  background-color: rgba(43, 98, 227, 0.919);
+}
+.pat-call-chat-open-btn:hover{
+  background-color: rgba(2, 71, 231, 0.919);
+}
+
 #user-2{
     display:none;
 }
@@ -81,14 +99,36 @@
 
 }
 .savemark{
-
     background-color: #7a4eff;
     margin-left: 110px;
-
-
-
 }
 
+.right-sidebar {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
+  }
+  
+.right-sidebar.open {
+    right: 0;
+}
+  
+  
+.chat-popup #ch{
+    /* min-height: 500px; */
+    height: 50vh;
+    /* overflow-y: scroll; */
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+  
+  }
 
 .patient-details {
     background-color: #ffc18377;
@@ -137,9 +177,9 @@
     width: 30px;
 }
 
-#leave-btn{
+/* #leave-btn{
     background-color: rgb(255,80,80, 1);
-}
+} */
 
 @media screen and (max-width:600px) {
         .smallFrame{

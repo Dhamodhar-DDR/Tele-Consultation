@@ -1,4 +1,4 @@
-import React,{ useState, useEffect, useRef ,Component} from "react";
+import React,{ useState, useEffect, useRef} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
 import './styles/vc.css'
@@ -7,7 +7,9 @@ import cam_icon from '../imgs/icons/camera.png'
 
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
-    
+    const [savefu, setsavefu] = useState(false)
+
+
     const [isLive, setIsLive] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -27,6 +29,10 @@ function DoctorCall() {
     const[patientName,setPatientName]  = useState("");
     const[patientAge,setPatientAge]  = useState("");
     const[patientGender,setPatientGender]  = useState("");
+    const[diagnosis,setDiagnosis] = useState("");
+    const[patpresent, setpatpresent] = useState(false);
+    const[prevDiagnosis,setPrevDiagnosis] = useState("");
+    
 
 
     const nav = useNavigate();
@@ -98,9 +104,14 @@ function DoctorCall() {
         console.log('New message received')
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
-        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
-        let elem = document.getElementById('ch');
-        elem.scrollTop = elem.scrollHeight;
+        // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('chat-pat-msg');
+        const divText = document.createTextNode("Patient: " + messages['message']);
+        newDiv.appendChild(divText);
+        document.getElementById('ch2').appendChild(newDiv);
+        document.getElementById('ch2').scrollTop = document.getElementById('ch2').scrollHeight;
+
     }
 
 
@@ -111,6 +122,7 @@ function DoctorCall() {
         setPatientAge("")
         setPatientGender("")
         setPatientName("")
+        setpatpresent(false)
     }
 
     let handleMessageFromPeer = async (message, MemberId) => {
@@ -243,28 +255,38 @@ function DoctorCall() {
         }
     }
 
-    let displayChat = async () =>{
+    let displayChat = async (e) =>{
+        e.preventDefault();
         console.log("closed")
-        console.log(document.getElementById('txt').value);
-        document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + document.getElementById('txt').value;
+        const message = document.getElementById('txt').value;
+        // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + document.getElementById('txt').value;
+        
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('chat-doc-msg');
+        const divText = document.createTextNode("Doctor: " + message);
+        newDiv.appendChild(divText);
+        document.getElementById('ch2').appendChild(newDiv);
+        document.getElementById('ch2').scrollTop = document.getElementById('ch2').scrollHeight;
+        // document.getElementById('ch2').insertBefore(newDiv, parent.firstChild);
+        // document.getElementById('ch').appendChild(newDiv);
+        
+        sendMessage(message);
         document.getElementById('cont').scrollTop = document.getElementById('cont').scrollHeight;
         document.getElementById('txt').value = "";
-
     }
 
-    let sendMessage = async(e) => {
-        e.preventDefault()
-        let message = document.getElementById('txt').value;
+    let sendMessage = (message) => {
+        console.log('messagy',message)
         channel.current.sendMessage({text:JSON.stringify({'type': 'chat', 'message': message})})
         console.log("message sent")
     }
 
 
-    window.addEventListener('mousemove', (e) => {
-        e.preventDefault()
-        let  myChat = document.getElementById('but')
-        myChat.addEventListener('click', sendMessage)
-    })
+    // window.addEventListener('mousemove', (e) => {
+    //     e.preventDefault()
+    //     let  myChat = document.getElementById('but')
+    //     myChat.addEventListener('click', sendMessage)
+    // })
 
     window.addEventListener('beforeunload', leaveChannel)
 
@@ -282,7 +304,15 @@ function DoctorCall() {
             },
             body: JSON.stringify(check_status_body)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.json();
+          })
         .then(data => {
             setIsConsultationActive(data);
         })
@@ -309,7 +339,15 @@ function DoctorCall() {
             },
             body: JSON.stringify(set_online_status_body)
         })
-        .then(response => response.text())
+        .then(response => {
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.json();
+          })
         .then(data => {
             console.log("Online status: ",data)
             setIsConsultationActive(param)
@@ -331,6 +369,7 @@ function DoctorCall() {
     }, [isLoading]);
 
     useEffect(() => {
+        console.log(searchParams.get("pat_id"),searchParams.get("doc_id"),searchParams.get("app_id"))
         init().then(()=>{
             console.log(localStream)
         });
@@ -397,6 +436,12 @@ function DoctorCall() {
                 },
                 body: JSON.stringify(set_app_status_body)
             })
+            if (set_status_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
             if(set_status_response.status != 200) console.log(set_status_response)
             else console.log("Changed previous appointment status to completed!")
         }
@@ -414,29 +459,55 @@ function DoctorCall() {
             },
             body: JSON.stringify(earliest_app_response_body)
         })
+        if (earliest_app_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
         console.log(earliest_app_response)
         try{
             const earliest_app = await earliest_app_response.json();
-            
             setAppointmentId(earliest_app.appointmentId);
             setPatientId(earliest_app.patientId);
-            display_file(earliest_app.patientId);
             
             setIsLoading(false);
             const get_pat_body_response = await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
                 method: 'POST',
                 headers: {
-                    
+                    'Authorization': localStorage.getItem("jwtToken_doc"),
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify({pat_id: earliest_app.patientId})
             })
+            if (get_pat_body_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
             const pat_details = await get_pat_body_response.json();
+            setfollowup(earliest_app.followup)
             setPatientName(pat_details.name);
             setPatientAge(pat_details.age);
             setPatientGender(pat_details.gender);
+            setpatpresent(true);
 
+            // await fetch('http://localhost:8090/api/v1/patient/get_appointment_by_id',{
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Access-Control-Allow-Origin': '*'
+            //     },
+            //     body: JSON.stringify({appId: earliest_app.appointmentId})
+            // }).then(async(response)=>{
+            //     const data = await response.json();
+            // })
+            setPrevDiagnosis(earliest_app.description);
+
+
+            
 
             //Change this appointment to live and connect the patient
             const set_app_status_body = {
@@ -453,6 +524,12 @@ function DoctorCall() {
                 },
                 body: JSON.stringify(set_app_status_body)
             })
+            if (set_status_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
             if(set_status_response.status != 200) console.log(set_status_response)
             else{
                 const now = new Date(); // get current date and time
@@ -471,9 +548,16 @@ function DoctorCall() {
                     },
                     body: JSON.stringify(set_start_time_body)
                 })
+                if (set_start_time_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
                 setIsPresSent(false)
                 console.log("Next patient status changed!")
             }
+            display_file(earliest_app.patientId);
         } catch(err) {
             console.log("No users!")
             setAppointmentId(-1);
@@ -528,6 +612,9 @@ function DoctorCall() {
     };
 
     const toggleFollowUp = async() => {
+
+        
+        // setsavefu(!savefu)
         if (markForFollowUp) setFollowUpReason(""); 
         const set_follow_up_body = {
             appId :  appointmentId,
@@ -544,17 +631,33 @@ function DoctorCall() {
             },
             body: JSON.stringify(set_follow_up_body)
         })
-        .then(response => response.text())
+        .then(response => {
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.text();
+          })
         .then(data => {
             console.log("Online status: ",data)
             setMarkForFollowUp(!markForFollowUp);
+            console.log("mark for followup is ,",markForFollowUp)
+            if(markForFollowUp)
+            {
+                setsavefu(!savefu)
+            }
         })
         .catch(error => {
             console.log(error)
         });
     }
+
+   
     
     const saveFollowup = async() => {
+        setsavefu(!savefu)
         const set_follow_up_body = {
             appId :  appointmentId,
             mark : true,
@@ -571,7 +674,15 @@ function DoctorCall() {
             },
             body: JSON.stringify(set_follow_up_body)
         })
-        .then(response => response.text())
+        .then(response =>{
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.text();
+          })
         .then(data => {
             console.log("Online status: ",data)
         })
@@ -655,7 +766,10 @@ function DoctorCall() {
         setInputFields(values);
     };
 
-
+    const handleDiagChange = (event) => {
+        event.preventDefault();
+        setDiagnosis(event.target.value);
+    };
     const handleInput3Change = (index, event) => {
         const values = [...inputFields];
         values[index].description = event.target.value;
@@ -669,6 +783,7 @@ function DoctorCall() {
     };
 
     const [files,setFiles] = useState([]);
+    const [init_files, setinitFiles] = useState([]);
     // useEffect(() => {
     //   display_file();
     // }, [])
@@ -688,25 +803,30 @@ function DoctorCall() {
         body: formData
       })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
         }
-        console.log(response)
         return response.json();
       })
       .then((list) => {
           for(const element of list)
           {
-            console.log(element)
+            // console.log(element)
           fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'].data)
           .then(async(res)=>{
             const blob = await res.blob()
-            console.log(blob)
+            // console.log(blob)
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
               setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
+              setinitFiles(files.slice(1, 3))
             };
             fileReader.readAsDataURL(blob);
+            // console.log("files are ", files)
+            // console.log("init files are ", init_files)
           })  
         }
         
@@ -718,7 +838,6 @@ function DoctorCall() {
   
     const [selectedFile, setSelectedFile] = useState(null);
 
-
     const handleFileClick = (file) => {
       setSelectedFile(file);
     }
@@ -727,7 +846,8 @@ function DoctorCall() {
       setSelectedFile(null);
     }
     
-    const sendPres = async() => {
+    const sendPres = async(e) => {
+        e.preventDefault();
         const medNames_l = []
         const frequencies_l = []
         const descriptions_l = []
@@ -758,33 +878,53 @@ function DoctorCall() {
             },
             body: JSON.stringify(send_pres_body)
         })
-        .then((response) => {
+        .then(async(response) => {
+            const send_pres_diag = {
+                appId: appointmentId,
+                description: diagnosis 
+            }
+                if (response['status'] == 401)
+                {
+                  nav({
+                    pathname: '/login_doc'
+                  });
+                }
+            await fetch('http://localhost:8090/api/v1/appointment/set_app_description',{
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*' 
+                },
+                body: JSON.stringify(send_pres_diag )
+            })
+            .then(response2=>{
+                if (response2['status'] == 401)
+                {
+                  nav({
+                    pathname: '/login_doc'
+                  });
+                }
+                console.log(response2)
+                return response2.json();
+              })
+            .catch(err=>console.log(err))
             setIsPresSent(true);
             console.log(response);
         })
         .catch((err)=>{
             console.log(err);
         })
-    
     }
+
+    const [lm, setlm] = useState(false);
     
+    const handleLoadMore = () => setlm(!lm);
+
+    const [isfollowup, setfollowup] = useState(false);
     
 
     function handleClick() {
       setIsLoading(!isLoading);
-      console.log("SD")
-    //   Perform the action that triggers loading
-    //   For example, fetch data from an API
-    //   fetch("https://example.com/api/data")
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       // Handle the data
-    //       setIsLoading(false);
-    //     })
-    //     .catch((error) => {
-    //       // Handle the error
-    //       setIsLoading(false);
-    //     });
     }
 
     return (
@@ -794,6 +934,14 @@ function DoctorCall() {
                 <button className="toggle-menu-call-btn" id="toggle-menu-call-btn-id" onClick={toggleLeftSidebar}>
                     ☰
                 </button>
+                {/* <button className="toggle-menu-call-btn" id="patnam" onClick={toggleLeftSidebar}>
+                    Patient Name : {patientName}
+                </button>
+                <button id='pname' className={`controls ${isLeftSideBarOpen}`} >
+                    Patient Name : {patientName}
+                    </button> */}
+
+
                 <div className={`left-sidebar ${isLeftSideBarOpen}`}>
                     <button className="close-left-sidebar-btn" onClick={toggleLeftSidebar}>X</button>
                     <div className="left-sidebar-menu" id="left-sidebar-menu">
@@ -805,18 +953,32 @@ function DoctorCall() {
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
                     </div>
-                    {markForFollowUp ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    {console.log("save state is : ", savefu)}
+                    {(markForFollowUp&&!savefu) ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button className="savemark" onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
                             <a href="#" onClick={togglePatientProf} className="previous">&#8249;</a>
                         </div>
-                        <div>
+                    <div className="patient-details">
+                          <h2 className="details-header">Patient details</h2>
+                          <div className="details-item"><b>Name</b>: {patientName}</div>
+                          <div className="details-item"><b>Age</b>: {patientAge}</div>
+                          <div className="details-item"><b>Gender</b>: {patientGender}</div>
+                    </div>
+                    {isfollowup && <div className="patient-details" style={{marginTop:"30px"}}>
+                       <h2 className="details-header">Previous Appointment Diagnosis</h2>
+                          <div className="details-item">{prevDiagnosis}</div>
+                    </div>}
+
+
+                        {/* <div>
                             <h2>Patient details</h2>
                             <div><b>Name</b> : {patientName}</div>
                             <div><b>Age</b> : {patientAge}</div>
                             <div><b>Gender</b> : {patientGender}</div>
-                            {/* <h4>Description provided by patient: </h4> */}
-                        </div>
+
+                        </div> */}
                     </div> 
 
                     <div className="left-sidebar-writePres" id="left-sidebar-writePres">
@@ -826,6 +988,9 @@ function DoctorCall() {
                         {!isPresSent ? 
                         (
                         <div>
+                        {inputFields.length >= 0 ?<textarea required rows="5" cols="58" value={diagnosis} 
+                         onChange={(event) => handleDiagChange(event)} className="diagnosis-input" type="text-area" placeholder="Diagnosis"></textarea>:""}
+                        <div className="pres-scroll-unlock">
                         {inputFields.map((inputField, index) => (
                             <div className = "field" key={index}>
                                 <div className="inputs">
@@ -836,7 +1001,8 @@ function DoctorCall() {
                                 <button className="bin" onClick={() => handleRemoveFields(index)}>🗑</button>
                             </div> 
                         ))}
-                        {inputFields.length > 0 ?<p>Prescriptions are auto saved</p>:""}
+                        </div>
+                        {inputFields.length > 0 ?<p>*Prescriptions are auto saved</p>:""}
                         <div className="writePres-btn-div">
                             <button className="writePres-add-btn"onClick={handleAddFields}>Add prescription</button>
                             {inputFields.length > 0 ? <button className="writePres-add-btn" onClick={sendPres}>Send prescriptions</button> : ""}
@@ -850,12 +1016,27 @@ function DoctorCall() {
                         <div className="doc-call-file-list">
                             <h1>Health records</h1>
                             <ul className="file-list">
-                                {files.map((file, index) => (
+
+                                <button onClick={handleLoadMore}> {lm ? 'Show Less' : 'Show More'}</button><br/>
+                                {
+                                    lm && (
+                                        files.map((file, index) => (
+                                            <li key={index} onClick={() => handleFileClick(file)}>
+                                                {file.name}
+                                            </li>
+                                            ))
+            
+
+                                    )
+
+                                }
+
+                                {files.slice(0,3).map((file, index) => (
                                 <li key={index} onClick={() => handleFileClick(file)}>
                                     {file.name}
                                 </li>
                                 ))}
-                                Load More
+
                             </ul>
                             {selectedFile && (
                                 <div className="modal">
@@ -871,13 +1052,23 @@ function DoctorCall() {
                         </div>
                     </div>
                 </div>
-                {/* <button onClick={init}>Start connection</button> */}
+
                 <div className={`content ${isLeftSideBarOpen}`}>
                     <div id="videos" className={`videos ${isLeftSideBarOpen}`} style={{height:'100vh'}}>
+
+                {patpresent && (<div id='pname' className = "sttop" >
+                    Patient Name : {patientName}
+                    </div>)}
+
+
                         <video className="doc-video-player" id="user-1" autoPlay playsInline></video>
                         <video className="doc-video-player" id="user-2" autoPlay playsInline></video>
                     </div>
+
+
+
                     <div id="doc-video-controls" className={`controls ${isLeftSideBarOpen}`}>
+
                         <div className={`vid-cb ${isLeftSideBarOpen}`}>
                             {Consultation_Button()} 
                         </div>
@@ -887,29 +1078,34 @@ function DoctorCall() {
                         <div onClick={toggleMic} className="control-container" id="mic-btn">
                             <img src={mic_icon}/>
                         </div>
+
                         {/* <button className="next-patient-btn" onClick={handlenextPatient}>Next patient</button> */}
                         <button className={`np-button ${isLoading ? "loading" : ""}`} onClick={handleClick}>
                         {isLoading ? <div className="spinner"></div> : "Next Patient"}
                         </button>
+
                     </div>
+
+                    <div id="patdetails" className={`controls ${isLeftSideBarOpen}`}></div>
                 </div>
                 <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>
             </div>
             <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
-                <button style = {{backgroundColor: "red"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
-                    <div className="chat-popup" id="myChat">
-                        <form className="form-container" id="cont">
-                            <h1>Chat</h1>
-                            <small id="ch">Welcome to tele-consultation app</small>
-                            <label for="msg"><b>Message</b></label>
-                            <textarea id="txt" placeholder="Type message.." name="msg" required></textarea>
-                            <button id="but" type="submit" className="btn" onClick={displayChat}>Send</button>
-                        </form>
-                    </div>
+                <button style = {{backgroundColor: "rgba(227, 43, 43, 0.919);"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>
+                <h1 id="hch" className="headchat"> Chat </h1>
+                <div className="chat-popup" id="myChat">
+                    <form className="form-container" id="cont">
+                        <div id="ch2"></div>
+                        {/* <small id="ch">Welcome to tele-consultation app</small> */}
+                        <label for="msg">Send a message</label>
+                        <textarea rows='4' placeholder="Type message.." name="msg" id="txt" className="chat-text-area" required></textarea>
+                        {/* <button id="but" className="chatsend" type="submit"  onClick={displayChat}>Send</button> */}
+                        <button id="but" type="submit" className="send-msg-btn" onClick={displayChat}>Send</button>
+                    </form>
+                </div>
             </div> 
         </div>
     );
 }
 
 export default DoctorCall;
-

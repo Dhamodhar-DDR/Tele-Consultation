@@ -6,13 +6,16 @@ import './styles/UploadRecords.css';
 import HandleBookApp from './HandleBookApp';
 
 
-function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
+function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
   const [files, setFiles] = useState([]);
   const [names, setNames] = useState([]);
   const [descriptions, setDescriptions] = useState([]);
   const [fileUrl, setFileUrl] = useState(null);
   const [fileType, setFileType] = useState(null);
   const[proceed, setpro] = useState(false);
+  const [spec, setspec] = useState("General");
+
+  const [da, setda] = useState(true)
 
   const nav = useNavigate();
   const handleFileUpload = (event) => {
@@ -63,74 +66,157 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
     fileInput.click();
   };
 
-   async function handleBookApp(doc_id,p_id) {
-
-    console.log('In happ');
-  
-      
-  
-      
-   
-      console.log('In happ');
-        // return async function() {
-          console.log('In happ');
+   async function handleBookApp(e) {
+        e.preventDefault();
+        
         const now = new Date(); // get current date and time
         const timestamp = now.toISOString(); // convert to ISO string
-        console.log(timestamp); // prints something like "2023-03-18T14:25:48.123Z"
-    
-        const create_app_body = {
-          bookingTime : timestamp,
-          patientId : p_id,
-          doctorId: doc_id,
-          startTime : null,
-          endTime : null,
-          isFollowup: false,
-          markForFollowup : false,
-          status : 'waiting',
-          description : ''
+        
+        let create_app_body = {};
+        if(upload_type === 'from_sd')
+        {
+          create_app_body = {
+            upload_type : upload_type,
+            specialization : "",
+            bookingTime : timestamp,
+            patientId : pat_id,
+            doctorId: doctor_id,
+            isFollowup: false,
+          }
         }
-        await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
-          method: 'POST',
-          headers: {
-            'Authorization': localStorage.getItem("jwtToken"),
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*' 
-          },
-          body: JSON.stringify(create_app_body)
-        })
-        .then(response =>{if( !response.ok )
-
-          console.log( response );
-          else
-          response.json();})
-        .then(data => {
-          console.log(data);
-          console.log(data.appointmentId);
-          console.log('about to nav to waiting page');
-          nav({
-            pathname: '/waiting_page',
-            search: createSearchParams({
-              doc_id: doc_id,
-              pat_id: p_id,
-              app_id: data.appointmentId
-            }).toString()
+        else if(upload_type === 'upload-follow-prev')
+        {
+          create_app_body = {
+            upload_type : upload_type,
+            specialization : "",
+            bookingTime : timestamp,
+            patientId : pat_id,
+            doctorId: null,
+            isFollowup: true,
+          }
+        }
+        else if(upload_type === 'upload-follow-auto')
+        {
+          create_app_body = {
+            upload_type : upload_type,
+            specialization : spec,
+            bookingTime : timestamp,
+            patientId : pat_id,
+            doctorId: null,
+            isFollowup: true,
+          }
+        }
+        else if(upload_type === 'upload-auto')
+        {
+          create_app_body = {
+            upload_type : upload_type,
+            specialization : spec,
+            bookingTime : timestamp,
+            patientId : pat_id,
+            doctorId: null,
+            isFollowup: false,
+          }
+        }
+        if(upload_type !== 'normal') 
+        {
+          await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
+              method: 'POST',
+              headers: {
+                'Authorization': localStorage.getItem("jwtToken"),
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*' 
+              },
+              body: JSON.stringify(create_app_body)
+          })
+          .then(async(response) => {
+            console.log(response);
+            try{
+              const data = await response.json();
+              const formData = new FormData();
+              if(files.length == 0)
+              {
+                nav({
+                  pathname: '/waiting_page',
+                  search: createSearchParams({
+                    doc_id: data.doctorId,
+                    pat_id: pat_id,
+                    app_id: data.appointmentId,
+                    type: upload_type
+                  }).toString()
+                });
+              }
+              else{
+                for (let i = 0; i < files.length; i++) {
+                  formData.append(`files`, files[i]);
+                }
+                formData.append('names',names)
+                formData.append('descriptions', descriptions)
+                formData.append('patId', parseInt(pat_id))
+                formData.append('appId', data.appointmentId)
+                console.log(names);
+                console.log(descriptions);
+              
+                await fetch('http://localhost:8090/api/v1/health_records/upload', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': localStorage.getItem("jwtToken"),
+                    // 'Content-Type': 'multipart/form-data',
+                    'Access-Control-Allow-Origin': '*' 
+                  },
+                  body: formData
+                })
+                .then(response2 => {
+                  // Handle the response from the server
+                  console.log(response2);
+                  console.log(data.appointmentId);
+                  console.log('about to nav to waiting page');
+                  nav({
+                    pathname: '/waiting_page',
+                    search: createSearchParams({
+                      doc_id: data.doctorId,
+                      pat_id: pat_id,
+                      app_id: data.appointmentId,
+                      type: upload_type
+                    }).toString()
+                  });
+                  // toggle("close");
+                })
+                .catch(error => {
+                  console.error(error);
+                });
+              }
+            }
+            catch{
+              console.log("NO doctor available with this specialization!")
+              setda(false)
+            } 
+          })
+          .catch(error => {
+            console.log(error);
           });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-  
-      // }
-  
-  
-      }
+        }
+        else{
+          //Write normal file upload api
+        }
+    }
+    
 
 
-  const handleSubmit = (event) => {
+  const handlespec = (e) => {
+
+    setspec(e.target.value);
+    console.log("Selected Spec: ",e.target.value)
+
+
+  }
+
+
+  const handleUpload = (event) => {
 
     console.log('into handle submutx');
 
     event.preventDefault();
+
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
       formData.append(`files`, files[i]);
@@ -138,9 +224,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
     formData.append('names',names)
     formData.append('descriptions', descriptions)
     formData.append('patId', parseInt(pat_id))
-    formData.append('appId', app_id)
-    console.log(names);
-    console.log(descriptions);
+    formData.append('appId', -1)
   
     fetch('http://localhost:8090/api/v1/health_records/upload', {
       method: 'POST',
@@ -152,49 +236,35 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
       body: formData
     })
     .then(response => {
-      // Handle the response from the server
-      if( !response.ok )
-
-      console.log( response );
-        else
-        response.json();
       console.log(response);
-      toggle("close");
+      toggle()("close");
     })
     .catch(error => {
-      // Handle any errors that occurred during the request
       console.error(error);
     });
-
-    if(upload_type=='from_sd')
-    {
-      console.log("into from sd");
-      setpro(true);
-      handleBookApp(docto_id, pat_id);
-
-      // <HandleBookApp doc_id={docto_id} p_id={pat_id}/>
-    
-
-
-    }
-
-    else
-    {
-      console.log("upload type is : ",upload_type);
-      toggle("close");
-    }
-    // console.log('toggle val is ',toggle)
-
   };
 
 
   return (
     <div className='upload-files-modal'>
       <div className="upload-files-modal-content">
-        <form className="FileUploader" encType="multipart/form-data" onSubmit={handleSubmit}>
+        <form className="FileUploader" encType="multipart/form-data" >
           <div className="FileUploader-header">
-            <h2>Upload Health Records {upload_type}</h2>
+            <h2>Choose Specialisation and Upload Health Records</h2>
           </div>
+          {upload_type==="upload-follow-auto" || upload_type==="upload-auto"?
+          <div className='selectspec-div'>
+            <h3 className="selectspec-head">Select Specialisation </h3>
+            <select className="selectspec" onChange={handlespec}>
+              <option disabled>Select Specialisation</option>
+              <option value="General">General</option>
+              <option value="Cardiologist">Cardiologist</option>
+              <option value="Pulmonologist">Pulmonologist</option>
+              <option value="Dentist">Dentist</option>
+            </select>
+          </div>:""}
+          {/* {upload_type==="upload-follow-auto" || upload_type==="upload-auto"?<span><label >Select doctor specialization &nbsp; &nbsp;&nbsp;</label> <input onChange={(e)=>{setSpec(e.target.value)}}  type="text" placeholder="Specialization"/></span>:""} */}
+          <div className='FileUploader-list'>
           {files.map((file, index) => (
             <div className="FileUploader-file" key={index}>
               <div>
@@ -209,40 +279,52 @@ function Modal ({toggle, upload_type, pat_id, app_id,docto_id})  {
               </div>
               <div className="FileUploader-details">
                 <div className="FileUploader-detail">
-                  <label htmlFor={`name-${index}`}>Name:</label>
+                  <label htmlFor={`name-${index}`}></label>
                   <input
                     type="text"
                     id={`name-${index}`}
                     value={names[index]}
+                    required
+                    placeholder='Name (required)'
                     onChange={(event) => handleNameChange(event, index)}
                   />
                 </div>
                 <div className="FileUploader-detail">
-                  {/* <label htmlFor={`description-${index}`}>Description:</label> */}
                   <textarea className='desc'
                     placeholder='Description (optional)'
                     rows="2" cols="70"
                     type="text"
                     id={`description-${index}`}
-                    // value={descriptions[index]}
                     onChange={(event) => handleDescriptionChange(event, index)}
                   />
                 </div>
               </div>
             </div>
           ))}
-          <button type="button" onClick={handleAddFiles}> Add Files</button>
-          <button className="FileUploader-submit" type="submit" onClick={handleSubmit}>
-            Submit
-          </button>
+          </div>
+            <div className="FileUploader-btn-div">
+
+          <button className="FileUploader-submit" type="button" onClick={handleAddFiles}> Add file</button>
+          {upload_type!=="upload-normal"?<button className="FileUploader-submit" type="submit" onClick={handleBookApp}> Book appointment </button>:<button className="FileUploader-submit" type="submit" onClick={handleUpload}>Upload Records</button>}
+
+
+          {
+           (da == false)?(
+            <>
+            <br/>
+            <br/>
+              <p style={{color:"red"}}> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Selected Specialization not available. </p>
+            </>
+           ):null
+
+           }
+          </div>
+
         </form>
         <button className="upload-files-modal-close" onClick={toggle("close")}>
             X
         </button> 
         </div>
-
-        {/* {proceed && <HandleBookApp doc_id={docto_id} p_id={pat_id}/>} */}
-
        </div>    
   );
 };

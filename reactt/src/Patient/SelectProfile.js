@@ -45,8 +45,11 @@ console.log("function")
         body: JSON.stringify(get_profiles_body)
       })
       .then(response => {
+        console.log(response)
         if (response['status'] == 401)
         {
+          console.log("should have navigated")
+          localStorage.removeItem('jwtToken')
           nav({
             pathname: '/login_p'
           });
@@ -76,7 +79,15 @@ console.log("function")
           },
           body: JSON.stringify(getProfilesBody)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+        })
         .then(data => {
           console.log(data)
           setProfiles(data)

@@ -96,7 +96,7 @@ function Regc() {
     <button className="login-go-back-btn" >Go back</button>
     <div className="login-center">
         <h1>Patient Register</h1>
-        <form  method="post">
+        <form  method="post" onSubmit={handleSubmit}>
 
 
 

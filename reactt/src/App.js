@@ -26,6 +26,12 @@ function check_login(){
   else return false;
 }
 
+function check_doc_login(){
+  const user = localStorage.getItem('jwtToken_doc');
+  if (user) return true;
+  else return false;
+}
+
 function App() 
 {
   return (
@@ -37,7 +43,10 @@ function App()
       element = {check_login() ? (<ProfileSelector/>) : (<Logincg/>)}
       />     
       <Route exact path="/register_p" element={<Regc />} />
-      <Route exact path="/login_doc" element={<Logindoc />} />
+      <Route exact path="/login_doc" 
+      // element={<Logindoc />}
+      element = {check_doc_login() ? (<DocHome/>) : (<Logindoc/>)}
+      />
       <Route path="/register_doc" element={<Regdoc />} />
       <Route path="/DocHome" element={<DocHome />} />
       <Route path="/select_doc" element={<DoctorList />} />

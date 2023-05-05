@@ -16,6 +16,7 @@ function Homepat(){
 
   const toggleModal = (param) => {
     return (()=>{
+      console.log("Close called!")
       if(param!="close") setUploadType(param)
       setShowModal(!showModal);
     })
@@ -42,7 +43,7 @@ function Homepat(){
       },
       body: JSON.stringify(getpatidbody)
     })
-    .then(response =>  { response.json();
+    .then(response =>  response.json()
 //       if( !response.ok ){
 // console.log("yep");
 // nav({
@@ -55,7 +56,7 @@ function Homepat(){
 //         catchError( response );}
 //         else
 //         response.json();
-    })
+    )
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  

@@ -16,7 +16,7 @@ function Regdoc() {
   const[searchParams] = useSearchParams();
   const [Name, setFirstName] = useState("");
   const [email, setEmail] = useState("");
-  const[spec, setSpec] = useState("");
+  const[spec, setSpec] = useState("General");
   const[exp, setExp] = useState("");
   const [gender, setgender] = useState("male");
   const [Age, setAge] = useState("");
@@ -76,13 +76,20 @@ function Regdoc() {
         method: 'POST',
         headers: {
         'Authorization': localStorage.getItem('jwtToken_doc'),
-
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(create_doc_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        return response.json();
+      })
       .then(async(data) => {
         const get_doc_by_mobile_body = {
           'mobile_number': searchParams.get("mobile")
@@ -97,7 +104,15 @@ function Regdoc() {
           },
           body: JSON.stringify(get_doc_by_mobile_body)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_doc'
+            });
+          }
+          return response.json();
+        })
         .then(data => {
           console.log("Doc Id assigned: ",data.doctorId)
           nav({
@@ -133,7 +148,7 @@ function Regdoc() {
     <button className="login-go-back-btn" >Go back</button>
     <div className="login-center">
         <h1>Doctor Login</h1>
-        <form  method="post">
+        <form  method="post" onSubmit={handleSubmit}>
 
         <div className="txt_field">
               <input type="number" required/>
@@ -198,17 +213,14 @@ function Regdoc() {
 
           </div>
 
-          <div className="txt_field">
+          <select class="custom-select" onChange={handlespec}>
+            <option disabled>Select Specialisation</option>
+            <option value="General">General</option>
+          <option value="Cardiologist">Cardiologist</option>
 
-          <input type="text" value={spec} placeholder="" onChange={handlespec} required/>
-
-          <span></span>
-
-
-            <label>Specialization:</label>
-
- 
-          </div>
+          <option value="Pulmonologist">Pulmonologist</option>
+          <option value="Dentist">Dentist</option>
+          </select>
 
           <div className="txt_field">
 

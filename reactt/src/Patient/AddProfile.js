@@ -33,11 +33,15 @@ function AddProf() {
       body: JSON.stringify(getpatidbody)
   
     })
-    .then(response =>{if( !response.ok )
-
-      console.log( response );
-      else
-      response.json();})
+    .then(response =>{
+      if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+    })
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
@@ -106,11 +110,14 @@ function AddProf() {
       },
       body: JSON.stringify(create_patient_body)
     })
-    .then(response => {if( !response.ok )
-
-      console.log( response );
-      else
-      response.json();})
+    .then(response => {
+      if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+      return response.json();})
     .then(data => {
       console.log(data)
       nav({

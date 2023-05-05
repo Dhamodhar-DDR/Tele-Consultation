@@ -24,71 +24,109 @@ const WaitingPage = () => {
                 },
                 body: JSON.stringify(get_curr_app_body)
             })
-            .then((response) => {if( !response.ok )
-
-              console.log( response );
-              else
-              response.json();})
+            .then((response) => {
+              return response.json();})
             .then(async(obj) => {
-                console.log(obj)
-                if(obj.doctor_live == false) 
+                if(obj.doctor_live == true)
                 {
-                  const set_status_body = {
-                    appId : searchParams.get("app_id"),
-                    value : 'cancelled'
+                  console.log('doctor_live');
+                  if(obj.status === 'live')
+                  {
+                      nav({
+                          pathname: '/patient_call',
+                          search: createSearchParams({
+                            doc_id: searchParams.get("doc_id"),
+                            pat_id: searchParams.get("pat_id"),
+                            app_id: searchParams.get("app_id")
+                          }).toString()
+                      });
+                  } 
+                  else{
+                    setqueueCount(obj.count);
                   }
-                  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
-                    method: 'POST',
-                    headers: {
-                      'Authorization': localStorage.getItem("jwtToken"),
-                      'Content-Type': 'application/json',
-                      'Access-Control-Allow-Origin': '*' 
-                    },
-                    body: JSON.stringify(set_status_body)
-                  }).then((response)=>{
-                    if( !response.ok )
-
-                    console.log( response );
-        else
-        response.json();
-                    nav({
-                      // pathname: '/select_doc',
-                      // search: createSearchParams({
-                      //   pat_id: searchParams.get("pat_id")
-                      // }).toString()
-                      pathname: '/call_summary',
-                      search: createSearchParams({
-                          pat_id: searchParams.get("pat_id"),
-                          doc_id: searchParams.get("doc_id"),
-                          app_id: searchParams.get("app_id")
-                      }).toString()
-                    });
-                    
-                  })
-                  
-                }  
-                if(obj.status === 'live')
+                }
+                else if(obj.doctor_live == false) 
                 {
-                    nav({
-                        pathname: '/patient_call',
-                        search: createSearchParams({
-                          doc_id: searchParams.get("doc_id"),
-                          pat_id: searchParams.get("pat_id"),
-                          app_id: searchParams.get("app_id")
-                        }).toString()
-                    });
-                } 
-                else {
-                  setqueueCount(obj.count);
+                  console.log('doctor_live - false');
+                  if(searchParams.get("type") === 'upload-auto' || searchParams.get("type") == 'upload-follow-auto')
+                  {
+                    console.log(searchParams.get("type"));
+                    const get_next_body = {
+                      appId : searchParams.get("app_id"),
+                    }
+                    await fetch('http://localhost:8090/api/v1/appointment/get_next_best_doc', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*' 
+                      },
+                      body: JSON.stringify(get_next_body)
+                    })
+                    .then(async(response)=>{
+                      const data = await response.json();
+                      console.log(searchParams);
+                      searchParams.set('doc_id', data);
+                      const get_queue_body = {
+                        appId : searchParams.get("app_id"),
+                      }
+                      fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                              'Access-Control-Allow-Origin': '*' 
+                          },
+                          body: JSON.stringify(get_queue_body)
+                      })
+                      .then((response2) => response2.json())
+                      .then(obj => {
+                        setqueueCount(obj.count)
+                      })
+                    })
+                    .catch(async(err)=>{
+                      console.log(err);
+                      cancelAppointment();
+                    })
+                  }   
+                  else
+                  {
+                    cancelAppointment();
+                  }
                 }
             });
-        }, 5000);
+        }, 2000);
       
         // Return a cleanup function that clears the interval when the component unmounts
         return () => {
           clearInterval(intervalId); // Stop the interval
         };
       }, []);
+    
+    const cancelAppointment = async()=>{
+      console.log("CANCEL")
+      const set_status_body = {
+        appId : searchParams.get("app_id"),
+        value : 'cancelled'
+      }
+      await fetch('http://localhost:8090/api/v1/appointment/set_status', {
+        method: 'POST',
+        headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
+          
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*' 
+        },
+        body: JSON.stringify(set_status_body)
+      }).then((response)=>{
+        nav({
+          pathname: '/call_summary',
+          search: createSearchParams({
+              pat_id: searchParams.get("pat_id"),
+              doc_id: searchParams.get("doc_id"),
+              app_id: searchParams.get("app_id")
+          }).toString()
+        });
+      })
+    }
 
     return (
     <div className="waiting-page">
@@ -101,6 +139,7 @@ const WaitingPage = () => {
         ):<p>{queueCount}</p>
 
       }
+      <button onClick={cancelAppointment}>Cancel appointment</button>
     </div>
   );
 };

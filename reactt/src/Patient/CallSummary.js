@@ -24,11 +24,13 @@ function CallSummary(){
             },
             body: JSON.stringify(body)
         })
-        .then(response => {if( !response.ok )
+        .then(response => response.json()
+          // {if( !response.ok )
 
-          console.log( response );
-          else
-          response.json();})
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
             console.log("Appointment details ",data)
             setAppointment(data)
@@ -50,11 +52,13 @@ function CallSummary(){
             },
             body: JSON.stringify(body2)
         })
-        .then(response => {if( !response.ok )
+        .then(response => response.json()
+          // {if( !response.ok )
 
-          console.log( response );
-          else
-          response.json();})
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
             console.log("Doctor details ",data)
             setDoctor(data)
@@ -81,16 +85,19 @@ function CallSummary(){
           body: JSON.stringify(getpatidbody)
       
         })
-        .then(response => {if( !response.ok )
+        .then(response => response.json()
+          // {if( !response.ok )
 
-          console.log( response );
-          else
-          response.json();})
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
+          if (data){
           console.log("Online docs list get profff: ",data)
           setprofname(data.name)  
           console.log("After set profname ",prof_name)     
-        })
+        }})
         .catch(error => {
           console.log(error)
         });
@@ -158,11 +165,13 @@ function CallSummary(){
             },
             body: JSON.stringify(getpresbody)
           })
-          .then(response => {if( !response.ok )
+          .then(response => response.json()
+            // {if( !response.ok )
 
-            console.log( response );
-            else
-            response.json();})
+            // console.log( response );
+            // else
+            // response.json();}
+            )
           .then(data => {
             console.log("Prescriptions: ",data)
             generatePDF(data,appId, doc_name, doc_spec);
@@ -194,13 +203,13 @@ function CallSummary(){
                 <div className="details">
                     <img className="doctor-photo" src={def_pp} alt="Doctor" />
                     <div>
-                        <p className="doctor-name">{doctor.name}</p>
-                        <div className="doctor-spec"><b>{doctor.specialization}</b></div>
-                        <div className="info-label"><b>Call Start Time:</b> {appointment.startTime}</div>
-                        <div className="info-label"><b>Call End Time:</b> {appointment.endTime}</div>
-                        <div className="info-label"><b>Status: </b>{appointment.status}</div>
+                        <p className="doctor-name">{doctor?.name}</p>
+                        <div className="doctor-spec"><b>{doctor?.specialization}</b></div>
+                        <div className="info-label"><b>Call Start Time:</b> {appointment?.startTime}</div>
+                        <div className="info-label"><b>Call End Time:</b> {appointment?.endTime}</div>
+                        <div className="info-label"><b>Status: </b>{appointment?.status}</div>
                         <span>
-                            <button className="app-sumary-btn" onClick={()=>viewPrescription(appointment.appointmentId,doctor.name,doctor.specialization)} style={{marginRight: '40px'}}>View prescription</button>
+                            <button className="app-sumary-btn" onClick={()=>viewPrescription(appointment?.appointmentId,doctor?.name,doctor?.specialization)} style={{marginRight: '40px'}}>View prescription</button>
                             <button className="app-sumary-btn" onClick={navToHome}>Back to home</button>
                         </span>
                     </div>
@@ -218,7 +227,7 @@ function CallSummary(){
                 </div>
             </div>
             <div id="pres-view-popup" className="appHis-popup">
-            <button onClick={closePopup}>Close</button>
+            <button className="closeX" onClick={closePopup}>x</button>
             <iframe id="pdf-frame" title="pdf" src="" width="100%" height="100%"></iframe>
           </div>
         </div>

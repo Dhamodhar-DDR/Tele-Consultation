@@ -17,16 +17,12 @@ public class AppointmentController {
         response.setHeader("Access-Control-Allow-Origin", "*");
     }
     record createNewAppReqbod(
-         Timestamp bookingTime,
-         int patientId,
-         String doctorId,
-         Timestamp startTime,
-         Timestamp endTime,
-         boolean isFollowup,
-         boolean markForFollowup,
-         String followupReason,
-         String status,
-         String description
+            String upload_type,
+            String specialization,
+            Timestamp bookingTime,
+            Integer patientId,
+            Integer doctorId,
+            boolean isFollowup
     ){}
     record setMarkForFollowupReqbod(Integer appId, Boolean value){}
     record setStatusReqbod(Integer appId, String value){}
@@ -34,6 +30,7 @@ public class AppointmentController {
 
     record getEarlReqbod(Integer docId){}
     record getAppById(Integer appId){}
+    record setAppDesc(int appId, String description){}
 
     record getPatAppReqBod(Integer patId){}
     record getDocAppReqBod(Integer docId){}
@@ -48,8 +45,42 @@ public class AppointmentController {
     @CrossOrigin
     @PostMapping("/create_appointment")
     public Appointment createAppointment(@RequestBody createNewAppReqbod reqbod) {
-        Appointment newAppointment = appointmentService.createAppointment(reqbod.bookingTime, reqbod.patientId, reqbod.doctorId, reqbod.startTime, reqbod.endTime, reqbod.isFollowup, reqbod.markForFollowup, reqbod.followupReason, reqbod.status, reqbod.description);
-        return newAppointment;
+        if(reqbod.upload_type.equals("from_sd"))
+        {
+            System.out.println("FROM SD");
+            Appointment newAppointment = appointmentService.createAppointment_N(reqbod.bookingTime, reqbod.patientId, reqbod.doctorId, null, null, reqbod.isFollowup, false, "", "waiting", "");
+            return newAppointment;
+        }
+        else if(reqbod.upload_type.equals("upload-follow-prev"))
+        {
+            System.out.println("UPLOAD FOLLOW PREV");
+            Appointment newAppointment = appointmentService.createAppointment_FP(reqbod.bookingTime, reqbod.patientId, null, null, reqbod.isFollowup, false, "", "waiting", "");
+            return newAppointment;
+        }
+        else if(reqbod.upload_type.equals("upload-follow-auto"))
+        {
+            System.out.println("UPLOAD FOLLOW AUTO");
+            Appointment newAppointment = appointmentService.createAppointment_FA(reqbod.specialization, reqbod.bookingTime, reqbod.patientId, null, null, reqbod.isFollowup, false, "", "waiting", "");
+            return newAppointment;
+        }
+        else //upload-auto
+        {
+            System.out.println("UPLOAD AUTO");
+            Appointment newAppointment = appointmentService.createAppointment_A(reqbod.specialization, reqbod.bookingTime, reqbod.patientId, null, null, reqbod.isFollowup, false, "", "waiting", "");
+            return newAppointment;
+        }
+    }
+    @CrossOrigin
+    @PostMapping("/get_next_best_doc")
+    public Integer createAppointment(@RequestBody getAppById reqbod) {
+        return appointmentService.get_next_best_doc(reqbod.appId);
+    }
+
+    @CrossOrigin
+    @PostMapping("/set_app_description")
+    public Boolean setAppDescription(@RequestBody setAppDesc reqbod) {
+        appointmentService.setAppDescription(reqbod.appId, reqbod.description);
+        return true;
     }
     @CrossOrigin
     @PostMapping("/set_mark_for_followup")
@@ -196,12 +227,5 @@ public class AppointmentController {
     public Boolean set_appointment_for_followup(@RequestBody getAppFollowById req_bod) {
         return appointmentService.set_appointment_for_followup(req_bod.appId,req_bod.mark, req_bod.followupReason);
     }
-
-
-//    @CrossOrigin
-//    @PostMapping("/send_sse_pat")
-//    public Appointment get_appointment_by_id(@RequestBody getAppById req_bod) {
-//        return appointmentService.get_appointment_by_id(req_bod.appId);
-//    }
 
 }

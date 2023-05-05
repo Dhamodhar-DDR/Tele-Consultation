@@ -5,6 +5,7 @@
 }
 
 #videos{
+    position: relative;
     display: grid;
     grid-template-columns: 1fr;
     height: 96vh;
@@ -16,6 +17,24 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.patcall-leave-button{
+  font-family: 'Google Sans', sans-serif;
+  background-color: rgba(227, 43, 43, 0.919);
+  
+}
+
+.patcall-leave-button:hover{
+  background-color: rgba(206, 6, 6, 0.919);
+}
+
+.pat-call-chat-open-btn{
+  font-family: 'Google Sans', sans-serif;
+  background-color: rgba(43, 98, 227, 0.919);
+}
+.pat-call-chat-open-btn:hover{
+  background-color: rgba(2, 71, 231, 0.919);
 }
 
 #user-2{
@@ -43,6 +62,104 @@
     display: flex;
     gap: 1em;
 }
+#patnam
+{
+
+  background-color: #2b01a7;
+  left: 100px;
+  top: 89%;
+  flex-direction: column;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+  
+}
+
+#pname{
+    
+    text-shadow: 2px 2px #000000;
+    border: wheat;
+    background: transparent;
+    color: aliceblue;
+    left: 45vw;
+    right: auto;
+    position: absolute;
+    z-index: 999;
+    
+    background: transparent;
+    opacity: 0.85;
+    
+    
+    top: 2%;
+    flex-direction: column;
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
+  
+
+}
+.savemark{
+    background-color: #7a4eff;
+    margin-left: 110px;
+}
+
+.right-sidebar {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
+  }
+  
+.right-sidebar.open {
+    right: 0;
+}
+  
+  
+.chat-popup #ch{
+    /* min-height: 500px; */
+    height: 50vh;
+    /* overflow-y: scroll; */
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+  
+  }
+
+.patient-details {
+    background-color: #ffc18377;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .details-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2f2f2f;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .details-item {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444444;
+  }
+  
+  .details-item b {
+    font-weight: 900;
+    color: #333333;
+    margin-right: 5px;
+  }
+  
+
 
 
 .control-container{
@@ -60,9 +177,9 @@
     width: 30px;
 }
 
-#leave-btn{
+/* #leave-btn{
     background-color: rgb(255,80,80, 1);
-}
+} */
 
 @media screen and (max-width:600px) {
         .smallFrame{

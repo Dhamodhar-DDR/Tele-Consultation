@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./styles/displayFiles.css";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams,createSearchParams, useNavigate} from "react-router-dom";
 
 const DisplayFiles = () => {
+
+  const nav = useNavigate();
   const [files,setFiles] = useState([]);
   useEffect(() => {
     display_file();
@@ -55,21 +57,76 @@ const DisplayFiles = () => {
   }
 
   const [selectedFile, setSelectedFile] = useState(null);
+  const[viewMore, setviewMore] = useState(false);
+
+  const handleviewmore = () => {
+
+    setviewMore(true);
+  }
+  const handleLogout = () =>{
+    nav('/login_p')
+  }
+  
+  const navToHome = () =>{
+    nav({
+      pathname: '/home_pat',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
+  const navToMngProfile = () =>{
+    nav({
+      pathname: '/patlist',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
 
   const handleFileClick = (file) => {
     setSelectedFile(file);
   }
+  const navToAppHis = () =>{
+    // nav('/login_p')
+  }
+
 
   const handleCloseModal = () => {
     setSelectedFile(null);
   }
 
   return (
+<>
+    <div className="navbar">
+
+        <div>
+          <button onClick={navToHome} className="nav-button">Home</button>
+          <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
+          <button onClick={navToAppHis} className="nav-button">Appointment History</button>
+          
+          
+
+            {/* <a href="#">Edit Profile</a>
+            <a href="#">Appointment History</a> */}
+        </div>
+       
+        <div>
+        {/* <button className="nav-button1"><img  />{prof_name}</button> */}
+          <button className="nav-button" onClick={handleLogout}>Logout</button>
+          
+        </div>
+      </div>
+
     <div className="App">
+
+
       <h1>File List</h1>
       <ul className="file-list">
         {files.map((file, index) => (
-          <li key={index} onClick={() => handleFileClick(file)}>
+          <li className="ViewF" key={index} onClick={() => handleFileClick(file)}>
             {file.name}
           </li>
         ))}
@@ -86,6 +143,7 @@ const DisplayFiles = () => {
       )}
       <br/>
     </div>
+    </>
   );
 };
 

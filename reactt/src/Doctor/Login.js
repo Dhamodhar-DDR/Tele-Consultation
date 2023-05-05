@@ -143,7 +143,15 @@ function Logindoc() {
           },
           body: JSON.stringify(check_new_user_body)
         })
-        .then(response => response.text())
+        .then(response => {
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_doc'
+            });
+          }
+          return response.text();
+        })
         .then(data => {
           console.log("New User?",data);
           feedback(data);

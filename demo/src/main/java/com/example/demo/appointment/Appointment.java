@@ -17,7 +17,7 @@ public class Appointment {
     private int patientId;
 
     @Column(name = "doctor_id")
-    private String doctorId;
+    private int doctorId;
 
     @Column(name = "start_time")
     private Timestamp startTime;
@@ -41,7 +41,7 @@ public class Appointment {
     private String description;
     public Appointment(){};
 
-    public Appointment(Timestamp bookingTime, int patientId, String doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason,String status, String description) {
+    public Appointment(Timestamp bookingTime, int patientId, int doctorId, Timestamp startTime, Timestamp endTime, boolean isFollowup, boolean markForFollowup, String followupReason,String status, String description) {
         this.bookingTime = bookingTime;
         this.patientId = patientId;
         this.doctorId = doctorId;
@@ -82,11 +82,11 @@ public class Appointment {
         this.patientId = patientId;
     }
 
-    public String getDoctorId() {
+    public int getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(String doctorId) {
+    public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
 

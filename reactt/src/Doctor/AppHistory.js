@@ -42,7 +42,15 @@ function DocAppoinHist() {
       body: JSON.stringify(getappoinhist)
   
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json();
+    })
     .then(data => {
       console.log("Online docs apoin list get profff: ",data)
       settappoinlist(data)  

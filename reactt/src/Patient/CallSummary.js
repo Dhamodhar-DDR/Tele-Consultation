@@ -13,7 +13,7 @@ function CallSummary(){
     const [showPopup, setShowPopup] = useState(false);
     const get_appoin_by_id = async()=>{
         const body = {
-            appId : searchParams.get("app_id")
+            appId : sessionStorage.getItem('app_id')
         }
         await fetch('http://localhost:8090/api/v1/appointment/get_appointment_by_id', {
             method: 'POST',
@@ -41,7 +41,7 @@ function CallSummary(){
     }
     const get_doc_by_id = async()=>{
         const body2 = {
-            doctorID : searchParams.get("doc_id")
+            doctorID : sessionStorage.getItem('doc_id')
         }
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_id', {
             method: 'POST',
@@ -74,7 +74,7 @@ function CallSummary(){
     }, [])
 
     const get_prof_name_by_id = async() => {
-        const getpatidbody = {pat_id: searchParams.get("pat_id")}
+        const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
         await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
           method: 'POST',
           headers: {
@@ -182,12 +182,14 @@ function CallSummary(){
       } 
 
     const navToHome = () =>{
-        nav({
-          pathname: '/home_pat',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+      nav('/home_pat')
+        // nav({
+        //   pathname: '/home_pat',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id'
+        //   }).toString()
+        // });
       }
 
       const closePopup = () => {

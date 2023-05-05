@@ -15,22 +15,26 @@ function ProfileSelector() {
   const nav = useNavigate();
 console.log("function")
   const onProfileSelect = (profile) => {
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: profile.patientId
-      }).toString()
-    });
+
+    sessionStorage.setItem('pat_id', profile.patientId)
+
+    nav('/home_pat');
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: profile.patientId
+    //   }).toString()
+    // });
   };
-  console.log(searchParams.get('mobile'));
+  console.log("received num from session: ",sessionStorage.getItem('mobile'));
   let mobile = jwt(localStorage.getItem('jwtToken'))['sub'];
   console.log(mobile);
-  if (searchParams.get('mobile'))
+  if (sessionStorage.getItem('mobile'))
   {
-    mobile = searchParams.get('mobile');
+    mobile = sessionStorage.getItem('mobile');
   }
    const get_pat_id = async() => {
-    if(searchParams.get('mobile') != undefined || mobile!=undefined)
+    if(sessionStorage.getItem('mobile') != null || mobile!=undefined)
     {
       const get_profiles_body = {
         'mobile_number' : mobile
@@ -65,10 +69,11 @@ console.log("function")
         console.log(error)
       });
     }
-    else if(searchParams.get('pat_id') != undefined)
+    else if(sessionStorage.getItem('pat_id') != null)
     {
+      console.log("sessst pat id is not null!!");
         const getProfilesBody = {
-          pat_id : searchParams.get('pat_id')
+          pat_id : sessionStorage.getItem('pat_id')
         }
         await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
           method: 'POST',

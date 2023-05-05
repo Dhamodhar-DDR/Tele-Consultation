@@ -15,18 +15,18 @@ function AppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log(searchParams.get('pat_id'))
+    console.log("apphist pid:",sessionStorage.getItem('pat_id'))
     get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id: ", sessionStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
   }, [])
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {patId: searchParams.get("pat_id")}
+    const getappoinhist = {patId: sessionStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_patient_appointments', {
       method: 'POST',
       headers: {
@@ -53,7 +53,7 @@ function AppoinHist() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: searchParams.get("pat_id")}
+    const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -81,30 +81,36 @@ function AppoinHist() {
   }
   
       const navToHome = () =>{
-        nav({
-          pathname: '/home_pat',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+        nav('/home_pat');
+        // nav({
+        //   pathname: '/home_pat',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id')
+        //   }).toString()
+        // });
       }
     
       const navToMngProfile = () =>{
-        nav({
-          pathname: '/patlist',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+        nav('/patlist');
+        // nav({
+        //   pathname: '/patlist',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id')
+        //   }).toString()
+        // });
       }
     
       const navToAppHis = () =>{
-        nav({
-          pathname: '/appoinhist',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+        nav('/appoinhist');
+        // nav({
+        //   pathname: '/appoinhist',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id')
+        //   }).toString()
+        // });
       }
 
       const generatePDF = (data,appointment,appointment_id, doc_name, doc_spec) => {

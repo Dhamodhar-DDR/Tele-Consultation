@@ -42,14 +42,20 @@ async function HandleBookApp({doc_id,p_id}) {
         console.log(data);
         console.log(data.appointmentId);
         console.log('about to nav to waiting page');
-        nav({
-          pathname: '/waiting_page',
-          search: createSearchParams({
-            doc_id: doc_id,
-            pat_id: p_id,
-            app_id: data.appointmentId
-          }).toString()
-        });
+
+        sessionStorage.setItem('pat_id', p_id)
+        sessionStorage.getItem('doc_id', doc_id)
+        sessionStorage.getItem('app_id', data.appointmentId)
+
+        nav('/waiting_page');
+      //   nav({
+      //     pathname: '/waiting_page',
+      //     search: createSearchParams({
+      //       doc_id: doc_id,
+      //       pat_id: p_id,
+      //       app_id: data.appointmentId
+      //     }).toString()
+      //   });
       })
       .catch(error => {
         console.log(error);

@@ -16,13 +16,13 @@ function PatientCall() {
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
-    let uid = "p_"+String(searchParams.get("pat_id"))
+    let uid = "p_"+String(sessionStorage.getItem('pat_id'))
 
     let client = useRef(null);
     let channel = useRef(null);
 
 
-    let roomId = searchParams.get("doc_id")
+    let roomId = sessionStorage.getItem('doc_id')
 
     let localStream = useRef(null);
     let remoteStream;
@@ -59,7 +59,7 @@ function PatientCall() {
     }
 
     let init = async () => {
-        await get_doc_online_stat(searchParams.get("doc_id")).then(async(data) => {
+        await get_doc_online_stat(sessionStorage.getItem('doc_id')).then(async(data) => {
             console.log("Consultation", isConsultationActive)
             console.log("Consultation", data)
             if(isConsultationActive)
@@ -302,7 +302,7 @@ function PatientCall() {
     }
     async function setAppStatus(status) {
         const set_status_body = {
-            appId : searchParams.get("app_id"),
+            appId : sessionStorage.getItem('app_id'),
             value : status
         }
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
@@ -328,7 +328,7 @@ function PatientCall() {
         console.log(timestamp); // prints something like "2023-03-18T14:25:48.123Z"
 
         const set_end_time_body = {
-            appId : searchParams.get("app_id"),
+            appId : sessionStorage.getItem('app_id'),
             value : timestamp
         }
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
@@ -353,14 +353,16 @@ function PatientCall() {
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
         await leaveChannel();
-        nav({
-            pathname: '/call_summary',
-            search: createSearchParams({
-                pat_id: searchParams.get("pat_id"),
-                doc_id: searchParams.get("doc_id"),
-                app_id: searchParams.get("app_id")
-            }).toString()
-        });
+
+        nav('/call_summary');
+        // nav({
+        //     pathname: '/call_summary',
+        //     search: createSearchParams({
+        //         pat_id: searchParams.get("pat_id"),
+        //         doc_id: searchParams.get("doc_id"),
+        //         app_id: searchParams.get("app_id")
+        //     }).toString()
+        // });
         window.location.reload();
     }
     

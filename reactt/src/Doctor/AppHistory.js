@@ -19,11 +19,11 @@ function DocAppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log(searchParams.get('doc_id'))
+    console.log("sess doc id: ",sessionStorage.getItem('doc_id'))
   //  get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", searchParams.get("doc_id"));
+    console.log("Received pat_id: ", sessionStorage.getItem('doc_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
     
@@ -31,7 +31,7 @@ function DocAppoinHist() {
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {docId: searchParams.get("doc_id")}
+    const getappoinhist = {docId: sessionStorage.getItem('doc_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_appointments', {
       method: 'POST',
       headers: {
@@ -62,30 +62,36 @@ function DocAppoinHist() {
   }
 
     const navToHome = () =>{
-      nav({
-        pathname: '/DocHome',
-        search: createSearchParams({
-          doc_id: searchParams.get('doc_id')
-        }).toString()
-      });
+
+      nav('/DocHome');
+      // nav({
+      //   pathname: '/DocHome',
+      //   search: createSearchParams({
+      //     doc_id: searchParams.get('doc_id')
+      //   }).toString()
+      // });
     }
   
     const navToMngProfile = () =>{
-      nav({
-        pathname: '/patlist',
-        search: createSearchParams({
-          doc_id: searchParams.get('doc_id')
-        }).toString()
-      });
+
+      nav('/patlist');
+      // nav({
+      //   pathname: '/patlist',
+      //   search: createSearchParams({
+      //     doc_id: searchParams.get('doc_id')
+      //   }).toString()
+      // });
     }
   
     const navToAppHis = () =>{
-      nav({
-        pathname: '/DocAppoinHist',
-        search: createSearchParams({
-          doc_id: searchParams.get('doc_id')
-        }).toString()
-      });
+
+      nav('/DocAppoinHist');
+      // nav({
+      //   pathname: '/DocAppoinHist',
+      //   search: createSearchParams({
+      //     doc_id: searchParams.get('doc_id')
+      //   }).toString()
+      // });
 
     }
     const convertTime=(curr) =>{

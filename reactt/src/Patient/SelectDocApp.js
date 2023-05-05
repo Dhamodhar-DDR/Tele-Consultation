@@ -38,7 +38,7 @@ function DoctorList() {
   
       const create_app_body = {
         bookingTime : timestamp,
-        patientId : searchParams.get("pat_id"),
+        patientId : sessionStorage.getItem('pat_id'),
         doctorId: doc_id,
         startTime : null,
         endTime : null,
@@ -61,14 +61,15 @@ function DoctorList() {
       .then(data => {
         console.log(data)
         console.log(data.appointmentId)
-        nav({
-          pathname: '/waiting_page',
-          search: createSearchParams({
-            doc_id: doc_id,
-            pat_id: searchParams.get("pat_id"),
-            app_id: data.appointmentId
-          }).toString()
-        });
+        nav('/waiting_page');
+        // nav({
+        //   pathname: '/waiting_page',
+        //   search: createSearchParams({
+        //     doc_id: doc_id,
+        //     pat_id: searchParams.get("pat_id"),
+        //     app_id: data.appointmentId
+        //   }).toString()
+        // });
       })
       .catch(error => {
         console.log(error)
@@ -98,7 +99,7 @@ function DoctorList() {
 
 const get_prof_name_by_id = async() => {
 
-  const getpatidbody = {pat_id: searchParams.get("pat_id")}
+  const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
   await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
     method: 'POST',
     headers: {
@@ -145,25 +146,32 @@ const get_prof_name_by_id = async() => {
   }
 
   const handleLogout = () =>{
+    sessionStorage.clear();
+
+    localStorage.removeItem('jwtToken');
     nav('/login_p')
   }
   
   const navToHome = () =>{
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/home_pat')
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToMngProfile = () =>{
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/patlist');
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToAppHis = () =>{
@@ -177,7 +185,7 @@ const get_prof_name_by_id = async() => {
 
     get_prof_name_by_id()
     get_onine_doc_list()
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id from sess: ", sessionStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
@@ -220,7 +228,7 @@ const get_prof_name_by_id = async() => {
 
       </div>
 
-      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={searchParams.get("pat_id")} app_id={-1} doctor_id={send_did}/>)}
+      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={sessionStorage.getItem('pat_id')} app_id={-1} doctor_id={send_did}/>)}
       
     </div>
     

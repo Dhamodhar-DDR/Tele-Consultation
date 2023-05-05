@@ -46,12 +46,12 @@ function DoctorCall() {
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
-    let uid = "d_"+String(searchParams.get("doc_id"));
+    let uid = "d_"+String(sessionStorage.getItem('doc_id'));
 
     let client = useRef(null);
     let channel = useRef(null);
 
-    let roomId = searchParams.get("doc_id");
+    let roomId = sessionStorage.getItem('doc_id');
 
     let localStream = useRef(null);
     let remoteStream;
@@ -332,7 +332,7 @@ function DoctorCall() {
     const set_status = async(param) =>{
 
         const set_online_status_body = {
-            'doctorID' : searchParams.get("doc_id"),
+            'doctorID' : sessionStorage.getItem('doc_id'),
             'online_status': param
         }
         console.log("bef await isconsulatationactive", param)
@@ -376,7 +376,7 @@ function DoctorCall() {
     }, [isLoading]);
 
     useEffect(() => {
-        console.log(searchParams.get("pat_id"),searchParams.get("doc_id"),searchParams.get("app_id"))
+        console.log(sessionStorage.getItem('pat_id'),sessionStorage.getItem('doc_id'),sessionStorage.getItem('app_id'))
         init().then(()=>{
             console.log(localStream)
         });
@@ -387,12 +387,14 @@ function DoctorCall() {
         const toggleConsultation = async() =>
         {
             await set_status(false);
-            nav({
-                pathname: '/DocHome',
-                search: createSearchParams({
-                doc_id: searchParams.get("doc_id")
-                }).toString()
-            });
+
+            nav('/DocHome');
+            // nav({
+            //     pathname: '/DocHome',
+            //     search: createSearchParams({
+            //     doc_id: searchParams.get("doc_id")
+            //     }).toString()
+            // });
             leaveChannel();
             window.location.reload();
         }
@@ -454,7 +456,7 @@ function DoctorCall() {
         }
 
         const earliest_app_response_body = {
-            docId: searchParams.get("doc_id")
+            docId: sessionStorage.getItem('doc_id')
         }
         const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
@@ -583,7 +585,7 @@ function DoctorCall() {
             console.log(members)
             for(let i = 0;i<members.length;i++)
             {
-                if(members[i] === "d_"+String(searchParams.get("doc_id")))
+                if(members[i] === "d_"+String(sessionStorage.getItem('doc_id')))
                 {
                     console.log('Doctor exists')
                     break;

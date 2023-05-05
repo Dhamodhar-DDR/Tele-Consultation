@@ -47,12 +47,14 @@ function Logindoc() {
       .then(response => response.json())
       .then(data => {
         console.log("Doc Id assigned: ",data.doctorId)
-        nav({
-          pathname: '/DocHome',
-          search: createSearchParams({
-            doc_id: data.doctorId
-          }).toString()
-        });
+        sessionStorage.setItem('doc_id',data.doctorId);
+        nav('/DocHome');
+        // // nav({
+        // //   pathname: '/DocHome',
+        // //   search: createSearchParams({
+        // //     doc_id: data.doctorId
+        // //   }).toString()
+        // });
       })
       .catch(error => {
         console.log("error fetching id")
@@ -61,12 +63,14 @@ function Logindoc() {
     }
     else if(data == 'true')
     {
-      nav({
-        pathname: '/register_doc',
-        search: createSearchParams({
-          mobile: phone
-        }).toString()
-      });
+      sessionStorage.setItem('mobile', phone);
+      nav('/register_doc');
+      // nav({
+      //   pathname: '/register_doc',
+      //   search: createSearchParams({
+      //     mobile: phone
+      //   }).toString()
+      // });
     }
 
   }

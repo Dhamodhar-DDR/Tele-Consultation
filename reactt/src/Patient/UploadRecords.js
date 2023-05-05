@@ -135,15 +135,21 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
               const formData = new FormData();
               if(files.length == 0)
               {
-                nav({
-                  pathname: '/waiting_page',
-                  search: createSearchParams({
-                    doc_id: data.doctorId,
-                    pat_id: pat_id,
-                    app_id: data.appointmentId,
-                    type: upload_type
-                  }).toString()
-                });
+                sessionStorage.setItem('doc_id', data.doctorId);
+                sessionStorage.setItem('app_id', data.appointmentId);
+                sessionStorage.getItem('type',upload_type);
+
+                nav('/waiting_page');
+
+                // nav({
+                //   pathname: '/waiting_page',
+                //   search: createSearchParams({
+                //     doc_id: data.doctorId,
+                //     pat_id: pat_id,
+                //     app_id: data.appointmentId,
+                //     type: upload_type
+                //   }).toString()
+              //  });
               }
               else{
                 for (let i = 0; i < files.length; i++) {
@@ -170,15 +176,21 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                   console.log(response2);
                   console.log(data.appointmentId);
                   console.log('about to nav to waiting page');
-                  nav({
-                    pathname: '/waiting_page',
-                    search: createSearchParams({
-                      doc_id: data.doctorId,
-                      pat_id: pat_id,
-                      app_id: data.appointmentId,
-                      type: upload_type
-                    }).toString()
-                  });
+                  sessionStorage.setItem('doc_id', data.doctorId);
+                  sessionStorage.setItem('app_id', data.appointmentId);
+                  sessionStorage.getItem('type',upload_type);
+
+                  nav('/waiting_page');
+                  // nav({
+                  //   pathname: '/waiting_page',
+                  //   // search: createSearchParams({
+                  //   //   doc_id: data.doctorId,
+                  //   //   pat_id: pat_id,
+                  //   //   app_id: data.appointmentId,
+                  //   //   type: upload_type
+                  //   // }).toString()
+                //  });
+
                   // toggle("close");
                 })
                 .catch(error => {
@@ -226,7 +238,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
     formData.append('patId', parseInt(pat_id))
     formData.append('appId', -1)
   
-    fetch('http://localhost:8090/api/v1/health_records/upload', {
+    fetch('http://localhost:8090/api/v1/health_records/upload', { 
       method: 'POST',
       headers: {
         'Authorization': localStorage.getItem("jwtToken"),
@@ -236,11 +248,11 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       body: formData
     })
     .then(response => {
-      console.log(response);
-      toggle()("close");
+      if( !response.ok ) console.log( response );
+      return response.json();
     })
     .catch(error => {
-      console.error(error);
+      console.log(error)
     });
   };
 

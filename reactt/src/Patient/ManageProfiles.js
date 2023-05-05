@@ -82,6 +82,15 @@ function PatList() {
     get_all_profiles();
   }, [])
 
+  const handleAppoinHist = () => {
+    nav({
+      pathname: '/appoinhist',
+      search: createSearchParams({
+        pat_id: searchParams.get("pat_id")
+      }).toString()
+    });
+
+  }
 
   const handleAddProf = () =>{
     nav({
@@ -175,7 +184,7 @@ function PatList() {
         <div>
           <button onClick={navToHome} className="nav-button">Home</button>
           <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
-          <button className="nav-button">Appointment History</button>
+          <button onClick={handleAppoinHist} className="nav-button">Appointment History</button>
 
             {/* <a href="#">Edit Profile</a>
             <a href="#">Appointment History</a> */}

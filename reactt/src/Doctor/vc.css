@@ -11,19 +11,6 @@
     overflow:hidden;
 }
 
-#pname{
-  background-color: #341e73;
-  left: 100px;
-  top: 89%;
-  flex-direction: column;
-  align-self: center;
-  margin-left: auto;
-  margin-right: auto;
-
-
-}
-
-
 .followup-reason{
   margin: 40px;
 }

@@ -62,11 +62,11 @@ function Regc() {
         'email' : email,
         'consent' : false
       }
-      localStorage.getItem('jwt token', data);
+      localStorage.getItem('jwtToken', data);
       await fetch('http://localhost:8090/api/v1/patient/create', {
         method: 'POST',
         headers: {
-          'Authorization': data,
+          'Authorization': localStorage.getItem('jwtToken'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },

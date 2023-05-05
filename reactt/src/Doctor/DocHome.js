@@ -19,7 +19,7 @@ function DocHome() {
   let help;
   useEffect(() => {
     console.log(searchParams.get('doc_id'));
-    get_doc_id();
+    // get_doc_id();
     get_appoin_history()    
   }, [])
 
@@ -36,7 +36,17 @@ function DocHome() {
       },
       body: JSON.stringify(get_doc_by_mobile_body)
     })
-    .then(response => response.json())
+    .then(response =>{
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
       console.log("Doc Id assigned: ",data.doctorId)
       nav({
@@ -64,7 +74,17 @@ function DocHome() {
       body: JSON.stringify(getappoinhist)
   
     })
-    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
       console.log("Online docs apoin list get profff: ",data)
       settappoinlist(data)  
@@ -89,7 +109,17 @@ function DocHome() {
       },
       body: JSON.stringify(check_status_body)
     })
-    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
       console.log(check_status_body);
       console.log("Online Status: ",data)
@@ -113,6 +143,7 @@ function DocHome() {
 
   const HandleLogout = () =>{
     set_status(false)
+    localStorage.removeItem('jwtToken_doc')
     nav('/login_doc')
   }
 
@@ -133,7 +164,17 @@ function DocHome() {
       },
       body: JSON.stringify(set_online_status_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
       console.log("Online status: ",data)
       setIsConsultationActive(param)
@@ -166,10 +207,11 @@ function DocHome() {
   }
 
   useEffect(() => {
-    get_doc_id();
+    // get_doc_id();
     console.log("Received num: ", searchParams.get("doc_id"));
     setDoc_id(searchParams.get("doc_id"));
-    get_online_stat();
+    console.log("check: ", searchParams.get("doc_id"))
+    get_online_stat(searchParams.get("doc_id"));
   }, []);
 
   const removeFollowUp = async(app,index) => {
@@ -192,7 +234,17 @@ function DocHome() {
         },
         body: JSON.stringify(set_follow_up_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
         console.log("Online status: ",data)
     })
@@ -214,6 +266,17 @@ function DocHome() {
         body: JSON.stringify({pat_id: pat_id})
     }).then(async(response)=>{
       const pat = await response.json();
+      
+        console.log(response);
+        if (response['status'] == 401)
+        {
+          localStorage.removeItem('jwtToken_doc')
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        return response.json()
+    
       console.log(pat)
       setPatient({name : pat.name, age : pat.age, gender : pat.gender, mobile: pat.mobileNumber, email: pat.email})
     })

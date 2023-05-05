@@ -17,7 +17,7 @@ public class TokenManager implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 7008375124389347049L; public static final long TOKEN_VALIDITY = 2*60*60;
+    private static final long serialVersionUID = 7008375124389347049L; public static final long TOKEN_VALIDITY = 10*60*60;
     //@Value("${secret}")
     private static String jwtSecret = "somethingwrongwiththethingsgoingarounddidntexpectmyselftobecaughtupwiththingslikethisbutitisnotasificouldhavedonethongsdiffernetlyastheysayifitismeanttobeitwillbe";
     public String generateJwtToken(UserDetails userDetails) {

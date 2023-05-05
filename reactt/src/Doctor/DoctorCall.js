@@ -29,10 +29,15 @@ function DoctorCall() {
     const[patientName,setPatientName]  = useState("");
     const[patientAge,setPatientAge]  = useState("");
     const[patientGender,setPatientGender]  = useState("");
+    const[patientMobile,setPatientMobile]  = useState("");
+    const[patientEmail,setPatientEmail] = useState("");
     const[diagnosis,setDiagnosis] = useState("");
     const[patpresent, setpatpresent] = useState(false);
     const[prevDiagnosis,setPrevDiagnosis] = useState("");
-    
+
+    const [files,setFiles] = useState([]);
+    const [init_files, setinitFiles] = useState([]);
+
 
 
     const nav = useNavigate();
@@ -122,6 +127,8 @@ function DoctorCall() {
         setPatientAge("")
         setPatientGender("")
         setPatientName("")
+        setPatientMobile("")
+        setPatientEmail("")
         setpatpresent(false)
     }
 
@@ -492,6 +499,8 @@ function DoctorCall() {
             setPatientName(pat_details.name);
             setPatientAge(pat_details.age);
             setPatientGender(pat_details.gender);
+            setPatientMobile(pat_details.mobileNumber);
+            setPatientEmail(pat_details.email);
             setpatpresent(true);
 
             // await fetch('http://localhost:8090/api/v1/patient/get_appointment_by_id',{
@@ -782,8 +791,6 @@ function DoctorCall() {
         setInputFields(values);
     };
 
-    const [files,setFiles] = useState([]);
-    const [init_files, setinitFiles] = useState([]);
     // useEffect(() => {
     //   display_file();
     // }, [])
@@ -952,9 +959,9 @@ function DoctorCall() {
                             <li classname="write-pres" onClick={toggleWritePres} >Write prescriptions</li>
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
-                    </div>
                     {console.log("save state is : ", savefu)}
                     {(markForFollowUp&&!savefu) ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button className="savemark" onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    </div>
                     
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
@@ -965,6 +972,8 @@ function DoctorCall() {
                           <div className="details-item"><b>Name</b>: {patientName}</div>
                           <div className="details-item"><b>Age</b>: {patientAge}</div>
                           <div className="details-item"><b>Gender</b>: {patientGender}</div>
+                          <div className="details-item"><b>Mobile Number</b>: {patientGender}</div>
+                          <div className="details-item"><b>Email</b>: {patientGender}</div>
                     </div>
                     {isfollowup && <div className="patient-details" style={{marginTop:"30px"}}>
                        <h2 className="details-header">Previous Appointment Diagnosis</h2>
@@ -1024,11 +1033,8 @@ function DoctorCall() {
                                             <li key={index} onClick={() => handleFileClick(file)}>
                                                 {file.name}
                                             </li>
-                                            ))
-            
-
+                                        ))
                                     )
-
                                 }
 
                                 {files.slice(0,3).map((file, index) => (
@@ -1055,12 +1061,7 @@ function DoctorCall() {
 
                 <div className={`content ${isLeftSideBarOpen}`}>
                     <div id="videos" className={`videos ${isLeftSideBarOpen}`} style={{height:'100vh'}}>
-
-                {patpresent && (<div id='pname' className = "sttop" >
-                    Patient Name : {patientName}
-                    </div>)}
-
-
+                        {patpresent && (<div id={`pname`} className = {`sttop ${isLeftSideBarOpen}`} > Patient Name : {patientName} </div>)}
                         <video className="doc-video-player" id="user-1" autoPlay playsInline></video>
                         <video className="doc-video-player" id="user-2" autoPlay playsInline></video>
                     </div>

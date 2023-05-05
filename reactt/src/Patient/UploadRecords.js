@@ -250,7 +250,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       <div className="upload-files-modal-content">
         <form className="FileUploader" encType="multipart/form-data" >
           <div className="FileUploader-header">
-            <h2>Choose Specialisation and Upload Health Records</h2>
+            <h2>{upload_type==="upload-follow-auto" || upload_type==="upload-auto"?"Choose Specialisation and ":""}Upload Health Records</h2>
           </div>
           {upload_type==="upload-follow-auto" || upload_type==="upload-auto"?
           <div className='selectspec-div'>

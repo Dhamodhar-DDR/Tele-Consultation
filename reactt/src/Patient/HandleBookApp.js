@@ -37,11 +37,7 @@ async function HandleBookApp({doc_id,p_id}) {
         },
         body: JSON.stringify(create_app_body)
       })
-      .then(response => {if( !response.ok )
-
-        console.log( response );
-        else
-        response.json();})
+      .then(response => response.json())
       .then(data => {
         console.log(data);
         console.log(data.appointmentId);

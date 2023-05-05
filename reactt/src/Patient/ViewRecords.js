@@ -85,6 +85,15 @@ const DisplayFiles = () => {
     });
   }
 
+  const handleAppoinHist = () => {
+    nav({
+      pathname: '/appoinhist',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
 
   const handleFileClick = (file) => {
     setSelectedFile(file);
@@ -105,7 +114,7 @@ const DisplayFiles = () => {
         <div>
           <button onClick={navToHome} className="nav-button">Home</button>
           <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
-          <button onClick={navToAppHis} className="nav-button">Appointment History</button>
+          <button onClick={handleAppoinHist} className="nav-button">Appointment History</button>
           
           
 

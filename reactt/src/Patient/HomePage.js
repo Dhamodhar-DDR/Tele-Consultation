@@ -177,7 +177,7 @@ function Homepat(){
         <div>
           <button onClick={navToHome} className="nav-button">Home</button>
           <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
-          <button onClick={navToAppHis} className="nav-button">Appointment History</button>
+          <button onClick={handleAppoinHist} className="nav-button">Appointment History</button>
           
           
 

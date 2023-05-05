@@ -88,7 +88,15 @@ function DocAppoinHist() {
       });
 
     }
-    
+    const convertTime=(curr) =>{
+      if(curr!==null)
+      {
+        const df = new Date(curr);
+        const date_str = String(df);
+        return <>{date_str.substring(0,date_str.length-31)+" IST"}</>; //prints date in current locale
+      }
+      else return <></>
+    }
     
       return (
         <div>
@@ -117,9 +125,9 @@ function DocAppoinHist() {
                     <img className="doctor-photo" src={def_pp} alt="Doctor" />
                     <div className="doctor-info">
                       <div className="doctor-name">{appointment.name}</div>
-                      <div className="info-label"><b>Call Start Time:</b> {appointment.appointment.startTime}</div>
+                      <div className="info-label"><b>Call Start Time:</b> {convertTime(appointment.appointment.startTime)}</div>
                       {/* <div className="info-value">{doctor.startTime}</div> */}
-                      <div className="info-label"><b>Call End Time:</b> {appointment.appointment.endTime}</div>
+                      <div className="info-label"><b>Call End Time:</b> {convertTime(appointment.appointment.endTime)}</div>
                       {/* <div className="info-value">{doctor.endTime}</div> */}
                       <div className="info-label"><b>Status: </b>{appointment.appointment.status}</div>
                       {/* <div className="info-value">{doctor.endTime}</div> */}

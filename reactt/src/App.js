@@ -15,7 +15,7 @@ import Modal from './Patient/UploadRecords';
 import PatList from './Patient/ManageProfiles';
 import AddProf from './Patient/AddProfile';
 import AppoinHist from './Patient/AppHistory';
-import WaitingPage from './Patient/WaitingPage'
+import WaitingPage from './Patient/waitingpage'
 import DocAppoinHist from './Doctor/AppHistory';
 import DisplayFiles  from './Patient/ViewRecords';
 import CallSummary from './Patient/CallSummary';

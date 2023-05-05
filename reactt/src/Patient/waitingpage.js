@@ -18,12 +18,14 @@ const WaitingPage = () => {
             fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
                 method: 'POST',
                 headers: {
+                  'Authorization': localStorage.getItem("jwtToken"),
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*' 
                 },
                 body: JSON.stringify(get_curr_app_body)
             })
-            .then((response) => response.json())
+            .then((response) => {
+              return response.json();})
             .then(async(obj) => {
                 if(obj.doctor_live == true)
                 {
@@ -108,6 +110,8 @@ const WaitingPage = () => {
       await fetch('http://localhost:8090/api/v1/appointment/set_status', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
+          
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },

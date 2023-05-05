@@ -122,6 +122,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
           await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
               method: 'POST',
               headers: {
+                'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
               },
@@ -158,6 +159,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                 await fetch('http://localhost:8090/api/v1/health_records/upload', {
                   method: 'POST',
                   headers: {
+                    'Authorization': localStorage.getItem("jwtToken"),
                     // 'Content-Type': 'multipart/form-data',
                     'Access-Control-Allow-Origin': '*' 
                   },
@@ -227,6 +229,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
     fetch('http://localhost:8090/api/v1/health_records/upload', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         // 'Content-Type': 'multipart/form-data',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -247,7 +250,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       <div className="upload-files-modal-content">
         <form className="FileUploader" encType="multipart/form-data" >
           <div className="FileUploader-header">
-            <h2>Choose Specialisation and Upload Health Records</h2>
+            <h2>{upload_type==="upload-follow-auto" || upload_type==="upload-auto"?"Choose Specialisation and ":""}Upload Health Records</h2>
           </div>
           {upload_type==="upload-follow-auto" || upload_type==="upload-auto"?
           <div className='selectspec-div'>

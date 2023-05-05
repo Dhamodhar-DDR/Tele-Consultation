@@ -75,12 +75,21 @@ function Regdoc() {
       await fetch('http://localhost:8090/api/v1/doctor/add_doctor', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(create_doc_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        return response.json();
+      })
       .then(async(data) => {
         const get_doc_by_mobile_body = {
           'mobile_number': searchParams.get("mobile")
@@ -88,12 +97,22 @@ function Regdoc() {
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
           method: 'POST',
           headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(get_doc_by_mobile_body)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_doc'
+            });
+          }
+          return response.json();
+        })
         .then(data => {
           console.log("Doc Id assigned: ",data.doctorId)
           nav({

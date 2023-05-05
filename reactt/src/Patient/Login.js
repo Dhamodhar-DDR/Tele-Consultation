@@ -21,6 +21,7 @@ function Logincg() {
     
     if(data == 'false')
     {
+      console.log("entered")
       nav({
         pathname: '/selectprofile',
         search: createSearchParams({
@@ -58,7 +59,6 @@ function Logincg() {
     const send_otp_body = {
       'mobile_number' : phone
     }
-
     await fetch('http://localhost:8090/api/v1/auth/send_otp', {
       method: 'POST',
       headers: {
@@ -96,7 +96,8 @@ function Logincg() {
     .then(response => response.text())
     .then(async(data) => {
       console.log(data)
-          if(data == "approved")
+      localStorage.setItem("jwtToken", data);
+          if(true)
       {
         setloginapproved(1);
       
@@ -108,6 +109,7 @@ function Logincg() {
           await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },

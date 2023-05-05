@@ -31,6 +31,7 @@ async function HandleBookApp({doc_id,p_id}) {
       await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },

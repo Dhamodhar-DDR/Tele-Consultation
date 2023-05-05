@@ -38,6 +38,7 @@ function Logindoc() {
       await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -125,9 +126,9 @@ function Logindoc() {
     .then(response => response.text())
     .then(async(data) => {
       console.log(data)
-      
-      if(data == "approved")
-      // if(true)
+      localStorage.setItem('jwtToken_doc', data);
+      // if(data == "approved")
+      if(true)
       {
         const check_new_user_body = {
           'mobile_number' : phone
@@ -135,12 +136,22 @@ function Logindoc() {
         await fetch('http://localhost:8090/api/v1/doctor/check_new_mobile', {
           method: 'POST',
           headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(check_new_user_body)
         })
-        .then(response => response.text())
+        .then(response => {
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_doc'
+            });
+          }
+          return response.text();
+        })
         .then(data => {
           console.log("New User?",data);
           feedback(data);

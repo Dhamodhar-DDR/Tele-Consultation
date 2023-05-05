@@ -17,6 +17,7 @@ const DisplayFiles = () => {
     await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         // 'Content-Type': 'multipart/form-data',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -24,6 +25,11 @@ const DisplayFiles = () => {
       body: formData
     })
     .then((response) => {
+      if( !response.ok )
+
+      console.log( response );
+        else
+        response.json();
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -79,6 +85,15 @@ const DisplayFiles = () => {
     });
   }
 
+  const handleAppoinHist = () => {
+    nav({
+      pathname: '/appoinhist',
+      search: createSearchParams({
+        pat_id: searchParams.get('pat_id')
+      }).toString()
+    });
+  }
+
 
   const handleFileClick = (file) => {
     setSelectedFile(file);
@@ -99,7 +114,7 @@ const DisplayFiles = () => {
         <div>
           <button onClick={navToHome} className="nav-button">Home</button>
           <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
-          <button onClick={navToAppHis} className="nav-button">Appointment History</button>
+          <button onClick={handleAppoinHist} className="nav-button">Appointment History</button>
           
           
 

@@ -26,13 +26,22 @@ function AddProf() {
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getpatidbody)
   
     })
-    .then(response => response.json())
+    .then(response =>{
+      if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+    })
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
@@ -95,12 +104,20 @@ function AddProf() {
     await fetch('http://localhost:8090/api/v1/patient/add_new_profile', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(create_patient_body)
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+      return response.json();})
     .then(data => {
       console.log(data)
       nav({

@@ -29,10 +29,15 @@ function DoctorCall() {
     const[patientName,setPatientName]  = useState("");
     const[patientAge,setPatientAge]  = useState("");
     const[patientGender,setPatientGender]  = useState("");
+    const[patientMobile,setPatientMobile]  = useState("");
+    const[patientEmail,setPatientEmail] = useState("");
     const[diagnosis,setDiagnosis] = useState("");
     const[patpresent, setpatpresent] = useState(false);
     const[prevDiagnosis,setPrevDiagnosis] = useState("");
-    
+
+    const [files,setFiles] = useState([]);
+    const [init_files, setinitFiles] = useState([]);
+
 
 
     const nav = useNavigate();
@@ -122,6 +127,8 @@ function DoctorCall() {
         setPatientAge("")
         setPatientGender("")
         setPatientName("")
+        setPatientMobile("")
+        setPatientEmail("")
         setpatpresent(false)
     }
 
@@ -298,13 +305,21 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
-                
+        'Authorization': localStorage.getItem('jwtToken_doc'),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(check_status_body)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.json();
+          })
         .then(data => {
             setIsConsultationActive(data);
         })
@@ -325,13 +340,21 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
             method: 'POST',
             headers: {
-                
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(set_online_status_body)
         })
-        .then(response => response.text())
+        .then(response => {
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.json();
+          })
         .then(data => {
             console.log("Online status: ",data)
             setIsConsultationActive(param)
@@ -414,12 +437,18 @@ function DoctorCall() {
             const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
-                    
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(set_app_status_body)
             })
+            if (set_status_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
             if(set_status_response.status != 200) console.log(set_status_response)
             else console.log("Changed previous appointment status to completed!")
         }
@@ -430,12 +459,19 @@ function DoctorCall() {
         const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(earliest_app_response_body)
         })
+        if (earliest_app_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
         console.log(earliest_app_response)
         try{
             const earliest_app = await earliest_app_response.json();
@@ -446,18 +482,25 @@ function DoctorCall() {
             const get_pat_body_response = await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
                 method: 'POST',
                 headers: {
-                    
+                    'Authorization': localStorage.getItem("jwtToken_doc"),
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify({pat_id: earliest_app.patientId})
             })
-
+            if (get_pat_body_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
             const pat_details = await get_pat_body_response.json();
             setfollowup(earliest_app.followup)
             setPatientName(pat_details.name);
             setPatientAge(pat_details.age);
             setPatientGender(pat_details.gender);
+            setPatientMobile(pat_details.mobileNumber);
+            setPatientEmail(pat_details.email);
             setpatpresent(true);
 
             // await fetch('http://localhost:8090/api/v1/patient/get_appointment_by_id',{
@@ -483,12 +526,19 @@ function DoctorCall() {
             const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                     
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(set_app_status_body)
             })
+            if (set_status_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
             if(set_status_response.status != 200) console.log(set_status_response)
             else{
                 const now = new Date(); // get current date and time
@@ -500,12 +550,19 @@ function DoctorCall() {
                 const set_start_time_response = await fetch('http://localhost:8090/api/v1/appointment/set_start_time', {
                     method: 'POST',
                     headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                         
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*'
                     },
                     body: JSON.stringify(set_start_time_body)
                 })
+                if (set_start_time_response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
                 setIsPresSent(false)
                 console.log("Next patient status changed!")
             }
@@ -576,13 +633,22 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(set_follow_up_body)
         })
-        .then(response => response.text())
+        .then(response => {
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.text();
+          })
         .then(data => {
             console.log("Online status: ",data)
             setMarkForFollowUp(!markForFollowUp);
@@ -610,13 +676,22 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
                 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(set_follow_up_body)
         })
-        .then(response => response.text())
+        .then(response =>{
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.text();
+          })
         .then(data => {
             console.log("Online status: ",data)
         })
@@ -701,7 +776,7 @@ function DoctorCall() {
     };
 
     const handleDiagChange = (event) => {
-        event.preventDefault;
+        event.preventDefault();
         setDiagnosis(event.target.value);
     };
     const handleInput3Change = (index, event) => {
@@ -716,8 +791,6 @@ function DoctorCall() {
         setInputFields(values);
     };
 
-    const [files,setFiles] = useState([]);
-    const [init_files, setinitFiles] = useState([]);
     // useEffect(() => {
     //   display_file();
     // }, [])
@@ -728,6 +801,8 @@ function DoctorCall() {
       await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
           // 'Content-Type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -735,10 +810,12 @@ function DoctorCall() {
         body: formData
       })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
         }
-        console.log(response)
         return response.json();
       })
       .then((list) => {
@@ -801,6 +878,8 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/prescription/add_prescription',{
             method: 'POST',
             headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*' 
             },
@@ -811,6 +890,12 @@ function DoctorCall() {
                 appId: appointmentId,
                 description: diagnosis 
             }
+                if (response['status'] == 401)
+                {
+                  nav({
+                    pathname: '/login_doc'
+                  });
+                }
             await fetch('http://localhost:8090/api/v1/appointment/set_app_description',{
                 method: 'POST',
                 headers: {
@@ -819,7 +904,16 @@ function DoctorCall() {
                 },
                 body: JSON.stringify(send_pres_diag )
             })
-            .then(response2=>console.log(response2))
+            .then(response2=>{
+                if (response2['status'] == 401)
+                {
+                  nav({
+                    pathname: '/login_doc'
+                  });
+                }
+                console.log(response2)
+                return response2.json();
+              })
             .catch(err=>console.log(err))
             setIsPresSent(true);
             console.log(response);
@@ -865,9 +959,9 @@ function DoctorCall() {
                             <li classname="write-pres" onClick={toggleWritePres} >Write prescriptions</li>
                             <li className={`mark-follow ${markForFollowUp ? 'open' : ''}`} onClick={toggleFollowUp}>{markForFollowUp ? 'Unmark':'Mark'} for follow up {markForFollowUp ? '✅':''}</li>
                         </ul>
-                    </div>
                     {console.log("save state is : ", savefu)}
                     {(markForFollowUp&&!savefu) ? <div className="followup-reason"> <h4>Reason for follow up:</h4> <textarea onChange={handleFollowUpReason} rows = '7' cols = '40'></textarea><div><button className="savemark" onClick={saveFollowup}>Save</button></div></div>  : <></>}
+                    </div>
                     
                     <div className="left-sidebar-patProf" id="left-sidebar-patProf">
                         <div className="go-back" >
@@ -878,6 +972,8 @@ function DoctorCall() {
                           <div className="details-item"><b>Name</b>: {patientName}</div>
                           <div className="details-item"><b>Age</b>: {patientAge}</div>
                           <div className="details-item"><b>Gender</b>: {patientGender}</div>
+                          <div className="details-item"><b>Mobile Number</b>: {patientGender}</div>
+                          <div className="details-item"><b>Email</b>: {patientGender}</div>
                     </div>
                     {isfollowup && <div className="patient-details" style={{marginTop:"30px"}}>
                        <h2 className="details-header">Previous Appointment Diagnosis</h2>
@@ -937,11 +1033,8 @@ function DoctorCall() {
                                             <li key={index} onClick={() => handleFileClick(file)}>
                                                 {file.name}
                                             </li>
-                                            ))
-            
-
+                                        ))
                                     )
-
                                 }
 
                                 {files.slice(0,3).map((file, index) => (
@@ -968,12 +1061,7 @@ function DoctorCall() {
 
                 <div className={`content ${isLeftSideBarOpen}`}>
                     <div id="videos" className={`videos ${isLeftSideBarOpen}`} style={{height:'100vh'}}>
-
-                {patpresent && (<div id='pname' className = "sttop" >
-                    Patient Name : {patientName}
-                    </div>)}
-
-
+                        {patpresent && (<div id={`pname`} className = {`sttop ${isLeftSideBarOpen}`} > Patient Name : {patientName} </div>)}
                         <video className="doc-video-player" id="user-1" autoPlay playsInline></video>
                         <video className="doc-video-player" id="user-2" autoPlay playsInline></video>
                     </div>

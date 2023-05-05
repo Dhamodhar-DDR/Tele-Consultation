@@ -51,6 +51,7 @@ function DoctorList() {
       await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -101,6 +102,7 @@ const get_prof_name_by_id = async() => {
   await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
     method: 'POST',
     headers: {
+      'Authorization': localStorage.getItem('jwtToken'),
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*' 
     },
@@ -124,6 +126,8 @@ const get_prof_name_by_id = async() => {
     await fetch('http://localhost:8090/api/v1/doctor/get_online_doctors', {
       method: 'GET',
       headers: {
+        'Authorization': localStorage.getItem('jwtToken'),
+
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },

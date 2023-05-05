@@ -15,20 +15,38 @@ import Modal from './Patient/UploadRecords';
 import PatList from './Patient/ManageProfiles';
 import AddProf from './Patient/AddProfile';
 import AppoinHist from './Patient/AppHistory';
-import WaitingPage from './Patient/WaitingPage'
+import WaitingPage from './Patient/waitingpage'
 import DocAppoinHist from './Doctor/AppHistory';
 import DisplayFiles  from './Patient/ViewRecords';
 import CallSummary from './Patient/CallSummary';
+
+function check_login(){
+  const user = localStorage.getItem('jwtToken');
+  if (user) return true;
+  else return false;
+}
+
+function check_doc_login(){
+  const user = localStorage.getItem('jwtToken_doc');
+  if (user) return true;
+  else return false;
+}
 
 function App() 
 {
   return (
   <Router>
     <Routes>
-      <Route exact path="/" element={<Page1 />}/>
-      <Route exact path="/login_p" element={<Logincg />} />     
+      <Route exact path="/" element={<Page1 />} />
+      <Route exact path="/login_p" 
+      // element={<Logincg />}
+      element = {check_login() ? (<ProfileSelector/>) : (<Logincg/>)}
+      />     
       <Route exact path="/register_p" element={<Regc />} />
-      <Route exact path="/login_doc" element={<Logindoc />} />
+      <Route exact path="/login_doc" 
+      // element={<Logindoc />}
+      element = {check_doc_login() ? (<DocHome/>) : (<Logindoc/>)}
+      />
       <Route path="/register_doc" element={<Regdoc />} />
       <Route path="/DocHome" element={<DocHome />} />
       <Route path="/select_doc" element={<DoctorList />} />

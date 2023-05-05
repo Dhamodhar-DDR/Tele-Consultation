@@ -282,7 +282,7 @@ function PatientCall() {
         await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
-                
+                'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
             },
@@ -308,7 +308,7 @@ function PatientCall() {
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
             method: 'POST',
             headers: {
-                
+                'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },
@@ -334,7 +334,7 @@ function PatientCall() {
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
             method: 'POST',
             headers: {
-                
+                'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },
@@ -349,7 +349,7 @@ function PatientCall() {
     }
 
     const handleLeaveCall = async(e) => {
-        e.preventDefault();
+      //e.preventDefault();
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
         await leaveChannel();

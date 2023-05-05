@@ -4,7 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import Modal from "./UploadRecords"
 
+function catchError( error ){
 
+  console.log( error );
+
+}
 function Homepat(){
 
   const [showModal, setShowModal] = useState(false);
@@ -33,21 +37,34 @@ function Homepat(){
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getpatidbody)
     })
-    .then(response => response.json())
+    .then(response =>  response.json()
+//       if( !response.ok ){
+// console.log("yep");
+// nav({
+//   pathname: '/login_p',
+  // search: createSearchParams({
+  //   mobile: phone
+  // }).toString()
+// });
+// alert("Please login again")
+//         catchError( response );}
+//         else
+//         response.json();
+    )
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
       console.log("After set profname ",prof_name)     
     })
     .catch(error => {
-      console.log(error)
+      // console.log(error)
     });
-  
   }
   
 
@@ -160,7 +177,7 @@ function Homepat(){
         <div>
           <button onClick={navToHome} className="nav-button">Home</button>
           <button onClick={navToMngProfile} className="nav-button">Manage Profile</button>
-          <button onClick={navToAppHis} className="nav-button">Appointment History</button>
+          <button onClick={handleAppoinHist} className="nav-button">Appointment History</button>
           
           
 

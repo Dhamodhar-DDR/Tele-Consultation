@@ -18,12 +18,19 @@ function CallSummary(){
         await fetch('http://localhost:8090/api/v1/appointment/get_appointment_by_id', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(body)
         })
-        .then(response => response.json())
+        .then(response => response.json()
+          // {if( !response.ok )
+
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
             console.log("Appointment details ",data)
             setAppointment(data)
@@ -39,12 +46,19 @@ function CallSummary(){
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_id', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(body2)
         })
-        .then(response => response.json())
+        .then(response => response.json()
+          // {if( !response.ok )
+
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
             console.log("Doctor details ",data)
             setDoctor(data)
@@ -64,49 +78,57 @@ function CallSummary(){
         await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(getpatidbody)
       
         })
-        .then(response => response.json())
+        .then(response => response.json()
+          // {if( !response.ok )
+
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
+          if (data){
           console.log("Online docs list get profff: ",data)
           setprofname(data.name)  
           console.log("After set profname ",prof_name)     
-        })
+        }})
         .catch(error => {
           console.log(error)
         });
       
     }
 
-    const generatePDF = (data,appointment_id, doc_name, doc_spec) => {
+    const generatePDF = (data,appointment,appointment_id, doc_name, doc_spec) => {
         const doc = new jspdf();
-        let line_number = 0; 
+        let line_number = 1; 
         
         doc.setFont('Arial, sans-serif', 'bold');
         doc.setFontSize(24);
-        doc.text('Tele Consultation Platform - Prescriptions', 10, line_number*10+5 + 10);
+        doc.text('Tele Consultation Platform - Prescriptions', 10, line_number*10+10);
+        line_number+=1;
         doc.setLineWidth(0.5);
         doc.setDrawColor(180, 180, 180);
-        doc.line(10, 22, 200, 22); // x1, y1, x2, y2
-
+        doc.line(10, line_number*10+8, 200, line_number*10+8); // x1, y1, x2, y2
         doc.setFont('Arial, sans-serif', 'normal');
         doc.setFontSize(14);
-        
         line_number+=1;
+        doc.text('Appointment Id    : ' + appointment_id, 10, line_number*10 + 10);
         line_number+=1;
-        doc.text('Appointment Id: ' + appointment_id, 10, line_number*10 + 10);
+        doc.text('Patient Name        : ' + prof_name, 10, line_number*10 + 10);
         line_number+=1;
-        doc.text('Patient Name: ' + prof_name, 10, line_number*10 + 10);
-        line_number+=1;
-        // doc.text('Gender: ', 10, line_number*10 + 10);
+        // doc.text('Patient Age: ' , 10, line_number*10 + 10);
         // line_number+=1;
-        doc.text('Doctor Consulted: Dr.' + doc_name + ' (' + doc_spec +')', 10, line_number*10 + 10);
+        doc.text('Doctor Consulted : Dr.' + doc_name + ' (' + doc_spec +')', 10, line_number*10 + 10);
         line_number+=1;
-        doc.line(10, 54, 200, 54); // x1, y1, x2, y2
+        doc.text('Diagnosis              : ' + appointment.description, 10, line_number*10 + 10);
+        line_number+=1;
+        doc.line(10, line_number*10+5, 200, line_number*10+5); // x1, y1, x2, y2
         line_number+=1;
 
         if(data.length == 0) {
@@ -132,20 +154,27 @@ function CallSummary(){
         document.getElementById("pres-view-popup").style.display = 'block';
       };
       
-      const viewPrescription = async(appId, doc_name, doc_spec) =>{
+      const viewPrescription = async(appointment,appId, doc_name, doc_spec) =>{
           const getpresbody = {appId: appId}
           await fetch('http://localhost:8090/api/v1/prescription/get_prescription', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(getpresbody)
           })
-          .then(response => response.json())
+          .then(response => response.json()
+            // {if( !response.ok )
+
+            // console.log( response );
+            // else
+            // response.json();}
+            )
           .then(data => {
             console.log("Prescriptions: ",data)
-            generatePDF(data,appId, doc_name, doc_spec);
+            generatePDF(data,appointment,appId, doc_name, doc_spec);
           })
           .catch(error => {
             console.log(error)
@@ -174,13 +203,13 @@ function CallSummary(){
                 <div className="details">
                     <img className="doctor-photo" src={def_pp} alt="Doctor" />
                     <div>
-                        <p className="doctor-name">{doctor.name}</p>
-                        <div className="doctor-spec"><b>{doctor.specialization}</b></div>
-                        <div className="info-label"><b>Call Start Time:</b> {appointment.startTime}</div>
-                        <div className="info-label"><b>Call End Time:</b> {appointment.endTime}</div>
-                        <div className="info-label"><b>Status: </b>{appointment.status}</div>
+                        <p className="doctor-name">{doctor?.name}</p>
+                        <div className="doctor-spec"><b>{doctor?.specialization}</b></div>
+                        <div className="info-label"><b>Call Start Time:</b> {appointment?.startTime}</div>
+                        <div className="info-label"><b>Call End Time:</b> {appointment?.endTime}</div>
+                        <div className="info-label"><b>Status: </b>{appointment?.status}</div>
                         <span>
-                            <button className="app-sumary-btn" onClick={()=>viewPrescription(appointment.appointmentId,doctor.name,doctor.specialization)} style={{marginRight: '40px'}}>View prescription</button>
+                            <button className="app-sumary-btn" onClick={()=>viewPrescription(appointment,appointment.appointmentId,doctor.name,doctor.specialization)} style={{marginRight: '40px'}}>View prescription</button>
                             <button className="app-sumary-btn" onClick={navToHome}>Back to home</button>
                         </span>
                     </div>

@@ -1,10 +1,10 @@
-
-
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import './styles/DocHome.css'
 import def_pp from '../imgs/profile.png'
+
+import jwt from 'jwt-decode';
 
 
 function DocHome() {
@@ -16,16 +16,48 @@ function DocHome() {
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
   const did = searchParams.get('doc_id')
+  let help;
   useEffect(() => {
+    console.log(searchParams.get('doc_id'));
+    get_doc_id();
     get_appoin_history()    
   }, [])
 
+  const get_doc_id = async() => {
+    const get_doc_by_mobile_body = {
+      'mobile_number': jwt(localStorage.getItem('jwtToken_doc'))['sub']
+    }
+    await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
+      method: 'POST',
+      headers: {
+      'Authorization': localStorage.getItem('jwtToken_doc'),
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(get_doc_by_mobile_body)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Doc Id assigned: ",data.doctorId)
+      nav({
+        pathname: '/DocHome',
+        search: createSearchParams({
+          doc_id: data.doctorId
+        }).toString()
+      });
+    })
+    .catch(error => {
+      console.log("error fetching id")
+      console.log(error)
+    });
+  }
   const get_appoin_history = async() =>{
 
     const getappoinhist = {docId: searchParams.get("doc_id")}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_followup_appointments', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken_doc"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -51,6 +83,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken_doc"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -94,6 +127,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken_doc"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -115,7 +149,7 @@ function DocHome() {
       nav({
         pathname: '/doctor_call',
         search: createSearchParams({
-          doc_id: doc_id
+          doc_id: searchParams.get("doc_id")
         }).toString()
       });
     } 
@@ -132,9 +166,10 @@ function DocHome() {
   }
 
   useEffect(() => {
+    get_doc_id();
     console.log("Received num: ", searchParams.get("doc_id"));
     setDoc_id(searchParams.get("doc_id"));
-    get_online_stat(searchParams.get("doc_id"));
+    get_online_stat();
   }, []);
 
   const removeFollowUp = async(app,index) => {
@@ -151,6 +186,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken_doc"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
@@ -171,7 +207,7 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
         method: 'POST',
         headers: {
-            
+          'Authorization': localStorage.getItem("jwtToken_doc"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
@@ -184,6 +220,16 @@ function DocHome() {
     .catch(error=>{
       console.log(error)
     })
+  }
+
+  const convertTime=(curr) =>{
+    if(curr!==null)
+    {
+      const df = new Date(curr);
+      const date_str = String(df);
+      return <>{date_str.substring(0,date_str.length-31)+" IST"}</>; //prints date in current locale
+    }
+    else return <></>
   }
 
   return (
@@ -221,9 +267,9 @@ function DocHome() {
                     <div className="doctor-info">
                       
                       <div className="doctor-name">{appointment.name}</div>
-                      <div className="info-label"><b>Call Start Time:</b> {appointment.appointment.startTime}</div>
+                      <div className="info-label"><b>Call Start Time:</b> {convertTime(appointment.appointment.startTime)}</div>
                       {/* <div className="info-value">{doctor.startTime}</div> */}
-                      <div className="info-label"><b>Call End Time:</b> {appointment.appointment.endTime}</div>
+                      <div className="info-label"><b>Call End Time:</b> {convertTime(appointment.appointment.endTime)}</div>
                       {/* <div className="info-value">{doctor.endTime}</div> */}
                       <div className="info-label"><b>Status: </b>{appointment.appointment.status}</div>
                       <div className="info-label"><b>Reason for Follow Up: </b>{appointment.appointment.followupReason}</div>

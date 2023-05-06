@@ -62,7 +62,6 @@ function Regdoc() {
     const create_doc_body = {
         'name' : Name,
         'mobile' : sessionStorage.getItem('mobile'),
-
         'age' : Age,
         'specialization':spec,
         'experience': exp,
@@ -81,15 +80,17 @@ function Regdoc() {
         },
         body: JSON.stringify(create_doc_body)
       })
-      .then(response => {
-        if (response['status'] == 401)
-        {
-          nav({
-            pathname: '/login_doc'
-          });
-        }
-        return response.json();
-      })
+      .then(response => response.json()
+      //   if (response['status'] == 401)
+      //   {
+      //     nav({
+      //       pathname: '/login_doc'
+      //     });
+      //   }
+      //   return response.text();
+      // }
+      
+      )
       .then(async(data) => {
         const get_doc_by_mobile_body = {
           'mobile_number': sessionStorage.getItem('mobile')
@@ -152,11 +153,11 @@ function Regdoc() {
         <h1>Doctor Login</h1>
         <form  method="post" onSubmit={handleSubmit}>
 
-        <div className="txt_field">
-              <input type="number" required/>
+        {/* <div className="txt_field">
+              <input type="number"/>
               <span></span>
               <label>Mobile Number</label>
-            </div>
+            </div> */}
 
 
           <div className="txt_field">

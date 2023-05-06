@@ -72,7 +72,7 @@ function Regc() {
         },
         body: JSON.stringify(create_patient_body)
       })
-      .then(response => response.json())
+      .then(response => response.text())
       .then(data => {
         console.log(data)
         nav('/selectprofile');

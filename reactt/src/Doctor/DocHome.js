@@ -38,13 +38,13 @@ function DocHome() {
     })
     .then(response =>{
       console.log(response);
-      if (response['status'] == 401)
-      {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
-      }
+      // if (response['status'] == 401)
+      // {
+      //   localStorage.removeItem('jwtToken_doc')
+      //   nav({
+      //     pathname: '/login_doc'
+      //   });
+      // }
       return response.json()
     })
     .then(data => {
@@ -78,13 +78,13 @@ function DocHome() {
     })
     .then(response => {
       console.log(response);
-      if (response['status'] == 401)
-      {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
-      }
+      // if (response['status'] == 401)
+      // {
+      //   localStorage.removeItem('jwtToken_doc')
+      //   nav({
+      //     pathname: '/login_doc'
+      //   });
+      // }
       return response.json()
     })
     .then(data => {
@@ -113,13 +113,13 @@ function DocHome() {
     })
     .then(response => {
       console.log(response);
-      if (response['status'] == 401)
-      {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
-      }
+      // if (response['status'] == 401)
+      // {
+      //   localStorage.removeItem('jwtToken_doc')
+      //   nav({
+      //     pathname: '/login_doc'
+      //   });
+      // }
       return response.json()
     })
     .then(data => {
@@ -172,13 +172,13 @@ function DocHome() {
     })
     .then(response => {
       console.log(response);
-      if (response['status'] == 401)
-      {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
-      }
+      // if (response['status'] == 401)
+      // {
+      //   localStorage.removeItem('jwtToken_doc')
+      //   nav({
+      //     pathname: '/login_doc'
+      //   });
+      // }
       return response.json()
     })
     .then(data => {
@@ -242,13 +242,13 @@ function DocHome() {
     })
     .then(response => {
       console.log(response);
-      if (response['status'] == 401)
-      {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
-      }
+      // if (response['status'] == 401)
+      // {
+      //   localStorage.removeItem('jwtToken_doc')
+      //   nav({
+      //     pathname: '/login_doc'
+      //   });
+      // }
       return response.json()
     })
     .then(data => {
@@ -274,14 +274,14 @@ function DocHome() {
       const pat = await response.json();
       
         console.log(response);
-        if (response['status'] == 401)
-        {
-          localStorage.removeItem('jwtToken_doc')
-          nav({
-            pathname: '/login_doc'
-          });
-        }
-        return response.json()
+        // if (response['status'] == 401)
+        // {
+        //   localStorage.removeItem('jwtToken_doc')
+        //   nav({
+        //     pathname: '/login_doc'
+        //   });
+        // }
+        // return response.json()
     
       console.log(pat)
       setPatient({name : pat.name, age : pat.age, gender : pat.gender, mobile: pat.mobileNumber, email: pat.email})

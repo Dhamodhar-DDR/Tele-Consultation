@@ -227,7 +227,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
 
     console.log('into handle submutx');
 
-    event.preventDefault();
+    // event.preventDefault();
 
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -243,12 +243,12 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       headers: {
         'Authorization': localStorage.getItem("jwtToken"),
         // 'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: formData
     })
     .then(response => {
-      if( !response.ok ) console.log( response );
       return response.json();
     })
     .catch(error => {

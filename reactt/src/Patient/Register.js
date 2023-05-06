@@ -14,7 +14,7 @@ function Regc() {
 
 
     useEffect(() => {
-        console.log("Received num: from sessst", sessionStorage.getItem("mobile"));
+        console.log("Received num: from sessst", localStorage.getItem("mobile"));
       });
   const[searchParams] = useSearchParams();
 
@@ -53,11 +53,11 @@ function Regc() {
   
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("In handle num:",sessionStorage.getItem("mobile"));
+    console.log("In handle num:",localStorage.getItem("mobile"));
     const create_patient_body = {
         'name' : Name,
         'age' : Age,
-        'mobile' : sessionStorage.getItem("mobile"),
+        'mobile' : localStorage.getItem("mobile"),
         'gender' : gender,
         'email' : email,
         'consent' : false
@@ -87,7 +87,7 @@ function Regc() {
         // nav({
         //   pathname: '/selectprofile',
         //   search: createSearchParams({
-        //     mobile: sessionStorage.getItem("mobile")
+        //     mobile: localStorage.getItem("mobile")
         //   }).toString()
         // });
       })

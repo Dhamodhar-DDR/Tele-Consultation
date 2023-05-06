@@ -22,7 +22,7 @@ function AddProf() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -82,11 +82,11 @@ function AddProf() {
 
 
   useEffect(() => {
-    console.log("received id to add prof frm sess, ",sessionStorage.getItem('pat_id'));
+    console.log("received id to add prof frm sess, ",localStorage.getItem('pat_id'));
     
     get_prof_name_by_id()
     
-    console.log("Received pat_id: ", sessionStorage.getItem('pat_id'));
+    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
   }, [])
@@ -94,7 +94,7 @@ function AddProf() {
   const handleSubmit = async(e) =>{
     e.preventDefault();
     const create_patient_body = {
-      'pat_id': sessionStorage.getItem('pat_id'),
+      'pat_id': localStorage.getItem('pat_id'),
       'name' : Name,
       'age' : Age,
       'gender' : gender,
@@ -122,7 +122,7 @@ function AddProf() {
     })
     .then(data => {
       console.log(data)
-      // sessionStorage.setItem('pat_id', data.patientId);
+      // localStorage.setItem('pat_id', data.patientId);
       nav('/selectprofile');
       // nav({
       //   pathname: '/selectprofile',

@@ -22,7 +22,7 @@ function Logincg() {
     if(data == 'false')
     {
       console.log("entered")
-      sessionStorage.setItem("mobile", phone);
+      localStorage.setItem("mobile", phone);
       nav('/selectprofile')
       // nav({
       //   pathname: '/selectprofile',
@@ -33,7 +33,7 @@ function Logincg() {
     }
     else if(data == 'true')
     {
-      sessionStorage.setItem("mobile", phone);
+      localStorage.setItem("mobile", phone);
       nav('/register_p');
       // nav({
       //   pathname: '/register_p',

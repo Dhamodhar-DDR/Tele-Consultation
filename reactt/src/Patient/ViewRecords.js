@@ -13,7 +13,7 @@ const DisplayFiles = () => {
 
   const display_file = async() => {
     const formData = new FormData();
-    formData.append('pat_id', sessionStorage.getItem('pat_id'))
+    formData.append('pat_id', localStorage.getItem('pat_id'))
     await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
       method: 'POST',
       headers: {
@@ -64,7 +64,7 @@ const DisplayFiles = () => {
   }
 
   const handleLogout = () =>{
-    sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem('jwtToken');
     nav('/login_p')
   }

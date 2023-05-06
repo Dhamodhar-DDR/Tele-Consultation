@@ -79,7 +79,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : sessionStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('pat_id'),
             doctorId: doctor_id,
             isFollowup: false,
           }
@@ -90,7 +90,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : sessionStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -101,7 +101,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : sessionStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -112,7 +112,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : sessionStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: false,
           }
@@ -139,9 +139,9 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             try{
               const data = await response.json();
               const formData = new FormData();
-              sessionStorage.setItem('doc_id', data.doctorId);
-              sessionStorage.setItem('app_id', data.appointmentId);
-              sessionStorage.getItem('type',upload_type);
+              localStorage.setItem('doc_id', data.doctorId);
+              localStorage.setItem('app_id', data.appointmentId);
+              localStorage.getItem('type',upload_type);
               if(files.length == 0)
               {
 
@@ -163,7 +163,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                 }
                 formData.append('names',names)
                 formData.append('descriptions', descriptions)
-                formData.append('patId', sessionStorage.getItem('pat_id'))
+                formData.append('patId', localStorage.getItem('pat_id'))
                 formData.append('appId', data.appointmentId)
                 console.log(names);
                 console.log(descriptions);
@@ -242,9 +242,9 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       }
       formData.append('names',names)
       formData.append('descriptions', descriptions)
-      formData.append('patId', parseInt(sessionStorage.getItem('pat_id')))
+      formData.append('patId', parseInt(localStorage.getItem('pat_id')))
       formData.append('appId', -1)
-      console.log(parseInt(sessionStorage.getItem('pat_id')));
+      console.log(parseInt(localStorage.getItem('pat_id')));
       console.log(names);
       console.log(descriptions);
       await fetch('http://localhost:8090/api/v1/health_records/upload', {

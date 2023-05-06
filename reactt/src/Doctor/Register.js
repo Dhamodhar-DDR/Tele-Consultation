@@ -22,7 +22,7 @@ function Regdoc() {
   const [Age, setAge] = useState("");
 
   useEffect(() => {
-    console.log("Received num: ", sessionStorage.getItem('mobile'));
+    console.log("Received num: ", localStorage.getItem('mobile'));
   });
 
   const handleFirstNameChange = (e) => {
@@ -58,10 +58,10 @@ function Regdoc() {
   
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("In handle num:",sessionStorage.getItem('mobile'));
+    console.log("In handle num:",localStorage.getItem('mobile'));
     const create_doc_body = {
         'name' : Name,
-        'mobile' : sessionStorage.getItem('mobile'),
+        'mobile' : localStorage.getItem('mobile'),
         'age' : Age,
         'specialization':spec,
         'experience': exp,
@@ -93,7 +93,7 @@ function Regdoc() {
       )
       .then(async(data) => {
         const get_doc_by_mobile_body = {
-          'mobile_number': sessionStorage.getItem('mobile')
+          'mobile_number': localStorage.getItem('mobile')
         }
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
           method: 'POST',
@@ -116,7 +116,7 @@ function Regdoc() {
         })
         .then(data => {
           console.log("Doc Id assigned: ",data.doctorId)
-          sessionStorage.setItem('doc_id', data.doctorId);
+          localStorage.setItem('doc_id', data.doctorId);
           nav('/DocHome')
           // nav({
           //   pathname: '/DocHome',

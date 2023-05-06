@@ -15,18 +15,18 @@ function AppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log("apphist pid:",sessionStorage.getItem('pat_id'))
+    console.log("apphist pid:",localStorage.getItem('pat_id'))
     get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", sessionStorage.getItem('pat_id'));
+    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
   }, [])
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {patId: sessionStorage.getItem('pat_id')}
+    const getappoinhist = {patId: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_patient_appointments', {
       method: 'POST',
       headers: {
@@ -38,7 +38,14 @@ function AppoinHist() {
   
     })
     .then(response => {
-      if( !response.ok ) console.log( response );
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
       else return response.json();
     })
     .then(data => {
@@ -52,7 +59,7 @@ function AppoinHist() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -64,7 +71,14 @@ function AppoinHist() {
   
     })
     .then(response => {
-      if( !response.ok )console.log( response );
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
       else return response.json();
     })
     .then(data => {
@@ -174,7 +188,14 @@ function AppoinHist() {
             body: JSON.stringify(getpresbody)
           })
           .then(response => {
-            if( !response.ok ) console.log( response );
+            console.log(response);
+            if (response['status'] == 401)
+            {
+              localStorage.removeItem('jwtToken')
+              nav({
+                pathname: '/login_p'
+              });
+            }
             else return response.json();
           })
           .then(data => {
@@ -201,7 +222,7 @@ function AppoinHist() {
         else return <></>
       }
       const handleLogout = () =>{
-        sessionStorage.clear();
+        localStorage.clear();
     
         localStorage.removeItem('jwtToken');
         nav('/login_p')

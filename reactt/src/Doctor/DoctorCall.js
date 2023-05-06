@@ -46,12 +46,12 @@ function DoctorCall() {
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
-    let uid = "d_"+String(sessionStorage.getItem('doc_id'));
+    let uid = "d_"+String(localStorage.getItem('doc_id'));
 
     let client = useRef(null);
     let channel = useRef(null);
 
-    let roomId = sessionStorage.getItem('doc_id');
+    let roomId = localStorage.getItem('doc_id');
 
     let localStream = useRef(null);
     let remoteStream;
@@ -230,7 +230,7 @@ function DoctorCall() {
     let leaveChannel = async () => {
         await channel.current.leave()
         await client.current.logout()
-        sessionStorage.setItem('app_id', -1);
+        localStorage.setItem('app_id', -1);
         // await peerConnection.close();
     }
 
@@ -372,7 +372,7 @@ function DoctorCall() {
     const set_status = async(param) =>{
 
         const set_online_status_body = {
-            'doctorID' : sessionStorage.getItem('doc_id'),
+            'doctorID' : localStorage.getItem('doc_id'),
             'online_status': param
         }
         console.log("bef await isconsulatationactive", param)
@@ -416,7 +416,7 @@ function DoctorCall() {
     }, [isLoading]);
 
     useEffect(() => {
-        console.log(sessionStorage.getItem('pat_id'),sessionStorage.getItem('doc_id'),sessionStorage.getItem('app_id'))
+        console.log(localStorage.getItem('pat_id'),localStorage.getItem('doc_id'),localStorage.getItem('app_id'))
         init().then(()=>{
             console.log(localStream)
         });
@@ -461,7 +461,7 @@ function DoctorCall() {
         setMarkForFollowUp(false);
         console.log("Next patient is being called")
         console.log(appointmentId)
-        console.log(sessionStorage.getItem("app_id"))
+        console.log(localStorage.getItem("app_id"))
         //Api call to set appointment to completed status
         if(appointmentId != -1)
         {
@@ -513,7 +513,7 @@ function DoctorCall() {
         }
 
         const earliest_app_response_body = {
-            docId: sessionStorage.getItem('doc_id')
+            docId: localStorage.getItem('doc_id')
         }
         const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
@@ -643,7 +643,7 @@ function DoctorCall() {
             console.log(members)
             for(let i = 0;i<members.length;i++)
             {
-                if(members[i] === "d_"+String(sessionStorage.getItem('doc_id')))
+                if(members[i] === "d_"+String(localStorage.getItem('doc_id')))
                 {
                     console.log('Doctor exists')
                     break;
@@ -889,7 +889,7 @@ function DoctorCall() {
             // console.log(blob)
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
-                if(parseInt(element.body.appId) === parseInt(sessionStorage.getItem('app_id')))
+                if(parseInt(element.body.appId) === parseInt(localStorage.getItem('app_id')))
                 {
                   setinitFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
                 }

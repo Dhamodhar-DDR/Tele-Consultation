@@ -15,10 +15,10 @@ function DocHome() {
   const [showPopup, setShowPopup] = useState(false);
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
-  const did = sessionStorage.getItem('doc_id')
+  const did = localStorage.getItem('doc_id')
   let help;
   useEffect(() => {
-    console.log(sessionStorage.getItem('doc_id'));
+    console.log(localStorage.getItem('doc_id'));
     get_doc_id();
     get_appoin_history()    
   }, [])
@@ -38,18 +38,18 @@ function DocHome() {
     })
     .then(response =>{
       console.log(response);
-      // if (response['status'] == 401)
-      // {
-      //   localStorage.removeItem('jwtToken_doc')
-      //   nav({
-      //     pathname: '/login_doc'
-      //   });
-      // }
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
       return response.json()
     })
     .then(data => {
       console.log("Doc Id assigned: ",data.doctorId)
-      sessionStorage.setItem('doc_id',data.doctorId)
+      localStorage.setItem('doc_id',data.doctorId)
       nav('/DocHome')
       // nav({
       //   pathname: '/DocHome',
@@ -65,7 +65,7 @@ function DocHome() {
   }
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {docId: sessionStorage.getItem('doc_id')}
+    const getappoinhist = {docId: localStorage.getItem('doc_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_followup_appointments', {
       method: 'POST',
       headers: {
@@ -78,13 +78,13 @@ function DocHome() {
     })
     .then(response => {
       console.log(response);
-      // if (response['status'] == 401)
-      // {
-      //   localStorage.removeItem('jwtToken_doc')
-      //   nav({
-      //     pathname: '/login_doc'
-      //   });
-      // }
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
       return response.json()
     })
     .then(data => {
@@ -140,7 +140,7 @@ function DocHome() {
 
   const handleAppointHist = () =>{
 
-    sessionStorage.setItem('doc_id',did);
+    localStorage.setItem('doc_id',did);
     nav('/DocAppoinHist');
     // nav({
     //   pathname: '/DocAppoinHist',
@@ -152,7 +152,7 @@ function DocHome() {
 
   const HandleLogout = async() =>{
     await set_status(false)
-    sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem('jwtToken_doc');
     nav('/login_doc');
     window.location.reload();
@@ -163,7 +163,7 @@ function DocHome() {
    console.log(doc_id); 
     const set_online_status_body = {
 
-      'doctorID' : sessionStorage.getItem("doc_id"),
+      'doctorID' : localStorage.getItem("doc_id"),
       'online_status': param      
     }
     console.log("bef await isconsulatationactive", param)
@@ -221,9 +221,9 @@ function DocHome() {
 
   useEffect(() => {
     get_doc_id();
-    console.log("Received id sesssto: ", sessionStorage.getItem('doc_id'));
-    setDoc_id(sessionStorage.getItem('doc_id'));
-    get_online_stat(sessionStorage.getItem('doc_id'));
+    console.log("Received id sesssto: ", localStorage.getItem('doc_id'));
+    setDoc_id(localStorage.getItem('doc_id'));
+    get_online_stat(localStorage.getItem('doc_id'));
   }, []);
 
   const removeFollowUp = async(app,index) => {

@@ -20,11 +20,11 @@ function DocAppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log("sess doc id: ",sessionStorage.getItem('doc_id'))
+    console.log("sess doc id: ",localStorage.getItem('doc_id'))
    get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", sessionStorage.getItem('doc_id'));
+    console.log("Received pat_id: ", localStorage.getItem('doc_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
     
@@ -34,7 +34,7 @@ function DocAppoinHist() {
 
 const get_prof_name_by_id = async() => {
 
-  const getdocidbody = {doctorID: sessionStorage.getItem('doc_id')}
+  const getdocidbody = {doctorID: localStorage.getItem('doc_id')}
   await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_id', {
     method: 'POST',
     headers: {
@@ -46,7 +46,13 @@ const get_prof_name_by_id = async() => {
 
   })
   .then(response => {
-    if( !response.ok )console.log( response );
+    if (response['status'] == 401)
+    {
+      localStorage.removeItem('jwtToken_doc')
+      nav({
+        pathname: '/login_doc'
+      });
+    }
     else return response.json();
   })
   .then(data => {
@@ -60,7 +66,7 @@ const get_prof_name_by_id = async() => {
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {docId: sessionStorage.getItem('doc_id')}
+    const getappoinhist = {docId: localStorage.getItem('doc_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_appointments', {
       method: 'POST',
       headers: {
@@ -197,7 +203,13 @@ const get_prof_name_by_id = async() => {
           body: JSON.stringify(getpresbody)
         })
         .then(response => {
-          if( !response.ok ) console.log( response );
+          if (response['status'] == 401)
+          {
+            localStorage.removeItem('jwtToken_doc')
+            nav({
+              pathname: '/login_doc'
+            });
+          }
           else return response.json();
         })
         .then(data => {

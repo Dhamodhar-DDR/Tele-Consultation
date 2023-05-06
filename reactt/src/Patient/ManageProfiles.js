@@ -13,7 +13,7 @@ function PatList() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -24,7 +24,16 @@ function PatList() {
       body: JSON.stringify(getpatidbody)
   
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
+    })
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
@@ -52,11 +61,11 @@ function PatList() {
 
   const nav = useNavigate();
   
-  const pat_id = sessionStorage.getItem('pat_id');
+  const pat_id = localStorage.getItem('pat_id');
   console.log("loook ", pat_id)
   const get_all_profiles = async() => {
     const getProfilesBody = {
-      pat_id : sessionStorage.getItem('pat_id')
+      pat_id : localStorage.getItem('pat_id')
     }
     await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
       method: 'POST',
@@ -68,7 +77,17 @@ function PatList() {
       },
       body: JSON.stringify(getProfilesBody)
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
+    }
+    )
     .then(data => {
       console.log("Profiles List: ",data)
       setdoclist(data);
@@ -76,10 +95,10 @@ function PatList() {
   }
 
   useEffect(() => {
-    console.log("received id sess: ",sessionStorage.getItem('pat_id'))
+    console.log("received id sess: ",localStorage.getItem('pat_id'))
     get_prof_name_by_id()
     
-    console.log("Received pat_id: ", sessionStorage.getItem('pat_id'));
+    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
     get_all_profiles();
@@ -185,7 +204,7 @@ function PatList() {
 //   }, [])
 
 const handleLogout = () =>{
-  sessionStorage.clear();
+  localStorage.clear();
 
   localStorage.removeItem('jwtToken');
   nav('/login_p')
@@ -211,7 +230,7 @@ const handleLogout = () =>{
         </div>
       </div>
       <h1 className="heading-1">List of Profiles</h1>
-      <div className="doctor-list">
+      <div style={{marginLeft:"155px"}} className="doctor-list">
         {console.log("doclist: ", doclist)}
         <br/>
         

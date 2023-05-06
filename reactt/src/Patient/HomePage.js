@@ -29,13 +29,13 @@ function Homepat(){
 
   // const pat_id = searchParams.get("pat_id");
 
-  const pat_id = sessionStorage.getItem('pat_id');
+  const pat_id = localStorage.getItem('pat_id');
 
   const [prof_name, setprofname] = useState('')
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -45,7 +45,17 @@ function Homepat(){
       },
       body: JSON.stringify(getpatidbody)
     })
-    .then(response =>  response.json()
+    .then(response =>  {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
+    }
 //       if( !response.ok ){
 // console.log("yep");
 // nav({
@@ -73,14 +83,14 @@ function Homepat(){
   useEffect(() => {
     get_prof_name_by_id()
     
-    console.log("Received pat_id from sess: ", sessionStorage.getItem('pat_id'));
+    console.log("Received pat_id from sess: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
 
   const handleUploadRecords = () => {
 
-    sessionStorage.setItem('upload_t', 0);
+    localStorage.setItem('upload_t', 0);
     
     nav('/upload_records');
 
@@ -146,7 +156,7 @@ function Homepat(){
 
   const handleLogout = () =>{
     console.log("welluntil")
-    sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem('jwtToken');
     console.log("welluntil")
     nav('/login_p');
@@ -184,7 +194,7 @@ function Homepat(){
 
   const goToSummary = ()=>{
 
-    // sessionStorage.setItem()
+    // localStorage.setItem()
     nav({
       pathname: '/call_summary',
       search: createSearchParams({

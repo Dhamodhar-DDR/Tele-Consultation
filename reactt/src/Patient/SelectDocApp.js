@@ -38,7 +38,7 @@ function DoctorList() {
   
       const create_app_body = {
         bookingTime : timestamp,
-        patientId : sessionStorage.getItem('pat_id'),
+        patientId : localStorage.getItem('pat_id'),
         doctorId: doc_id,
         startTime : null,
         endTime : null,
@@ -107,7 +107,7 @@ function DoctorList() {
 
 const get_prof_name_by_id = async() => {
 
-  const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
+  const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
   await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
     method: 'POST',
     headers: {
@@ -170,7 +170,7 @@ const get_prof_name_by_id = async() => {
   }
 
   const handleLogout = () =>{
-    sessionStorage.clear();
+    localStorage.clear();
 
     localStorage.removeItem('jwtToken');
     nav('/login_p')
@@ -210,7 +210,7 @@ const get_prof_name_by_id = async() => {
 
     get_prof_name_by_id()
     get_onine_doc_list()
-    console.log("Received pat_id from sess: ", sessionStorage.getItem('pat_id'));
+    console.log("Received pat_id from sess: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
@@ -254,7 +254,7 @@ const get_prof_name_by_id = async() => {
 
       </div>
 
-      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={sessionStorage.getItem('pat_id')} app_id={-1} doctor_id={send_did}/>)}
+      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={localStorage.getItem('pat_id')} app_id={-1} doctor_id={send_did}/>)}
       
     </div>
     </div>

@@ -11,7 +11,7 @@ const WaitingPage = () => {
     useEffect(() => {
         //Api call to get the just finished appointment. 
         const get_curr_app_body = {
-            appId : sessionStorage.getItem('app_id')
+            appId : localStorage.getItem('app_id')
         }
 
         const intervalId = setInterval(async() => {
@@ -57,11 +57,11 @@ const WaitingPage = () => {
                 else if(obj.doctor_live == false) 
                 {
                   console.log('doctor_live - false');
-                  if(sessionStorage.getItem('type') === 'upload-auto' || sessionStorage.getItem('type') == 'upload-follow-auto')
+                  if(localStorage.getItem('type') === 'upload-auto' || localStorage.getItem('type') == 'upload-follow-auto')
                   {
-                    console.log("type is ses: ",sessionStorage.getItem('type'));
+                    console.log("type is ses: ",localStorage.getItem('type'));
                     const get_next_body = {
-                      appId : sessionStorage.getItem('app_id'),
+                      appId : localStorage.getItem('app_id'),
                     }
                     await fetch('http://localhost:8090/api/v1/appointment/get_next_best_doc', {
                       method: 'POST',
@@ -79,11 +79,11 @@ const WaitingPage = () => {
                           });
                         }
                       const data = await response.json();
-                      console.log(sessionStorage);
-                      sessionStorage.setItem('doc_id',data);
+                      console.log(localStorage);
+                      localStorage.setItem('doc_id',data);
                       // searchParams.set('doc_id', data);
                       const get_queue_body = {
-                        appId : sessionStorage.getItem('app_id'),
+                        appId : localStorage.getItem('app_id'),
                       }
                       fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
                           method: 'POST',
@@ -128,7 +128,7 @@ const WaitingPage = () => {
     const cancelAppointment = async()=>{
       console.log("CANCEL")
       const set_status_body = {
-        appId : sessionStorage.getItem('app_id'),
+        appId : localStorage.getItem('app_id'),
         value : 'cancelled'
       }
       await fetch('http://localhost:8090/api/v1/appointment/set_status', {
@@ -151,9 +151,9 @@ const WaitingPage = () => {
         // nav({
         //   pathname: '/call_summary',
         //   search: createSearchParams({
-        //       pat_id: sessionStorage.getItem('pat_id'),
-        //       doc_id: sessionStorage.getItem('doc_id'),
-        //       app_id: sessionStorage.getItem('app_id')
+        //       pat_id: localStorage.getItem('pat_id'),
+        //       doc_id: localStorage.getItem('doc_id'),
+        //       app_id: localStorage.getItem('app_id')
         //   }).toString()
         // });
       })

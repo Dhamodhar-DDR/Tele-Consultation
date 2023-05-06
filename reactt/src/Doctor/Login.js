@@ -55,7 +55,7 @@ function Logindoc() {
       })
       .then(data => {
         console.log("Doc Id assigned: ",data.doctorId)
-        sessionStorage.setItem('doc_id',data.doctorId);
+        localStorage.setItem('doc_id',data.doctorId);
         nav('/DocHome');
         // // nav({
         // //   pathname: '/DocHome',
@@ -71,7 +71,7 @@ function Logindoc() {
     }
     else if(data == 'true')
     {
-      sessionStorage.setItem('mobile', phone);
+      localStorage.setItem('mobile', phone);
       nav('/register_doc');
       // nav({
       //   pathname: '/register_doc',

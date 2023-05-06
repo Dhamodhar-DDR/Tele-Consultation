@@ -17,13 +17,13 @@ function PatientCall() {
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
-    let uid = "p_"+String(sessionStorage.getItem('pat_id'))
+    let uid = "p_"+String(localStorage.getItem('pat_id'))
 
     let client = useRef(null);
     let channel = useRef(null);
 
 
-    let roomId = sessionStorage.getItem('doc_id')
+    let roomId = localStorage.getItem('doc_id')
 
     let localStream = useRef(null);
     let remoteStream;
@@ -60,7 +60,7 @@ function PatientCall() {
     }
 
     let init = async () => {
-        await get_doc_online_stat(sessionStorage.getItem('doc_id')).then(async(data) => {
+        await get_doc_online_stat(localStorage.getItem('doc_id')).then(async(data) => {
             console.log("Consultation", isConsultationActive)
             console.log("Consultation", data)
             if(isConsultationActive)
@@ -306,7 +306,7 @@ function PatientCall() {
     }
     async function setAppStatus(status) {
         const set_status_body = {
-            appId : sessionStorage.getItem('app_id'),
+            appId : localStorage.getItem('app_id'),
             value : status
         }
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
@@ -332,7 +332,7 @@ function PatientCall() {
         console.log(timestamp); // prints something like "2023-03-18T14:25:48.123Z"
 
         const set_end_time_body = {
-            appId : sessionStorage.getItem('app_id'),
+            appId : localStorage.getItem('app_id'),
             value : timestamp
         }
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {

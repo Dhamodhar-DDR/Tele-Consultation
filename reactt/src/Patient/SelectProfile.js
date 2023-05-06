@@ -16,7 +16,7 @@ function ProfileSelector() {
 console.log("function")
   const onProfileSelect = (profile) => {
 
-    sessionStorage.setItem('pat_id', profile.patientId)
+    localStorage.setItem('pat_id', profile.patientId)
 
     nav('/home_pat');
     // nav({
@@ -26,15 +26,15 @@ console.log("function")
     //   }).toString()
     // });
   };
-  console.log("received num from session: ",sessionStorage.getItem('mobile'));
+  console.log("received num from session: ",localStorage.getItem('mobile'));
   let mobile = jwt(localStorage.getItem('jwtToken'))['sub'];
   console.log(mobile);
-  if (sessionStorage.getItem('mobile'))
+  if (localStorage.getItem('mobile'))
   {
-    mobile = sessionStorage.getItem('mobile');
+    mobile = localStorage.getItem('mobile');
   }
    const get_pat_id = async() => {
-    if(sessionStorage.getItem('mobile') != null || mobile!=undefined)
+    if(localStorage.getItem('mobile') != null || mobile!=undefined)
     {
       const get_profiles_body = {
         'mobile_number' : mobile
@@ -69,11 +69,11 @@ console.log("function")
         console.log(error)
       });
     }
-    else if(sessionStorage.getItem('pat_id') != null)
+    else if(localStorage.getItem('pat_id') != null)
     {
       console.log("sessst pat id is not null!!");
         const getProfilesBody = {
-          pat_id : sessionStorage.getItem('pat_id')
+          pat_id : localStorage.getItem('pat_id')
         }
         await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
           method: 'POST',

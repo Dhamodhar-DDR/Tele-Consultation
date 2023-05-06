@@ -195,11 +195,12 @@ public class AppointmentController {
         List<AppointmentHistoryObj> list = new ArrayList<AppointmentHistoryObj>();
         List<Appointment> aps_list = appointmentService.get_doctor_appointments(req_bod.docId);
         List<String> name_list = appointmentService.get_patient_names(req_bod.docId);
+
         for (int i = 0; i < aps_list.size(); i++) {
             AppointmentHistoryObj temp = new AppointmentHistoryObj();
             temp.appointment = aps_list.get(i);
             temp.name = name_list.get(i);
-            temp.specialization = "";
+            temp.specialization = appointmentService.get_doc_spec(req_bod.docId);;
             list.add(temp);
         }
         return list;

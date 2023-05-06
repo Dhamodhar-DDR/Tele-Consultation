@@ -79,7 +79,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : sessionStorage.getItem('pat_id'),
             doctorId: doctor_id,
             isFollowup: false,
           }
@@ -90,7 +90,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : sessionStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -101,7 +101,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : sessionStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -112,7 +112,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : sessionStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: false,
           }
@@ -133,11 +133,11 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             try{
               const data = await response.json();
               const formData = new FormData();
+              sessionStorage.setItem('doc_id', data.doctorId);
+              sessionStorage.setItem('app_id', data.appointmentId);
+              sessionStorage.getItem('type',upload_type);
               if(files.length == 0)
               {
-                sessionStorage.setItem('doc_id', data.doctorId);
-                sessionStorage.setItem('app_id', data.appointmentId);
-                sessionStorage.getItem('type',upload_type);
 
                 nav('/waiting_page');
 
@@ -157,7 +157,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                 }
                 formData.append('names',names)
                 formData.append('descriptions', descriptions)
-                formData.append('patId', parseInt(pat_id))
+                formData.append('patId', sessionStorage.getItem('pat_id'))
                 formData.append('appId', data.appointmentId)
                 console.log(names);
                 console.log(descriptions);
@@ -176,9 +176,6 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                   console.log(response2);
                   console.log(data.appointmentId);
                   console.log('about to nav to waiting page');
-                  sessionStorage.setItem('doc_id', data.doctorId);
-                  sessionStorage.setItem('app_id', data.appointmentId);
-                  sessionStorage.getItem('type',upload_type);
 
                   nav('/waiting_page');
                   // nav({
@@ -215,45 +212,47 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
 
 
   const handlespec = (e) => {
-
     setspec(e.target.value);
     console.log("Selected Spec: ",e.target.value)
-
-
   }
 
 
-  const handleUpload = (event) => {
+  const handleUpload = async(event) => {
 
     console.log('into handle submutx');
 
     event.preventDefault();
-
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append(`files`, files[i]);
+    if(files.length != 0)
+    {
+      for (let i = 0; i < files.length; i++) {
+        formData.append(`files`, files[i]);
+      }
+      formData.append('names',names)
+      formData.append('descriptions', descriptions)
+      formData.append('patId', parseInt(sessionStorage.getItem('pat_id')))
+      formData.append('appId', -1)
+      console.log(parseInt(sessionStorage.getItem('pat_id')));
+      console.log(names);
+      console.log(descriptions);
+      await fetch('http://localhost:8090/api/v1/health_records/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
+          // 'Content-Type': 'multipart/form-data',
+          'Access-Control-Allow-Origin': '*' 
+        },
+        body: formData
+      })
+      .then(response2 => {
+        // Handle the response from the server
+        console.log(response2);
+        toggle()("close");
+      })
+      .catch(error => {
+        console.error(error);
+      });
     }
-    formData.append('names',names)
-    formData.append('descriptions', descriptions)
-    formData.append('patId', parseInt(pat_id))
-    formData.append('appId', -1)
-  
-    fetch('http://localhost:8090/api/v1/health_records/upload', { 
-      method: 'POST',
-      headers: {
-        'Authorization': localStorage.getItem("jwtToken"),
-        // 'Content-Type': 'multipart/form-data',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: formData
-    })
-    .then(response => {
-      if( !response.ok ) console.log( response );
-      return response.json();
-    })
-    .catch(error => {
-      console.log(error)
-    });
   };
 
 

@@ -3,6 +3,7 @@ package com.example.demo.doctor;
 import com.example.demo.doctor.Doctor;
 import com.example.demo.doctor.DoctorRepository;
 import com.example.demo.patient.Patient;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,9 +24,9 @@ public class DoctorService {
     }
 
 
-    public Doctor create_doctor(String name,String mobile,Boolean onlineStatus,int age,String experience,String specialization,String email, String gender) {
+    public void create_doctor(String name,String mobile,Boolean onlineStatus,int age,String experience,String specialization,String email, String gender) {
         Doctor doctor = new Doctor(name, mobile, onlineStatus, age, experience, specialization, email, gender);
-        return doctorRepository.save(doctor);
+        doctorRepository.addPatient(name, mobile, onlineStatus, age, experience, gender, specialization, email);
     }
 
     public Boolean check_online_status(Integer doctorID) {

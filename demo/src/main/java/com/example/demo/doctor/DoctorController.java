@@ -1,6 +1,7 @@
 package com.example.demo.doctor;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,8 +43,9 @@ public class DoctorController {
 
     @CrossOrigin
     @PostMapping("/add_doctor")
-    public Doctor create_doctor(@RequestBody new_doctor_request ndr) {
-        return this.doctorService.create_doctor(ndr.name,ndr.mobile,ndr.onlineStatus,ndr.age,ndr.experience,ndr.specialization,ndr.email,ndr.gender);
+    @Transactional
+    public void create_doctor(@RequestBody new_doctor_request ndr) {
+        this.doctorService.create_doctor(ndr.name,ndr.mobile,ndr.onlineStatus,ndr.age,ndr.experience,ndr.specialization,ndr.email,ndr.gender);
     }
 
     @CrossOrigin

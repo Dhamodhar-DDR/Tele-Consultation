@@ -40,4 +40,10 @@ public class PatientService {
         Patient patient = new Patient( name, old_patient.getMobileNumber(),  age,  gender,  email ,consent);
         return patientRepository.save(patient);
     }
+
+    public void add_newPatient(String name, String mobile, int age, String gender, String email, Boolean consent) {
+        Patient patient = new Patient( name, mobile,  age,  gender,  email ,consent);
+        patientRepository.addPatient(name, mobile, age, gender, consent, email
+        );
+    }
 }

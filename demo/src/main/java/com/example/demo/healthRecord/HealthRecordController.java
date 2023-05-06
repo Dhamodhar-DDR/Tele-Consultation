@@ -26,10 +26,13 @@ public class HealthRecordController {
                                               @RequestParam("descriptions") List<String> descriptions,
                                               @RequestParam("patId") Integer patientId,
                                               @RequestParam("appId") Integer appointmentId) {
+        System.out.println("didn't");
         try {
             healthRecordService.uploadRecord(files,names,descriptions,patientId,appointmentId);
+            System.out.println("no prob");
             return ResponseEntity.ok("Files uploaded successfully");
         } catch (Exception e) {
+            System.out.println("except");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload files");
         }
     }

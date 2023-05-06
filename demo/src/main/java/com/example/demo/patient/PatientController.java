@@ -1,6 +1,7 @@
 package com.example.demo.patient;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,9 +45,10 @@ public class PatientController {
             Boolean consent
     ){}
     @CrossOrigin
+    @Transactional
     @PostMapping("/create")
-    public Patient create_patient(@RequestBody new_patient_request npr) {
-        return this.patientService.create_patient(npr.name,npr.mobile,npr.age, npr.gender, npr.email, npr.consent);
+    public void create_patient(@RequestBody new_patient_request npr) {
+        this.patientService.add_newPatient(npr.name,npr.mobile,npr.age, npr.gender, npr.email, npr.consent);
     }
 
     record check_new_user_body (String mobile_number) {}
@@ -60,6 +62,7 @@ public class PatientController {
     }
 
     @CrossOrigin
+    @Transactional
     @PostMapping("/display_profiles")
     public List<Patient> display_profiles(@RequestBody check_new_user_body cnub) {
          return this.patientService.check_new_user(cnub.mobile_number);

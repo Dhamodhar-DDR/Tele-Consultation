@@ -15,11 +15,11 @@ function DocHome() {
   const [showPopup, setShowPopup] = useState(false);
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
-  const did = searchParams.get('doc_id')
+  const did = sessionStorage.getItem('doc_id')
   let help;
   useEffect(() => {
-    console.log(searchParams.get('doc_id'));
-    // get_doc_id();
+    console.log(sessionStorage.getItem('doc_id'));
+    get_doc_id();
     get_appoin_history()    
   }, [])
 
@@ -49,12 +49,14 @@ function DocHome() {
     })
     .then(data => {
       console.log("Doc Id assigned: ",data.doctorId)
-      nav({
-        pathname: '/DocHome',
-        search: createSearchParams({
-          doc_id: data.doctorId
-        }).toString()
-      });
+      sessionStorage.setItem('doc_id',data.doctorId)
+      nav('/DocHome')
+      // nav({
+      //   pathname: '/DocHome',
+      //   search: createSearchParams({
+      //     doc_id: data.doctorId
+      //   }).toString()
+      // });
     })
     .catch(error => {
       console.log("error fetching id")
@@ -63,7 +65,7 @@ function DocHome() {
   }
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {docId: searchParams.get("doc_id")}
+    const getappoinhist = {docId: sessionStorage.getItem('doc_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_followup_appointments', {
       method: 'POST',
       headers: {
@@ -133,18 +135,22 @@ function DocHome() {
 
   const handleAppointHist = () =>{
 
-    nav({
-      pathname: '/DocAppoinHist',
-      search: createSearchParams({
-        doc_id: did
-      }).toString()
-    });
+    sessionStorage.setItem('doc_id',did);
+    nav('/DocAppoinHist');
+    // nav({
+    //   pathname: '/DocAppoinHist',
+    //   search: createSearchParams({
+    //     doc_id: did
+    //   }).toString()
+    // });
   }
 
   const HandleLogout = () =>{
     set_status(false)
-    localStorage.removeItem('jwtToken_doc')
-    nav('/login_doc')
+    sessionStorage.clear();
+
+    localStorage.removeItem('jwtToken_doc');
+    nav('/login_doc');
   }
 
   const set_status = async(param) =>
@@ -187,12 +193,13 @@ function DocHome() {
   const Consultation_Button = () => {
     const toggleConsultation = async() => {
       await set_status(!isConsultationActive);
-      nav({
-        pathname: '/doctor_call',
-        search: createSearchParams({
-          doc_id: searchParams.get("doc_id")
-        }).toString()
-      });
+      nav('/doctor_call');
+      // nav({
+      //   pathname: '/doctor_call',
+      //   search: createSearchParams({
+      //     doc_id: searchParams.get("doc_id")
+      //   }).toString()
+      // });
     } 
   return (
     <div className="centered-button">
@@ -207,11 +214,10 @@ function DocHome() {
   }
 
   useEffect(() => {
-    // get_doc_id();
-    console.log("Received num: ", searchParams.get("doc_id"));
-    setDoc_id(searchParams.get("doc_id"));
-    console.log("check: ", searchParams.get("doc_id"))
-    get_online_stat(searchParams.get("doc_id"));
+    get_doc_id();
+    console.log("Received id sesssto: ", sessionStorage.getItem('doc_id'));
+    setDoc_id(sessionStorage.getItem('doc_id'));
+    get_online_stat();
   }, []);
 
   const removeFollowUp = async(app,index) => {

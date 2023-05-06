@@ -14,7 +14,7 @@ function Regc() {
 
 
     useEffect(() => {
-        console.log("Received num: ", searchParams.get("mobile"));
+        console.log("Received num: from sessst", sessionStorage.getItem("mobile"));
       });
   const[searchParams] = useSearchParams();
 
@@ -53,16 +53,16 @@ function Regc() {
   
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("In handle num:",searchParams.get("mobile"));
+    console.log("In handle num:",sessionStorage.getItem("mobile"));
     const create_patient_body = {
         'name' : Name,
         'age' : Age,
-        'mobile' : searchParams.get("mobile"),
+        'mobile' : sessionStorage.getItem("mobile"),
         'gender' : gender,
         'email' : email,
         'consent' : false
       }
-      localStorage.getItem('jwtToken', data);
+      localStorage.getItem('jwt token', data);
       await fetch('http://localhost:8090/api/v1/patient/create', {
         method: 'POST',
         headers: {
@@ -75,12 +75,13 @@ function Regc() {
       .then(response => response.json())
       .then(data => {
         console.log(data)
-        nav({
-          pathname: '/selectprofile',
-          search: createSearchParams({
-            mobile: searchParams.get("mobile")
-          }).toString()
-        });
+        nav('/selectprofile');
+        // nav({
+        //   pathname: '/selectprofile',
+        //   search: createSearchParams({
+        //     mobile: sessionStorage.getItem("mobile")
+        //   }).toString()
+        // });
       })
       .catch(error => {
         console.log(error)

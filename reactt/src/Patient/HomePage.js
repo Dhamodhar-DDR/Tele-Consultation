@@ -27,13 +27,15 @@ function Homepat(){
 
   const nav = useNavigate();
 
-  const pat_id = searchParams.get("pat_id");
+  // const pat_id = searchParams.get("pat_id");
+
+  const pat_id = sessionStorage.getItem('pat_id');
 
   const [prof_name, setprofname] = useState('')
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: searchParams.get("pat_id")}
+    const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -71,57 +73,73 @@ function Homepat(){
   useEffect(() => {
     get_prof_name_by_id()
     
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id from sess: ", sessionStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
 
   const handleUploadRecords = () => {
-    nav({
-      pathname: '/upload_records',
-      search: createSearchParams({
-        upload_t: 0,
-        pat_id: pat_id
-      }).toString()
-    });
-  }
+
+    sessionStorage.setItem('upload_t', 0);
+    
+    nav('/upload_records');
+
+  //   nav({
+  //     pathname: '/upload_records',
+  //   //   search: createSearchParams({
+  //   //     upload_t: 0,
+  //   //     pat_id: pat_id
+  //   //   }).toString()
+  //   // });
+   }
 
   const handleViewRecords = () => {
-    nav({
-      pathname: '/view_records',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+
+    nav('/view_records');
+    // nav({
+    //   pathname: '/view_records',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
   }
 
   const handleSelectDoc = () => {
 
-    nav({
-      pathname: '/select_doc',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+    nav('/select_doc');
+
+    // nav({
+    //   pathname: '/select_doc',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
 
   }
 
   const handleManageProf = () => {
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+
+    nav('/patlist');
+
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
 
   }
   const handleAppoinHist = () => {
-    nav({
-      pathname: '/appoinhist',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+
+    nav('/appoinhist')
+
+
+    // nav({
+    //   pathname: '/appoinhist',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
 
   }
 
@@ -134,25 +152,36 @@ function Homepat(){
   };
 
   const handleLogout = () =>{
-    nav('/login_p')
+    console.log("welluntil")
+    sessionStorage.clear();
+    localStorage.removeItem('jwtToken');
+    console.log("welluntil")
+    nav('/login_p');
   }
   
   const navToHome = () =>{
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/home_pat');
+
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToMngProfile = () =>{
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/patlist');
+
+
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToAppHis = () =>{
@@ -160,6 +189,8 @@ function Homepat(){
   }
 
   const goToSummary = ()=>{
+
+    // sessionStorage.setItem()
     nav({
       pathname: '/call_summary',
       search: createSearchParams({
@@ -221,5 +252,6 @@ function Homepat(){
     </div>
     );
   }
+
 
 export default Homepat;

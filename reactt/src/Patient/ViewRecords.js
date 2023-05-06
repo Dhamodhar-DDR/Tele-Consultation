@@ -13,7 +13,7 @@ const DisplayFiles = () => {
 
   const display_file = async() => {
     const formData = new FormData();
-    formData.append('pat_id', searchParams.get('pat_id'))
+    formData.append('pat_id', sessionStorage.getItem('pat_id'))
     await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
       method: 'POST',
       headers: {
@@ -64,34 +64,45 @@ const DisplayFiles = () => {
     setviewMore(true);
   }
   const handleLogout = () =>{
+
+    sessionStorage.clear();
+
+
+    localStorage.removeItem('jwtToken');
+
     nav('/login_p')
   }
   
   const navToHome = () =>{
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/home_pat');
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToMngProfile = () =>{
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/patlist');
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const handleAppoinHist = () => {
-    nav({
-      pathname: '/appoinhist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+    nav('/appoinhist');
+    // nav({
+    //   pathname: '/appoinhist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
 

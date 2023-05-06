@@ -13,7 +13,7 @@ function PatList() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: searchParams.get("pat_id")}
+    const getpatidbody = {pat_id: sessionStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -52,11 +52,11 @@ function PatList() {
 
   const nav = useNavigate();
   
-  const pat_id = searchParams.get("pat_id");
+  const pat_id = sessionStorage.getItem('pat_id');
   console.log("loook ", pat_id)
   const get_all_profiles = async() => {
     const getProfilesBody = {
-      pat_id : searchParams.get('pat_id')
+      pat_id : sessionStorage.getItem('pat_id')
     }
     await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
       method: 'POST',
@@ -76,59 +76,69 @@ function PatList() {
   }
 
   useEffect(() => {
-    console.log(searchParams.get('pat_id'))
+    console.log("received id sess: ",sessionStorage.getItem('pat_id'))
     get_prof_name_by_id()
     
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id: ", sessionStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
     get_all_profiles();
   }, [])
 
   const handleAppoinHist = () => {
-    nav({
-      pathname: '/appoinhist',
-      search: createSearchParams({
-        pat_id: searchParams.get("pat_id")
-      }).toString()
-    });
+
+    nav('/appoin_hist');
+    // nav({
+    //   pathname: '/appoinhist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get("pat_id")
+    //   }).toString()
+    // });
 
   }
 
   const handleAddProf = () =>{
-    nav({
-      pathname: '/addprof',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+
+    nav('/addprof');
+    // nav({
+    //   pathname: '/addprof',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
   }
 
   const handleSwitchProf = () => {
-    nav({
-      pathname: '/selectprofile',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+
+    nav('/selectprofile')
+    // nav({
+    //   pathname: '/selectprofile',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
   }
 
   const navToHome = () =>{
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/home_pat')
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToMngProfile = () =>{
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/patlist')
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
 

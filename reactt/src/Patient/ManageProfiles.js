@@ -144,9 +144,9 @@ function PatList() {
             <p>{props.email}</p>
           </div>
         </div>
-        <div className="book-appointment">
+        {/* <div className="book-appointment">
           <button>Edit Profile</button>
-        </div>
+        </div> */}
       </div>
     );
 }

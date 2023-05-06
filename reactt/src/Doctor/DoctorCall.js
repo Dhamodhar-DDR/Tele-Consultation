@@ -2,13 +2,13 @@ import React,{ useState, useEffect, useRef} from "react";
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
 import './styles/vc.css'
+import def_pp from '../imgs/profile.png'
 import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
     const [savefu, setsavefu] = useState(false)
-
 
     const [isLive, setIsLive] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -35,10 +35,10 @@ function DoctorCall() {
     const[patpresent, setpatpresent] = useState(false);
     const[prevDiagnosis,setPrevDiagnosis] = useState("");
 
+    const [showNotification, setShowNotification] = useState(false);
+
     const [files,setFiles] = useState([]);
     const [init_files, setinitFiles] = useState([]);
-
-
 
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
@@ -95,7 +95,7 @@ function DoctorCall() {
 
         channel.current.on('MemberJoined', handleUserJoined)
         channel.current.on('MemberLeft', handleUserLeft)
-        channel.current.on('ChannelMessage', handleMyChat)
+        channel.current.on('ChannelMessage', (chat,memberId) => handleMyChat(chat,memberId,isRightSideBarOpen))
 
         client.current.on('MessageFromPeer', handleMessageFromPeer)
 
@@ -105,8 +105,12 @@ function DoctorCall() {
 
     }
 
-    let handleMyChat = async(chat, memeberId) => {
+    let handleMyChat = async(chat, memeberId, isRightSideBarOpen) => {
         console.log('New message received')
+        
+        if (!isRightSideBarOpen) {
+            setShowNotification(true);
+        }
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
         // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
@@ -617,13 +621,12 @@ function DoctorCall() {
     };
 
     const toggleRightSidebar = () => {
+        if(!isRightSideBarOpen) setShowNotification(false);
         setisRightSideBarOpen(!isRightSideBarOpen);
     };
 
     const toggleFollowUp = async() => {
 
-        
-        // setsavefu(!savefu)
         if (markForFollowUp) setFollowUpReason(""); 
         const set_follow_up_body = {
             appId :  appointmentId,
@@ -650,13 +653,8 @@ function DoctorCall() {
             return response.text();
           })
         .then(data => {
-            console.log("Online status: ",data)
             setMarkForFollowUp(!markForFollowUp);
-            console.log("mark for followup is ,",markForFollowUp)
-            if(markForFollowUp)
-            {
-                setsavefu(!savefu)
-            }
+            if(markForFollowUp) setsavefu(!savefu)
         })
         .catch(error => {
             console.log(error)
@@ -969,25 +967,17 @@ function DoctorCall() {
                         </div>
                     <div className="patient-details">
                           <h2 className="details-header">Patient details</h2>
+                          {patientName!==""?<img style={{marginLeft:"80px"}} className="doctor-photo" src={def_pp} alt="Doctor" />:""}
                           <div className="details-item"><b>Name</b>: {patientName}</div>
                           <div className="details-item"><b>Age</b>: {patientAge}</div>
                           <div className="details-item"><b>Gender</b>: {patientGender}</div>
-                          <div className="details-item"><b>Mobile Number</b>: {patientGender}</div>
-                          <div className="details-item"><b>Email</b>: {patientGender}</div>
+                          <div className="details-item"><b>Mobile Number</b>: {patientMobile}</div>
+                          <div className="details-item"><b>Email</b>: {patientEmail}</div>
                     </div>
                     {isfollowup && <div className="patient-details" style={{marginTop:"30px"}}>
                        <h2 className="details-header">Previous Appointment Diagnosis</h2>
                           <div className="details-item">{prevDiagnosis}</div>
                     </div>}
-
-
-                        {/* <div>
-                            <h2>Patient details</h2>
-                            <div><b>Name</b> : {patientName}</div>
-                            <div><b>Age</b> : {patientAge}</div>
-                            <div><b>Gender</b> : {patientGender}</div>
-
-                        </div> */}
                     </div> 
 
                     <div className="left-sidebar-writePres" id="left-sidebar-writePres">
@@ -1089,7 +1079,7 @@ function DoctorCall() {
 
                     <div id="patdetails" className={`controls ${isLeftSideBarOpen}`}></div>
                 </div>
-                <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>
+                <button className={`toggle-chat-btn ${showNotification ? "notification" : ""}`}  onClick={toggleRightSidebar}>Chat</button>
             </div>
             <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
                 <button style = {{backgroundColor: "rgba(227, 43, 43, 0.919);"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>

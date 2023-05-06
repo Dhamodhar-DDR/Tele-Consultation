@@ -25,11 +25,8 @@ const DisplayFiles = () => {
       body: formData
     })
     .then((response) => {
-      if( !response.ok )
-
-      console.log( response );
-        else
-        response.json();
+      if( !response.ok ) console.log( response );      
+      else return response.json();
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

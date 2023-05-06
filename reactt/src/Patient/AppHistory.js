@@ -20,7 +20,7 @@ function AppoinHist() {
     get_appoin_history()
     
     console.log("Received pat_id: ", searchParams.get("pat_id"));
-    console.log("Received profilename pat_id: ", prof_name);
+    // console.log("Received profilename pat_id: ", prof_name);
 
   }, [])
 
@@ -35,16 +35,16 @@ function AppoinHist() {
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getappoinhist)
-  
     })
-    .then(response => {if( !response.ok )
-
-      console.log( response );
-      else
-      response.json();})
+    .then(response => {
+      if( !response.ok ){
+        // console.log( response );
+      }      
+      else return response.json();
+    })
     .then(data => {
-      // console.log("Online apoin list get profff: ",data)
-      settappoinlist(data)  
+      console.log("Online apoin list get profff: ",data)
+      settappoinlist(data.reverse());  
     })
     .catch(error => {
       console.log(error)
@@ -64,15 +64,17 @@ function AppoinHist() {
       body: JSON.stringify(getpatidbody)
   
     })
-    .then(response => {if( !response.ok )
-
-      console.log( response );
-      else
-      response.json();})
+    .then(response => {
+      if( !response.ok )
+      {
+      // console.log( response );
+      }
+      else return response.json();
+    })
     .then(data => {
-      console.log("Online docs list get profff: ",data)
+      // console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
-      console.log("After set profname ",prof_name)     
+      // console.log("After set profname ",prof_name)     
     })
     .catch(error => {
       console.log(error)
@@ -173,9 +175,9 @@ function AppoinHist() {
 
             console.log( response );
             else
-            response.json();})
+            return response.json();})
           .then(data => {
-            console.log("Prescriptions: ",data)
+            // console.log("Prescriptions: ",data)
             generatePDF(data,appointment,appId, doc_name, doc_spec);
           })
           .catch(error => {
@@ -212,7 +214,7 @@ function AppoinHist() {
           <div>
           <button className="nav-button1"><img  />{prof_name}</button>
 
-            <button className="nav-button" >Logout</button>
+          <button className="nav-button">Logout</button>
           </div>
         </div>
         <div className="appointment-history">

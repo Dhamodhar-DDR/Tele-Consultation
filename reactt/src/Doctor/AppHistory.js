@@ -53,7 +53,7 @@ function DocAppoinHist() {
     })
     .then(data => {
       console.log("Online docs apoin list get profff: ",data)
-      settappoinlist(data)  
+      settappoinlist(data.reverse())  
      // console.log("After set profname ",prof_name)     
     })
     .catch(error => {

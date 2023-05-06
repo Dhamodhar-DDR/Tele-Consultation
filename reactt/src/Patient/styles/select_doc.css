@@ -55,6 +55,12 @@
   color: #fff;
 }
 
+.doctor-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 
 .doctor-profile {
     display: flex;
@@ -62,8 +68,8 @@
     align-items: center;
     width: 80%;
     margin-bottom: 20px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 300px;
+    /* margin-right: auto; */
     padding: 20px;
     border: 1px solid #ccc;
     background-color: #ffffff;

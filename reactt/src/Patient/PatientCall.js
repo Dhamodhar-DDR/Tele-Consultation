@@ -10,6 +10,7 @@ function PatientCall() {
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
     const [isRightSideBarOpen, setisRightSideBarOpen] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
 
     var isConsultationActive = false;    
     var chat = 0;
@@ -88,6 +89,9 @@ function PatientCall() {
     }
     let handleMyChat = async(chat, memeberId) => {
         console.log('New message received')
+        if (!isRightSideBarOpen) {
+            setShowNotification(true);
+        }
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
         // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + messages['message'];
@@ -367,6 +371,7 @@ function PatientCall() {
     }
     
     const toggleRightSidebar = () => {
+        if(!isRightSideBarOpen) setShowNotification(false);
         setisRightSideBarOpen(!isRightSideBarOpen);
     };
 
@@ -404,7 +409,7 @@ function PatientCall() {
             <div onClick={toggleMic} className="control-container" id="mic-btn">
                 <img src={mic_icon}/>
             </div>
-            <button className="pat-call-chat-open-btn" onClick={toggleRightSidebar}>Chat</button>
+            <button onClick={toggleRightSidebar} className={`pat-call-chat-open-btn ${showNotification ? "notification" : ""}`}>Chat</button>
         </div>
         </div>
         <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>

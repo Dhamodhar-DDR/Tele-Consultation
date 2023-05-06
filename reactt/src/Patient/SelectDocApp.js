@@ -174,6 +174,7 @@ const get_prof_name_by_id = async() => {
 
     localStorage.removeItem('jwtToken');
     nav('/login_p')
+    window.location.reload();
   }
   
   const navToHome = () =>{
@@ -235,6 +236,7 @@ const get_prof_name_by_id = async() => {
         </div>
       </div>
       <h1 className="heading-1">Choose a doctor</h1>
+      <div style = {{marginLeft:"160px"}}>
       <div className="doctor-list">
         <br/>
         
@@ -254,6 +256,7 @@ const get_prof_name_by_id = async() => {
 
       {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={sessionStorage.getItem('pat_id')} app_id={-1} doctor_id={send_did}/>)}
       
+    </div>
     </div>
     
   );

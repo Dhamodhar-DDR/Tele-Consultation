@@ -128,7 +128,7 @@ const WaitingPage = () => {
     const cancelAppointment = async()=>{
       console.log("CANCEL")
       const set_status_body = {
-        appId : sessionStorage.getItem('type'),
+        appId : sessionStorage.getItem('app_id'),
         value : 'cancelled'
       }
       await fetch('http://localhost:8090/api/v1/appointment/set_status', {

@@ -38,13 +38,13 @@ function DocHome() {
     })
     .then(response =>{
       console.log(response);
-      if (response['status'] == 401)
-      {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
-      }
+      // if (response['status'] == 401)
+      // {
+      //   localStorage.removeItem('jwtToken_doc')
+      //   nav({
+      //     pathname: '/login_doc'
+      //   });
+      // }
       return response.json()
     })
     .then(data => {
@@ -78,18 +78,18 @@ function DocHome() {
     })
     .then(response => {
       console.log(response);
-      if (response['status'] == 401)
-      {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
-      }
+      // if (response['status'] == 401)
+      // {
+      //   localStorage.removeItem('jwtToken_doc')
+      //   nav({
+      //     pathname: '/login_doc'
+      //   });
+      // }
       return response.json()
     })
     .then(data => {
       console.log("Online docs apoin list get profff: ",data)
-      settappoinlist(data)  
+      settappoinlist(data.reverse())  
      // console.log("After set profname ",prof_name)     
     })
     .catch(error => {
@@ -99,6 +99,7 @@ function DocHome() {
 
 
   const get_online_stat = async(doc_id_param) => {
+    console.log("doc_id_param: ", doc_id_param)
     const check_status_body = {
       'doctorID': doc_id_param
     }
@@ -115,7 +116,11 @@ function DocHome() {
       console.log(response);
       if (response['status'] == 401)
       {
+        console.log("ASDSADSDDSAD")
+        if (localStorage.getItem('jwtToken_doc'))
+        {
         localStorage.removeItem('jwtToken_doc')
+        }
         nav({
           pathname: '/login_doc'
         });
@@ -150,13 +155,15 @@ function DocHome() {
     sessionStorage.clear();
     localStorage.removeItem('jwtToken_doc');
     nav('/login_doc');
+    window.location.reload();
   }
 
   const set_status = async(param) =>
   {
+   console.log(doc_id); 
     const set_online_status_body = {
 
-      'doctorID' : doc_id,
+      'doctorID' : sessionStorage.getItem("doc_id"),
       'online_status': param      
     }
     console.log("bef await isconsulatationactive", param)

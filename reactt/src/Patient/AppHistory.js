@@ -200,7 +200,13 @@ function AppoinHist() {
         }
         else return <></>
       }
+      const handleLogout = () =>{
+        sessionStorage.clear();
     
+        localStorage.removeItem('jwtToken');
+        nav('/login_p')
+        window.location.reload();
+      }
       return (
       <div>
         <div className="navbar">
@@ -215,7 +221,7 @@ function AppoinHist() {
           <div>
           <button className="nav-button1"><img  />{prof_name}</button>
 
-            <button className="nav-button" >Logout</button>
+            <button onClick={handleLogout} className="nav-button" >Logout</button>
           </div>
         </div>
         <div className="appointment-history">

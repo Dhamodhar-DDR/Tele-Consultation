@@ -38,7 +38,18 @@
 .pat-call-chat-open-btn:hover{
   background-color: rgba(2, 71, 231, 0.919);
 }
-
+.pat-call-chat-open-btn .notification::after {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1007;
+  top: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+}
 #user-2{
     display:none;
 }

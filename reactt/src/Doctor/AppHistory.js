@@ -214,8 +214,6 @@ const get_prof_name_by_id = async() => {
       document.getElementById("pres-view-popup").style.display = 'none';
     };
 
-
-    
       return (
         <div>
       <div className="navbar">
@@ -252,7 +250,6 @@ const get_prof_name_by_id = async() => {
                       
                       <button onClick={()=>viewPrescription(appointment.appointment,appointment.appointment.appointmentId,appointment.name,appointment.specialization)}>View Details</button>
                     </div>
-                    
                   </div>
                 </li>
               ))}

@@ -87,13 +87,7 @@ function PatList() {
 
   const handleAppoinHist = () => {
 
-    nav('/appoin_hist');
-    // nav({
-    //   pathname: '/appoinhist',
-    //   search: createSearchParams({
-    //     pat_id: searchParams.get("pat_id")
-    //   }).toString()
-    // });
+    nav('/appoinhist');
 
   }
 
@@ -190,6 +184,14 @@ function PatList() {
 //     console.log("Received pat_id: ", searchParams.get("pat_id"));
 //   }, [])
 
+const handleLogout = () =>{
+  sessionStorage.clear();
+
+  localStorage.removeItem('jwtToken');
+  nav('/login_p')
+  window.location.reload();
+}
+
   return (
     <div>
       {/* Navigation bar */}
@@ -205,7 +207,7 @@ function PatList() {
         <div>
         <button className="nav-button1"><img  />{prof_name}</button>
 
-          <button className="nav-button" >Logout</button>
+          <button onClick={handleLogout} className="nav-button" >Logout</button>
         </div>
       </div>
       <h1 className="heading-1">List of Profiles</h1>

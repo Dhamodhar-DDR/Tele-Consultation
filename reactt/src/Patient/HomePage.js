@@ -150,6 +150,7 @@ function Homepat(){
     localStorage.removeItem('jwtToken');
     console.log("welluntil")
     nav('/login_p');
+    window.location.reload();
   }
   
   const navToHome = () =>{

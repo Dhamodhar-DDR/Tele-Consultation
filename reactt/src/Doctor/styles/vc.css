@@ -309,6 +309,18 @@
   font-size: 20px;
 }
 
+.toggle-chat-btn.notification::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+}
+
 .close-left-sidebar-btn{
   float: right;
   background-color:#f7f7f700;

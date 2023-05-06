@@ -34,6 +34,7 @@ const DisplayFiles = () => {
       return response.json();
     })
     .then((list) => {
+      console.log(list)
       for(const element of list)
       {
         fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'].data)

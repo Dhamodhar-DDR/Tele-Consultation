@@ -5,6 +5,12 @@
 }
 
 body {
+
+  background-image: linear-gradient(to right, #9C8AE8, #E6DFFF);
+
+  /* background-color: linear-gradient(to right, #9C8AE8, #E6DFFF); */
+  background-size: cover;
+  background-color: transparent;
   font-family: 'Google Sans', sans-serif;
   font-size: 16px;
   line-height: 1.5;

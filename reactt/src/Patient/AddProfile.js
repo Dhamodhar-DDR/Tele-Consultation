@@ -117,10 +117,13 @@ function AddProf() {
             pathname: '/login_p'
           });
         }
-      return response.json();})
+      // console.log(response)
+      return response;
+    })
     .then(data => {
       console.log(data)
-      sessionStorage.setItem('pat_id', data.patientId);
+      // sessionStorage.setItem('pat_id', data.patientId);
+      nav('/selectprofile');
       // nav({
       //   pathname: '/selectprofile',
       //   search: createSearchParams({

@@ -79,7 +79,7 @@ function Regc() {
             pathname: '/login_p'
           });
         }
-        return response.json();
+        return response.text();
       })
       .then(data => {
         console.log(data)

@@ -4,11 +4,11 @@ import * as AgoraRTM from "../agora-rtm-sdk-1.5.1";
 import './styles/vc.css'
 import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
+import def_pp from '../imgs/profile.png'
 
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
     const [savefu, setsavefu] = useState(false)
-
 
     const [isLive, setIsLive] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ function DoctorCall() {
 
     const [files,setFiles] = useState([]);
     const [init_files, setinitFiles] = useState([]);
-
+    const [showNotification, setShowNotification] = useState(false);
 
 
     const nav = useNavigate();
@@ -107,6 +107,9 @@ function DoctorCall() {
 
     let handleMyChat = async(chat, memeberId) => {
         console.log('New message received')
+        if (!isRightSideBarOpen) {
+            setShowNotification(true);
+        }
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
         // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nPatient: " + messages['message'];
@@ -128,13 +131,14 @@ function DoctorCall() {
         while (parent.firstChild) {
             parent.removeChild(parent.firstChild);
         }
-        setPatientAge("")
-        setPatientGender("")
-        setPatientName("")
-        setPatientMobile("")
-        setPatientEmail("")
-        setFiles([])
-        setpatpresent(false)
+        // setPatientAge("")
+        // setPatientGender("")
+        // setPatientName("")
+        // setPatientMobile("")
+        // setPatientEmail("")
+        // setFiles([])
+        // setpatpresent(false)
+        // setMarkForFollowUp(false);
     }
 
     let handleMessageFromPeer = async (message, MemberId) => {
@@ -226,6 +230,7 @@ function DoctorCall() {
     let leaveChannel = async () => {
         await channel.current.leave()
         await client.current.logout()
+        sessionStorage.setItem('app_id', -1);
         // await peerConnection.close();
     }
 
@@ -302,7 +307,37 @@ function DoctorCall() {
 
     window.addEventListener('beforeunload', leaveChannel)
 
-
+    const get_prev_app_diag= async(pat_id) => {
+        const check_status_body = {
+            'patId': pat_id
+        }
+        await fetch('http://localhost:8090/api/v1/appointment/get_prev_app_diag', {
+            method: 'POST',
+            headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(check_status_body)
+        })
+        .then(response => {
+            if (response['status'] == 401)
+            {
+              nav({
+                pathname: '/login_doc'
+              });
+            }
+            return response.text();
+          })
+        .then(data => {
+            console.log("DESC", data)
+            setPrevDiagnosis(data);
+        })
+        .catch(error => {
+            console.log("error getting online status")
+            console.log(error)
+        });
+    }
     const get_online_stat = async(doc_id_param) => {
         const check_status_body = {
             'doctorID': doc_id_param
@@ -416,8 +451,17 @@ function DoctorCall() {
     }
 
     const handlenextPatient = async()=>{
+        setPatientAge("")
+        setPatientGender("")
+        setPatientName("")
+        setPatientMobile("")
+        setPatientEmail("")
+        setFiles([])
+        setpatpresent(false)
+        setMarkForFollowUp(false);
         console.log("Next patient is being called")
         console.log(appointmentId)
+        console.log(sessionStorage.getItem("app_id"))
         //Api call to set appointment to completed status
         if(appointmentId != -1)
         {
@@ -435,6 +479,14 @@ function DoctorCall() {
                 }
             });
 
+            setPatientAge("")
+            setPatientGender("")
+            setPatientName("")
+            setPatientMobile("")
+            setPatientEmail("")
+            setFiles([])
+            setpatpresent(false)
+            setMarkForFollowUp(false);
             handleUserLeft(String(patientId));
 
             const set_app_status_body = {
@@ -444,18 +496,18 @@ function DoctorCall() {
             const set_status_response = await fetch('http://localhost:8090/api/v1/appointment/set_status', {
                 method: 'POST',
                 headers: {
-        'Authorization': localStorage.getItem('jwtToken_doc'),
+                    'Authorization': localStorage.getItem('jwtToken_doc'),
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify(set_app_status_body)
             })
             if (set_status_response['status'] == 401)
-        {
-          nav({
-            pathname: '/login_doc'
-          });
-        }
+            {
+            nav({
+                pathname: '/login_doc'
+            });
+            }
             if(set_status_response.status != 200) console.log(set_status_response)
             else console.log("Changed previous appointment status to completed!")
         }
@@ -466,8 +518,7 @@ function DoctorCall() {
         const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
             headers: {
-        'Authorization': localStorage.getItem('jwtToken_doc'),
-                
+                'Authorization': localStorage.getItem('jwtToken_doc'),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
@@ -479,12 +530,13 @@ function DoctorCall() {
             pathname: '/login_doc'
           });
         }
-        console.log(earliest_app_response)
+
         try{
             const earliest_app = await earliest_app_response.json();
             setAppointmentId(earliest_app.appointmentId);
             setPatientId(earliest_app.patientId);
-            
+            console.log('E I E I O',earliest_app.patientId)
+
             setIsLoading(false);
             const get_pat_body_response = await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
                 method: 'POST',
@@ -496,11 +548,11 @@ function DoctorCall() {
                 body: JSON.stringify({pat_id: earliest_app.patientId})
             })
             if (get_pat_body_response['status'] == 401)
-        {
-          nav({
-            pathname: '/login_doc'
-          });
-        }
+            {
+                nav({
+                    pathname: '/login_doc'
+                });
+            }
             const pat_details = await get_pat_body_response.json();
             setfollowup(earliest_app.followup)
             setPatientName(pat_details.name);
@@ -508,6 +560,7 @@ function DoctorCall() {
             setPatientGender(pat_details.gender);
             setPatientMobile(pat_details.mobileNumber);
             setPatientEmail(pat_details.email);
+            if(earliest_app.followup) get_prev_app_diag(earliest_app.patientId);
             setpatpresent(true);
 
             // await fetch('http://localhost:8090/api/v1/patient/get_appointment_by_id',{
@@ -520,7 +573,7 @@ function DoctorCall() {
             // }).then(async(response)=>{
             //     const data = await response.json();
             // })
-            setPrevDiagnosis(earliest_app.description);
+            // setPrevDiagnosis(earliest_app.description);
 
 
             
@@ -624,6 +677,7 @@ function DoctorCall() {
     };
 
     const toggleRightSidebar = () => {
+        if(!isRightSideBarOpen) setShowNotification(false);
         setisRightSideBarOpen(!isRightSideBarOpen);
     };
 
@@ -835,12 +889,13 @@ function DoctorCall() {
             // console.log(blob)
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
-              setFiles(current => [{name : element.body.name, type: blob.type , url : fileReader.result}, ...current])
-              setinitFiles(files.slice(1, 3))
+                if(parseInt(element.body.appId) === parseInt(sessionStorage.getItem('app_id')))
+                {
+                  setinitFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
+                }
+                else setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
             };
             fileReader.readAsDataURL(blob);
-            // console.log("files are ", files)
-            // console.log("init files are ", init_files)
           })  
         }
         
@@ -861,6 +916,7 @@ function DoctorCall() {
     }
     
     const sendPres = async(e) => {
+        
         e.preventDefault();
         const medNames_l = []
         const frequencies_l = []
@@ -885,8 +941,7 @@ function DoctorCall() {
         await fetch('http://localhost:8090/api/v1/prescription/add_prescription',{
             method: 'POST',
             headers: {
-        'Authorization': localStorage.getItem('jwtToken_doc'),
-
+              'Authorization': localStorage.getItem('jwtToken_doc'),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*' 
             },
@@ -903,9 +958,11 @@ function DoctorCall() {
                     pathname: '/login_doc'
                   });
                 }
+            console.log(send_pres_diag)
             await fetch('http://localhost:8090/api/v1/appointment/set_app_description',{
                 method: 'POST',
                 headers: {
+                'Authorization': localStorage.getItem('jwtToken_doc'),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
                 },
@@ -976,11 +1033,12 @@ function DoctorCall() {
                         </div>
                     <div className="patient-details">
                           <h2 className="details-header">Patient details</h2>
+                          <img style={{marginLeft: "85px"}} className="doctor-photo" src={def_pp} alt="Doctor" />
                           <div className="details-item"><b>Name</b>: {patientName}</div>
                           <div className="details-item"><b>Age</b>: {patientAge}</div>
                           <div className="details-item"><b>Gender</b>: {patientGender}</div>
-                          <div className="details-item"><b>Mobile Number</b>: {patientGender}</div>
-                          <div className="details-item"><b>Email</b>: {patientGender}</div>
+                          <div className="details-item"><b>Mobile Number</b>: {patientMobile}</div>
+                          <div className="details-item"><b>Email</b>: {patientEmail}</div>
                     </div>
                     {isfollowup && <div className="patient-details" style={{marginTop:"30px"}}>
                        <h2 className="details-header">Previous Appointment Diagnosis</h2>
@@ -1022,7 +1080,7 @@ function DoctorCall() {
                         <div className="writePres-btn-div">
                             <button className="writePres-add-btn"onClick={handleAddFields}>Add prescription</button>
                             {inputFields.length > 0 ? <button className="writePres-add-btn" onClick={sendPres}>Send prescriptions</button> : ""}
-                        </div></div>) : "Prescriptions are already sent!"}
+                        </div></div>) : "Prescriptions are sent!"}
                     </div> 
 
                     <div className="left-sidebar-healthRec" id="left-sidebar-healthRec">
@@ -1096,7 +1154,7 @@ function DoctorCall() {
 
                     <div id="patdetails" className={`controls ${isLeftSideBarOpen}`}></div>
                 </div>
-                <button className="toggle-chat-btn"  onClick={toggleRightSidebar}>Chat</button>
+                <button className={`toggle-chat-btn ${showNotification ? "notification" : ""}`} onClick={toggleRightSidebar}>Chat</button>
             </div>
             <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>
                 <button style = {{backgroundColor: "rgba(227, 43, 43, 0.919);"}} className="toggle-char-call-btn-inside" onClick={toggleRightSidebar}>x</button>

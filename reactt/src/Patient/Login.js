@@ -22,21 +22,25 @@ function Logincg() {
     if(data == 'false')
     {
       console.log("entered")
-      nav({
-        pathname: '/selectprofile',
-        search: createSearchParams({
-          mobile: phone
-        }).toString()
-      });
+      sessionStorage.setItem("mobile", phone);
+      nav('/selectprofile')
+      // nav({
+      //   pathname: '/selectprofile',
+      //   search: createSearchParams({
+      //     mobile: phone
+      //   }).toString()
+      // });
     }
     else if(data == 'true')
     {
-      nav({
-        pathname: '/register_p',
-        search: createSearchParams({
-          mobile: phone
-        }).toString()
-      });
+      sessionStorage.setItem("mobile", phone);
+      nav('/register_p');
+      // nav({
+      //   pathname: '/register_p',
+      //   search: createSearchParams({
+      //     mobile: phone
+      //   }).toString()
+      // });
     }
 
   }
@@ -55,7 +59,7 @@ function Logincg() {
     // startTimer();
     e.preventDefault();
     setShowOtp(true);
-
+    console.log("entered phone ",phone)
     const send_otp_body = {
       'mobile_number' : phone
     }

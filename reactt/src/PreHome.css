@@ -21,7 +21,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('imgs/background.jpeg');
+  /* background-image: url('imgs/background.jpeg'); */
   background-size: cover;
 
   font-family: 'Google Sans', sans-serif;

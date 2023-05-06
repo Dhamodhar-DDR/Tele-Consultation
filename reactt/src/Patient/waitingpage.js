@@ -11,7 +11,7 @@ const WaitingPage = () => {
     useEffect(() => {
         //Api call to get the just finished appointment. 
         const get_curr_app_body = {
-            appId : searchParams.get("app_id")
+            appId : sessionStorage.getItem('app_id')
         }
 
         const intervalId = setInterval(async() => {
@@ -32,14 +32,15 @@ const WaitingPage = () => {
                   console.log('doctor_live');
                   if(obj.status === 'live')
                   {
-                      nav({
-                          pathname: '/patient_call',
-                          search: createSearchParams({
-                            doc_id: searchParams.get("doc_id"),
-                            pat_id: searchParams.get("pat_id"),
-                            app_id: searchParams.get("app_id")
-                          }).toString()
-                      });
+                    nav('/patient_call')
+                      // nav({
+                      //     pathname: '/patient_call',
+                      //     search: createSearchParams({
+                      //       doc_id: searchParams.get("doc_id"),
+                      //       pat_id: searchParams.get("pat_id"),
+                      //       app_id: searchParams.get("app_id")
+                      //     }).toString()
+                      // });
                   } 
                   else{
                     setqueueCount(obj.count);
@@ -48,11 +49,11 @@ const WaitingPage = () => {
                 else if(obj.doctor_live == false) 
                 {
                   console.log('doctor_live - false');
-                  if(searchParams.get("type") === 'upload-auto' || searchParams.get("type") == 'upload-follow-auto')
+                  if(sessionStorage.getItem('type') === 'upload-auto' || sessionStorage.getItem('type') == 'upload-follow-auto')
                   {
-                    console.log(searchParams.get("type"));
+                    console.log("type is ses: ",sessionStorage.getItem('type'));
                     const get_next_body = {
-                      appId : searchParams.get("app_id"),
+                      appId : sessionStorage.getItem('app_id'),
                     }
                     await fetch('http://localhost:8090/api/v1/appointment/get_next_best_doc', {
                       method: 'POST',
@@ -64,10 +65,11 @@ const WaitingPage = () => {
                     })
                     .then(async(response)=>{
                       const data = await response.json();
-                      console.log(searchParams);
-                      searchParams.set('doc_id', data);
+                      console.log(sessionStorage);
+                      sessionStorage.setItem('doc_id',data);
+                      // searchParams.set('doc_id', data);
                       const get_queue_body = {
-                        appId : searchParams.get("app_id"),
+                        appId : sessionStorage.getItem('app_id'),
                       }
                       fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
                           method: 'POST',
@@ -104,7 +106,7 @@ const WaitingPage = () => {
     const cancelAppointment = async()=>{
       console.log("CANCEL")
       const set_status_body = {
-        appId : searchParams.get("app_id"),
+        appId : sessionStorage.getItem('type'),
         value : 'cancelled'
       }
       await fetch('http://localhost:8090/api/v1/appointment/set_status', {
@@ -117,14 +119,16 @@ const WaitingPage = () => {
         },
         body: JSON.stringify(set_status_body)
       }).then((response)=>{
-        nav({
-          pathname: '/call_summary',
-          search: createSearchParams({
-              pat_id: searchParams.get("pat_id"),
-              doc_id: searchParams.get("doc_id"),
-              app_id: searchParams.get("app_id")
-          }).toString()
-        });
+
+        nav('/call_summary');
+        // nav({
+        //   pathname: '/call_summary',
+        //   search: createSearchParams({
+        //       pat_id: sessionStorage.getItem('pat_id'),
+        //       doc_id: sessionStorage.getItem('doc_id'),
+        //       app_id: sessionStorage.getItem('app_id')
+        //   }).toString()
+        // });
       })
     }
 

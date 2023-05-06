@@ -124,11 +124,16 @@ function DoctorCall() {
         console.log("User left: ", MemberId)
         document.getElementById('user-2').style.display = 'none'
         document.getElementById('user-1').classList.remove('smallFrame')
+        const parent = document.getElementById("ch2");
+        while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
+        }
         setPatientAge("")
         setPatientGender("")
         setPatientName("")
         setPatientMobile("")
         setPatientEmail("")
+        setFiles([])
         setpatpresent(false)
     }
 
@@ -830,7 +835,7 @@ function DoctorCall() {
             // console.log(blob)
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
-              setFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
+              setFiles(current => [{name : element.body.name, type: blob.type , url : fileReader.result}, ...current])
               setinitFiles(files.slice(1, 3))
             };
             fileReader.readAsDataURL(blob);
@@ -1031,7 +1036,7 @@ function DoctorCall() {
                                 <button onClick={handleLoadMore}> {lm ? 'Show Less' : 'Show More'}</button><br/>
                                 {
                                     lm && (
-                                        files.map((file, index) => (
+                                        files.slice(4,files.length).map((file, index) => (
                                             <li key={index} onClick={() => handleFileClick(file)}>
                                                 {file.name}
                                             </li>

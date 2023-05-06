@@ -155,7 +155,7 @@ function PatList() {
           </div>
         </div>
         <div className="book-appointment">
-          <button>Edit Profile</button>
+          {/* <button>Edit Profile</button> */}
         </div>
       </div>
     );

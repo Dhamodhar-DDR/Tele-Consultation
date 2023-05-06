@@ -143,13 +143,6 @@ function Homepat(){
 
   }
 
-  const handleModalOpen = () => {
-    setShowModal(true);
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
 
   const handleLogout = () =>{
     console.log("welluntil")

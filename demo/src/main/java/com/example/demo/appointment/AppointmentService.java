@@ -70,6 +70,10 @@ public class AppointmentService {
         }
     }
 
+    public String get_doc_spec(int docId){
+        return appointmentRepository.get_doc_spec(docId);
+    }
+
     public boolean setMarkForFollowup(int id, boolean value) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
         if (optionalAppointment.isPresent()) {

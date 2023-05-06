@@ -37,14 +37,13 @@ function AppoinHist() {
       body: JSON.stringify(getappoinhist)
   
     })
-    .then(response => {if( !response.ok )
-
-      console.log( response );
-      else
-      response.json();})
+    .then(response => {
+      if( !response.ok ) console.log( response );
+      else return response.json();
+    })
     .then(data => {
       // console.log("Online apoin list get profff: ",data)
-      settappoinlist(data)  
+      settappoinlist(data.reverse())  
     })
     .catch(error => {
       console.log(error)
@@ -64,11 +63,10 @@ function AppoinHist() {
       body: JSON.stringify(getpatidbody)
   
     })
-    .then(response => {if( !response.ok )
-
-      console.log( response );
-      else
-      response.json();})
+    .then(response => {
+      if( !response.ok )console.log( response );
+      else return response.json();
+    })
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
@@ -175,11 +173,10 @@ function AppoinHist() {
             },
             body: JSON.stringify(getpresbody)
           })
-          .then(response => {if( !response.ok )
-
-            console.log( response );
-            else
-            response.json();})
+          .then(response => {
+            if( !response.ok ) console.log( response );
+            else return response.json();
+          })
           .then(data => {
             console.log("Prescriptions: ",data)
             generatePDF(data,appointment,appId, doc_name, doc_spec);
@@ -223,7 +220,7 @@ function AppoinHist() {
         </div>
         <div className="appointment-history">
           <h1>Appointment History</h1>
-          <ul className="doctor-list">
+          {appoinlist.length == 0? "No appointments":<ul className="doctor-list">
             {appoinlist.map(appointment => (
               <li key={appointment.appointment.appointmentId}>
                 <div className="doctor-profile">
@@ -243,7 +240,7 @@ function AppoinHist() {
                 </div>
               </li>
             ))}
-          </ul>
+          </ul>}
           <div id="pres-view-popup" className="appHis-popup">
             <button className="appHis-popup-btn" onClick={closePopup}>X</button>
             <iframe id="pdf-frame" title="pdf" src="" width="90%" height="90%"></iframe>

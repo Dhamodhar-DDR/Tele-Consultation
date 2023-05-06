@@ -61,13 +61,10 @@ const DisplayFiles = () => {
 
     setviewMore(true);
   }
+
   const handleLogout = () =>{
-
     sessionStorage.clear();
-
-
     localStorage.removeItem('jwtToken');
-
     nav('/login_p')
   }
   

@@ -145,10 +145,9 @@ function DocHome() {
     // });
   }
 
-  const HandleLogout = () =>{
-    set_status(false)
+  const HandleLogout = async() =>{
+    await set_status(false)
     sessionStorage.clear();
-
     localStorage.removeItem('jwtToken_doc');
     nav('/login_doc');
   }
@@ -217,7 +216,7 @@ function DocHome() {
     get_doc_id();
     console.log("Received id sesssto: ", sessionStorage.getItem('doc_id'));
     setDoc_id(sessionStorage.getItem('doc_id'));
-    get_online_stat();
+    get_online_stat(sessionStorage.getItem('doc_id'));
   }, []);
 
   const removeFollowUp = async(app,index) => {

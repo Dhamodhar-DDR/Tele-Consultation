@@ -24,16 +24,14 @@ const DisplayFiles = () => {
       // responseType: "json",
       body: formData
     })
-    .then((response) => { response.json()
-      // if( !response.ok )
-
-      // console.log( response );
-      //   else
-      //   response.json();
-      // if (!response.ok) {
-      //   throw new Error(`HTTP error! status: ${response.status}`);
-      // }
-      // return response.json();
+    .then((response) => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
     })
     .then((list) => {
       for(const element of list)

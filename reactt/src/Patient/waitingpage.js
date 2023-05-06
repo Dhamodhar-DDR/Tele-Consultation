@@ -25,7 +25,15 @@ const WaitingPage = () => {
                 body: JSON.stringify(get_curr_app_body)
             })
             .then((response) => {
-              return response.json();})
+              if (response['status'] == 401)
+              {
+                nav({
+                  pathname: '/login_p'
+                });
+              }
+              return response.json();
+            }
+            )
             .then(async(obj) => {
                 if(obj.doctor_live == true)
                 {
@@ -64,6 +72,12 @@ const WaitingPage = () => {
                       body: JSON.stringify(get_next_body)
                     })
                     .then(async(response)=>{
+                        if (response['status'] == 401)
+                        {
+                          nav({
+                            pathname: '/login_p'
+                          });
+                        }
                       const data = await response.json();
                       console.log(sessionStorage);
                       sessionStorage.setItem('doc_id',data);
@@ -79,7 +93,15 @@ const WaitingPage = () => {
                           },
                           body: JSON.stringify(get_queue_body)
                       })
-                      .then((response2) => response2.json())
+                      .then((response2) => {
+                        if (response2['status'] == 401)
+                        {
+                          nav({
+                            pathname: '/login_p'
+                          });
+                        }
+                        return response2.json();
+                      })
                       .then(obj => {
                         setqueueCount(obj.count)
                       })
@@ -119,7 +141,12 @@ const WaitingPage = () => {
         },
         body: JSON.stringify(set_status_body)
       }).then((response)=>{
-
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_p'
+            });
+          }
         nav('/call_summary');
         // nav({
         //   pathname: '/call_summary',

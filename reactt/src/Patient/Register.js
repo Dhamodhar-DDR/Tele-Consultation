@@ -72,7 +72,15 @@ function Regc() {
         },
         body: JSON.stringify(create_patient_body)
       })
-      .then(response => response.text())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+      })
       .then(data => {
         console.log(data)
         nav('/selectprofile');

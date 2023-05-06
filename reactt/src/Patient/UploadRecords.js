@@ -130,6 +130,12 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
           })
           .then(async(response) => {
             console.log(response);
+              if (response['status'] == 401)
+              {
+                nav({
+                  pathname: '/login_p'
+                });
+              }
             try{
               const data = await response.json();
               const formData = new FormData();
@@ -172,6 +178,12 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                   body: formData
                 })
                 .then(response2 => {
+                    if (response['status'] == 401)
+                    {
+                      nav({
+                        pathname: '/login_p'
+                      });
+                    }
                   // Handle the response from the server
                   console.log(response2);
                   console.log(data.appointmentId);
@@ -249,6 +261,12 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       body: formData
     })
     .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_p'
+        });
+      }
       return response.json();
     })
     .catch(error => {

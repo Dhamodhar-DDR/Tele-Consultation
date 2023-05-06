@@ -44,7 +44,15 @@ function Logindoc() {
         },
         body: JSON.stringify(get_doc_by_mobile_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        return response.json();
+      })
       .then(data => {
         console.log("Doc Id assigned: ",data.doctorId)
         sessionStorage.setItem('doc_id',data.doctorId);
@@ -102,7 +110,15 @@ function Logindoc() {
       },
       body: JSON.stringify(send_otp_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.text();
+    })
     .then(data => {
       console.log(data)
     })
@@ -127,7 +143,15 @@ function Logindoc() {
       },
       body: JSON.stringify(verify_otp_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.text();
+    })
     .then(async(data) => {
       console.log(data)
       localStorage.setItem('jwtToken_doc', data);

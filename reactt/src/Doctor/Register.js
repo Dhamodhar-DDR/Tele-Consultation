@@ -80,15 +80,15 @@ function Regdoc() {
         },
         body: JSON.stringify(create_doc_body)
       })
-      .then(response => response.json()
-      //   if (response['status'] == 401)
-      //   {
-      //     nav({
-      //       pathname: '/login_doc'
-      //     });
-      //   }
-      //   return response.text();
-      // }
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        return response.text();
+      }
       
       )
       .then(async(data) => {

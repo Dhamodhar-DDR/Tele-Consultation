@@ -57,7 +57,15 @@ function DoctorList() {
         },
         body: JSON.stringify(create_app_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+      })
       .then(data => {
         console.log(data)
         console.log(data.appointmentId)
@@ -110,7 +118,15 @@ const get_prof_name_by_id = async() => {
     body: JSON.stringify(getpatidbody)
 
   })
-  .then(response => response.json())
+  .then(response => {
+    if (response['status'] == 401)
+    {
+      nav({
+        pathname: '/login_p'
+      });
+    }
+    return response.json();
+  })
   .then(data => {
     console.log("Online docs list get profff: ",data)
     setprofname(data.name)  
@@ -134,7 +150,15 @@ const get_prof_name_by_id = async() => {
       },
   
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
+    })
     .then(data => {
       console.log("Online docs list: ",data)
       setdoclist(data)      

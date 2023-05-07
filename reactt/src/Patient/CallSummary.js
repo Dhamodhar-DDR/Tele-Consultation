@@ -13,17 +13,24 @@ function CallSummary(){
     const [showPopup, setShowPopup] = useState(false);
     const get_appoin_by_id = async()=>{
         const body = {
-            appId : searchParams.get("app_id")
+            appId : localStorage.getItem('app_id')
         }
         await fetch('http://localhost:8090/api/v1/appointment/get_appointment_by_id', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(body)
         })
-        .then(response => response.json())
+        .then(response => response.json()
+          // {if( !response.ok )
+
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
             console.log("Appointment details ",data)
             setAppointment(data)
@@ -34,17 +41,24 @@ function CallSummary(){
     }
     const get_doc_by_id = async()=>{
         const body2 = {
-            doctorID : searchParams.get("doc_id")
+            doctorID : localStorage.getItem('doc_id')
         }
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_id', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(body2)
         })
-        .then(response => response.json())
+        .then(response => response.json()
+          // {if( !response.ok )
+
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
             console.log("Doctor details ",data)
             setDoctor(data)
@@ -60,22 +74,30 @@ function CallSummary(){
     }, [])
 
     const get_prof_name_by_id = async() => {
-        const getpatidbody = {pat_id: searchParams.get("pat_id")}
+        const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
         await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(getpatidbody)
       
         })
-        .then(response => response.json())
+        .then(response => response.json()
+          // {if( !response.ok )
+
+          // console.log( response );
+          // else
+          // response.json();}
+          )
         .then(data => {
+          if (data){
           console.log("Online docs list get profff: ",data)
           setprofname(data.name)  
           console.log("After set profname ",prof_name)     
-        })
+        }})
         .catch(error => {
           console.log(error)
         });
@@ -137,12 +159,19 @@ function CallSummary(){
           await fetch('http://localhost:8090/api/v1/prescription/get_prescription', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(getpresbody)
           })
-          .then(response => response.json())
+          .then(response => response.json()
+            // {if( !response.ok )
+
+            // console.log( response );
+            // else
+            // response.json();}
+            )
           .then(data => {
             console.log("Prescriptions: ",data)
             generatePDF(data,appointment,appId, doc_name, doc_spec);
@@ -153,12 +182,14 @@ function CallSummary(){
       } 
 
     const navToHome = () =>{
-        nav({
-          pathname: '/home_pat',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+      nav('/home_pat')
+        // nav({
+        //   pathname: '/home_pat',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id'
+        //   }).toString()
+        // });
       }
 
       const closePopup = () => {
@@ -174,11 +205,11 @@ function CallSummary(){
                 <div className="details">
                     <img className="doctor-photo" src={def_pp} alt="Doctor" />
                     <div>
-                        <p className="doctor-name">{doctor.name}</p>
-                        <div className="doctor-spec"><b>{doctor.specialization}</b></div>
-                        <div className="info-label"><b>Call Start Time:</b> {appointment.startTime}</div>
-                        <div className="info-label"><b>Call End Time:</b> {appointment.endTime}</div>
-                        <div className="info-label"><b>Status: </b>{appointment.status}</div>
+                        <p className="doctor-name">{doctor?.name}</p>
+                        <div className="doctor-spec"><b>{doctor?.specialization}</b></div>
+                        <div className="info-label"><b>Call Start Time:</b> {appointment?.startTime}</div>
+                        <div className="info-label"><b>Call End Time:</b> {appointment?.endTime}</div>
+                        <div className="info-label"><b>Status: </b>{appointment?.status}</div>
                         <span>
                             <button className="app-sumary-btn" onClick={()=>viewPrescription(appointment,appointment.appointmentId,doctor.name,doctor.specialization)} style={{marginRight: '40px'}}>View prescription</button>
                             <button className="app-sumary-btn" onClick={navToHome}>Back to home</button>

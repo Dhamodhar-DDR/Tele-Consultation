@@ -38,7 +38,7 @@ function DoctorList() {
   
       const create_app_body = {
         bookingTime : timestamp,
-        patientId : searchParams.get("pat_id"),
+        patientId : localStorage.getItem('pat_id'),
         doctorId: doc_id,
         startTime : null,
         endTime : null,
@@ -51,23 +51,33 @@ function DoctorList() {
       await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(create_app_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+      })
       .then(data => {
         console.log(data)
         console.log(data.appointmentId)
-        nav({
-          pathname: '/waiting_page',
-          search: createSearchParams({
-            doc_id: doc_id,
-            pat_id: searchParams.get("pat_id"),
-            app_id: data.appointmentId
-          }).toString()
-        });
+        nav('/waiting_page');
+        // nav({
+        //   pathname: '/waiting_page',
+        //   search: createSearchParams({
+        //     doc_id: doc_id,
+        //     pat_id: searchParams.get("pat_id"),
+        //     app_id: data.appointmentId
+        //   }).toString()
+        // });
       })
       .catch(error => {
         console.log(error)
@@ -97,17 +107,26 @@ function DoctorList() {
 
 const get_prof_name_by_id = async() => {
 
-  const getpatidbody = {pat_id: searchParams.get("pat_id")}
+  const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
   await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
     method: 'POST',
     headers: {
+      'Authorization': localStorage.getItem('jwtToken'),
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*' 
     },
     body: JSON.stringify(getpatidbody)
 
   })
-  .then(response => response.json())
+  .then(response => {
+    if (response['status'] == 401)
+    {
+      nav({
+        pathname: '/login_p'
+      });
+    }
+    return response.json();
+  })
   .then(data => {
     console.log("Online docs list get profff: ",data)
     setprofname(data.name)  
@@ -124,12 +143,22 @@ const get_prof_name_by_id = async() => {
     await fetch('http://localhost:8090/api/v1/doctor/get_online_doctors', {
       method: 'GET',
       headers: {
+        'Authorization': localStorage.getItem('jwtToken'),
+
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
   
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
+    })
     .then(data => {
       console.log("Online docs list: ",data)
       setdoclist(data)      
@@ -141,25 +170,33 @@ const get_prof_name_by_id = async() => {
   }
 
   const handleLogout = () =>{
+    localStorage.clear();
+
+    localStorage.removeItem('jwtToken');
     nav('/login_p')
+    window.location.reload();
   }
   
   const navToHome = () =>{
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/home_pat')
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToMngProfile = () =>{
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/patlist');
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToAppHis = () =>{
@@ -173,7 +210,7 @@ const get_prof_name_by_id = async() => {
 
     get_prof_name_by_id()
     get_onine_doc_list()
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id from sess: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
@@ -199,6 +236,7 @@ const get_prof_name_by_id = async() => {
         </div>
       </div>
       <h1 className="heading-1">Choose a doctor</h1>
+      <div style = {{marginLeft:"160px"}}>
       <div className="doctor-list">
         <br/>
         
@@ -216,8 +254,9 @@ const get_prof_name_by_id = async() => {
 
       </div>
 
-      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={searchParams.get("pat_id")} app_id={-1} doctor_id={send_did}/>)}
+      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={localStorage.getItem('pat_id')} app_id={-1} doctor_id={send_did}/>)}
       
+    </div>
     </div>
     
   );

@@ -31,6 +31,7 @@ async function HandleBookApp({doc_id,p_id}) {
       await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -41,14 +42,20 @@ async function HandleBookApp({doc_id,p_id}) {
         console.log(data);
         console.log(data.appointmentId);
         console.log('about to nav to waiting page');
-        nav({
-          pathname: '/waiting_page',
-          search: createSearchParams({
-            doc_id: doc_id,
-            pat_id: p_id,
-            app_id: data.appointmentId
-          }).toString()
-        });
+
+        localStorage.setItem('pat_id', p_id)
+        localStorage.getItem('doc_id', doc_id)
+        localStorage.getItem('app_id', data.appointmentId)
+
+        nav('/waiting_page');
+      //   nav({
+      //     pathname: '/waiting_page',
+      //     search: createSearchParams({
+      //       doc_id: doc_id,
+      //       pat_id: p_id,
+      //       app_id: data.appointmentId
+      //     }).toString()
+      //   });
       })
       .catch(error => {
         console.log(error);

@@ -10,19 +10,20 @@ function PatientCall() {
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
     const [isRightSideBarOpen, setisRightSideBarOpen] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
 
     var isConsultationActive = false;    
     var chat = 0;
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
-    let uid = "p_"+String(searchParams.get("pat_id"))
+    let uid = "p_"+String(localStorage.getItem('pat_id'))
 
     let client = useRef(null);
     let channel = useRef(null);
 
 
-    let roomId = searchParams.get("doc_id")
+    let roomId = localStorage.getItem('doc_id')
 
     let localStream = useRef(null);
     let remoteStream;
@@ -59,7 +60,7 @@ function PatientCall() {
     }
 
     let init = async () => {
-        await get_doc_online_stat(searchParams.get("doc_id")).then(async(data) => {
+        await get_doc_online_stat(localStorage.getItem('doc_id')).then(async(data) => {
             console.log("Consultation", isConsultationActive)
             console.log("Consultation", data)
             if(isConsultationActive)
@@ -88,6 +89,9 @@ function PatientCall() {
     }
     let handleMyChat = async(chat, memeberId) => {
         console.log('New message received')
+        if (!isRightSideBarOpen) {
+            setShowNotification(true);
+        }
         let messages = JSON.parse(chat.text)
         console.log('Message: ', messages)
         // document.getElementById('ch').innerText = document.getElementById('ch').innerText+ "\nDoctor: " + messages['message'];
@@ -282,7 +286,7 @@ function PatientCall() {
         await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
             method: 'POST',
             headers: {
-                
+                'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
             },
@@ -302,13 +306,13 @@ function PatientCall() {
     }
     async function setAppStatus(status) {
         const set_status_body = {
-            appId : searchParams.get("app_id"),
+            appId : localStorage.getItem('app_id'),
             value : status
         }
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_status', {
             method: 'POST',
             headers: {
-                
+                'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },
@@ -328,13 +332,13 @@ function PatientCall() {
         console.log(timestamp); // prints something like "2023-03-18T14:25:48.123Z"
 
         const set_end_time_body = {
-            appId : searchParams.get("app_id"),
+            appId : localStorage.getItem('app_id'),
             value : timestamp
         }
         const response =  await fetch('http://localhost:8090/api/v1/appointment/set_end_time', {
             method: 'POST',
             headers: {
-                
+                'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },
@@ -348,22 +352,26 @@ function PatientCall() {
         return data;
     }
 
-    const handleLeaveCall = async() => {
+    const handleLeaveCall = async(e) => {
+      //e.preventDefault();
         const set_status_res = await setAppStatus("completed");
         const set_end_time_res = await setAppEndTime();
         await leaveChannel();
-        nav({
-            pathname: '/call_summary',
-            search: createSearchParams({
-                pat_id: searchParams.get("pat_id"),
-                doc_id: searchParams.get("doc_id"),
-                app_id: searchParams.get("app_id")
-            }).toString()
-        });
+
+        nav('/call_summary');
+        // nav({
+        //     pathname: '/call_summary',
+        //     search: createSearchParams({
+        //         pat_id: searchParams.get("pat_id"),
+        //         doc_id: searchParams.get("doc_id"),
+        //         app_id: searchParams.get("app_id")
+        //     }).toString()
+        // });
         window.location.reload();
     }
     
     const toggleRightSidebar = () => {
+        if(!isRightSideBarOpen) setShowNotification(false);
         setisRightSideBarOpen(!isRightSideBarOpen);
     };
 
@@ -401,7 +409,7 @@ function PatientCall() {
             <div onClick={toggleMic} className="control-container" id="mic-btn">
                 <img src={mic_icon}/>
             </div>
-            <button className="pat-call-chat-open-btn" onClick={toggleRightSidebar}>Chat</button>
+            <button onClick={toggleRightSidebar} className={`pat-call-chat-open-btn ${showNotification ? "notification" : ""}`}>Chat</button>
         </div>
         </div>
         <div className={`right-sidebar ${isRightSideBarOpen ? 'open' : ''}`}>

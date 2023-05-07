@@ -13,17 +13,27 @@ function PatList() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: searchParams.get("pat_id")}
+    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getpatidbody)
   
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
+    })
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
@@ -51,21 +61,33 @@ function PatList() {
 
   const nav = useNavigate();
   
-  const pat_id = searchParams.get("pat_id");
-  
+  const pat_id = localStorage.getItem('pat_id');
+  console.log("loook ", pat_id)
   const get_all_profiles = async() => {
     const getProfilesBody = {
-      pat_id : searchParams.get('pat_id')
+      pat_id : localStorage.getItem('pat_id')
     }
     await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
       method: 'POST',
       headers: {
+        'Access-Control-Allow-Origin': '*' ,
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*' 
+        // 'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getProfilesBody)
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      return response.json();
+    }
+    )
     .then(data => {
       console.log("Profiles List: ",data)
       setdoclist(data);
@@ -73,59 +95,63 @@ function PatList() {
   }
 
   useEffect(() => {
-    console.log(searchParams.get('pat_id'))
+    console.log("received id sess: ",localStorage.getItem('pat_id'))
     get_prof_name_by_id()
     
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
     get_all_profiles();
   }, [])
 
   const handleAppoinHist = () => {
-    nav({
-      pathname: '/appoinhist',
-      search: createSearchParams({
-        pat_id: searchParams.get("pat_id")
-      }).toString()
-    });
+
+    nav('/appoinhist');
 
   }
 
   const handleAddProf = () =>{
-    nav({
-      pathname: '/addprof',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+
+    nav('/addprof');
+    // nav({
+    //   pathname: '/addprof',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
   }
 
   const handleSwitchProf = () => {
-    nav({
-      pathname: '/selectprofile',
-      search: createSearchParams({
-        pat_id: pat_id
-      }).toString()
-    });
+
+    nav('/selectprofile')
+    // nav({
+    //   pathname: '/selectprofile',
+    //   search: createSearchParams({
+    //     pat_id: pat_id
+    //   }).toString()
+    // });
   }
 
   const navToHome = () =>{
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/home_pat')
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToMngProfile = () =>{
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/patlist')
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
 
@@ -142,7 +168,7 @@ function PatList() {
           </div>
         </div>
         <div className="book-appointment">
-          <button>Edit Profile</button>
+          {/* <button>Edit Profile</button> */}
         </div>
       </div>
     );
@@ -177,6 +203,14 @@ function PatList() {
 //     console.log("Received pat_id: ", searchParams.get("pat_id"));
 //   }, [])
 
+const handleLogout = () =>{
+  localStorage.clear();
+
+  localStorage.removeItem('jwtToken');
+  nav('/login_p')
+  window.location.reload();
+}
+
   return (
     <div>
       {/* Navigation bar */}
@@ -192,11 +226,11 @@ function PatList() {
         <div>
         <button className="nav-button1"><img  />{prof_name}</button>
 
-          <button className="nav-button" >Logout</button>
+          <button onClick={handleLogout} className="nav-button" >Logout</button>
         </div>
       </div>
       <h1 className="heading-1">List of Profiles</h1>
-      <div className="doctor-list">
+      <div style={{marginLeft:"155px"}} className="doctor-list">
         {console.log("doclist: ", doclist)}
         <br/>
         

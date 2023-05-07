@@ -7,59 +7,92 @@ import './styles/pop.css'
 import male_def_pp from '../imgs/male_def_pp.jpg';
 import female_def_pp from '../imgs/fem_def_pp.png';
 // import def_pp from '../src/imgs/profile.png'
-
+import jwt from 'jwt-decode';
 
 function ProfileSelector() {
   const [profiles,setProfiles] = useState([]);
   const[searchParams] = useSearchParams();
   const nav = useNavigate();
-
+console.log("function")
   const onProfileSelect = (profile) => {
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: profile.patientId
-      }).toString()
-    });
+
+    localStorage.setItem('pat_id', profile.patientId)
+
+    nav('/home_pat');
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: profile.patientId
+    //   }).toString()
+    // });
   };
-  
+  console.log("received num from session: ",localStorage.getItem('mobile'));
+  let mobile = jwt(localStorage.getItem('jwtToken'))['sub'];
+  console.log(mobile);
+  if (localStorage.getItem('mobile'))
+  {
+    mobile = localStorage.getItem('mobile');
+  }
    const get_pat_id = async() => {
-    if(searchParams.get('mobile') != undefined)
+    if(localStorage.getItem('mobile') != null || mobile!=undefined)
     {
       const get_profiles_body = {
-        'mobile_number' : searchParams.get("mobile")
+        'mobile_number' : mobile
       }
       await fetch('http://localhost:8090/api/v1/patient/display_profiles', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(get_profiles_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        console.log(response)
+        if (response['status'] == 401)
+        {
+          console.log("should have navigated")
+          localStorage.removeItem('jwtToken')
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+      }) // response and data
       .then(data => {
         console.log(data)
         setProfiles(data)
-      })
+      }
+      )
       .catch(error => {
         console.log(error)
       });
     }
-    else if(searchParams.get('pat_id') != undefined)
+    else if(localStorage.getItem('pat_id') != null)
     {
+      console.log("sessst pat id is not null!!");
         const getProfilesBody = {
-          pat_id : searchParams.get('pat_id')
+          pat_id : localStorage.getItem('pat_id')
         }
         await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(getProfilesBody)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.json();
+        })
         .then(data => {
           console.log(data)
           setProfiles(data)
@@ -93,7 +126,7 @@ function ProfileSelector() {
           <h2>Select User</h2>
         </div>
         <div className="popup-profiles">
-          {profiles.map((profile) => (
+          {profiles?.map((profile) => (
             <div
               className="popup-profile"
               key={profile.patientId}

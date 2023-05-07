@@ -14,7 +14,7 @@ function Regc() {
 
 
     useEffect(() => {
-        console.log("Received num: ", searchParams.get("mobile"));
+        console.log("Received num: from sessst", localStorage.getItem("mobile"));
       });
   const[searchParams] = useSearchParams();
 
@@ -23,7 +23,7 @@ function Regc() {
   const [email, setEmail] = useState("");
   const [gender, setgender] = useState("male");
   const [Age, setAge] = useState("");
-  
+  const [data, setData] = useState("");
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -53,33 +53,43 @@ function Regc() {
   
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("In handle num:",searchParams.get("mobile"));
+    console.log("In handle num:",localStorage.getItem("mobile"));
     const create_patient_body = {
         'name' : Name,
         'age' : Age,
-        'mobile' : searchParams.get("mobile"),
+        'mobile' : localStorage.getItem("mobile"),
         'gender' : gender,
         'email' : email,
         'consent' : false
       }
-  
+      localStorage.getItem('jwt token', data);
       await fetch('http://localhost:8090/api/v1/patient/create', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem('jwtToken'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(create_patient_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_p'
+          });
+        }
+        return response.text();
+      })
       .then(data => {
         console.log(data)
-        nav({
-          pathname: '/selectprofile',
-          search: createSearchParams({
-            mobile: searchParams.get("mobile")
-          }).toString()
-        });
+        nav('/selectprofile');
+        // nav({
+        //   pathname: '/selectprofile',
+        //   search: createSearchParams({
+        //     mobile: localStorage.getItem("mobile")
+        //   }).toString()
+        // });
       })
       .catch(error => {
         console.log(error)

@@ -11,33 +11,44 @@ const WaitingPage = () => {
     useEffect(() => {
         //Api call to get the just finished appointment. 
         const get_curr_app_body = {
-            appId : searchParams.get("app_id")
+            appId : localStorage.getItem('app_id')
         }
 
         const intervalId = setInterval(async() => {
             fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
                 method: 'POST',
                 headers: {
+                  'Authorization': localStorage.getItem("jwtToken"),
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*' 
                 },
                 body: JSON.stringify(get_curr_app_body)
             })
-            .then((response) => response.json())
+            .then((response) => {
+              if (response['status'] == 401)
+              {
+                nav({
+                  pathname: '/login_p'
+                });
+              }
+              return response.json();
+            }
+            )
             .then(async(obj) => {
                 if(obj.doctor_live == true)
                 {
                   console.log('doctor_live');
                   if(obj.status === 'live')
                   {
-                      nav({
-                          pathname: '/patient_call',
-                          search: createSearchParams({
-                            doc_id: searchParams.get("doc_id"),
-                            pat_id: searchParams.get("pat_id"),
-                            app_id: searchParams.get("app_id")
-                          }).toString()
-                      });
+                    nav('/patient_call')
+                      // nav({
+                      //     pathname: '/patient_call',
+                      //     search: createSearchParams({
+                      //       doc_id: searchParams.get("doc_id"),
+                      //       pat_id: searchParams.get("pat_id"),
+                      //       app_id: searchParams.get("app_id")
+                      //     }).toString()
+                      // });
                   } 
                   else{
                     setqueueCount(obj.count);
@@ -46,11 +57,11 @@ const WaitingPage = () => {
                 else if(obj.doctor_live == false) 
                 {
                   console.log('doctor_live - false');
-                  if(searchParams.get("type") === 'upload-auto' || searchParams.get("type") == 'upload-follow-auto')
+                  if(localStorage.getItem('type') === 'upload-auto' || localStorage.getItem('type') == 'upload-follow-auto')
                   {
-                    console.log(searchParams.get("type"));
+                    console.log("type is ses: ",localStorage.getItem('type'));
                     const get_next_body = {
-                      appId : searchParams.get("app_id"),
+                      appId : localStorage.getItem('app_id'),
                     }
                     await fetch('http://localhost:8090/api/v1/appointment/get_next_best_doc', {
                       method: 'POST',
@@ -61,11 +72,18 @@ const WaitingPage = () => {
                       body: JSON.stringify(get_next_body)
                     })
                     .then(async(response)=>{
+                        if (response['status'] == 401)
+                        {
+                          nav({
+                            pathname: '/login_p'
+                          });
+                        }
                       const data = await response.json();
-                      console.log(searchParams);
-                      searchParams.set('doc_id', data);
+                      console.log(localStorage);
+                      localStorage.setItem('doc_id',data);
+                      // searchParams.set('doc_id', data);
                       const get_queue_body = {
-                        appId : searchParams.get("app_id"),
+                        appId : localStorage.getItem('app_id'),
                       }
                       fetch('http://localhost:8090/api/v1/appointment/get_queue_status', {
                           method: 'POST',
@@ -75,7 +93,15 @@ const WaitingPage = () => {
                           },
                           body: JSON.stringify(get_queue_body)
                       })
-                      .then((response2) => response2.json())
+                      .then((response2) => {
+                        if (response2['status'] == 401)
+                        {
+                          nav({
+                            pathname: '/login_p'
+                          });
+                        }
+                        return response2.json();
+                      })
                       .then(obj => {
                         setqueueCount(obj.count)
                       })
@@ -102,25 +128,34 @@ const WaitingPage = () => {
     const cancelAppointment = async()=>{
       console.log("CANCEL")
       const set_status_body = {
-        appId : searchParams.get("app_id"),
+        appId : localStorage.getItem('app_id'),
         value : 'cancelled'
       }
       await fetch('http://localhost:8090/api/v1/appointment/set_status', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
+          
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(set_status_body)
       }).then((response)=>{
-        nav({
-          pathname: '/call_summary',
-          search: createSearchParams({
-              pat_id: searchParams.get("pat_id"),
-              doc_id: searchParams.get("doc_id"),
-              app_id: searchParams.get("app_id")
-          }).toString()
-        });
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_p'
+            });
+          }
+        nav('/call_summary');
+        // nav({
+        //   pathname: '/call_summary',
+        //   search: createSearchParams({
+        //       pat_id: localStorage.getItem('pat_id'),
+        //       doc_id: localStorage.getItem('doc_id'),
+        //       app_id: localStorage.getItem('app_id')
+        //   }).toString()
+        // });
       })
     }
 

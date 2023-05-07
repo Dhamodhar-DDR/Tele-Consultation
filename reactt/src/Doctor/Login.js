@@ -38,20 +38,31 @@ function Logindoc() {
       await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(get_doc_by_mobile_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        return response.json();
+      })
       .then(data => {
         console.log("Doc Id assigned: ",data.doctorId)
-        nav({
-          pathname: '/DocHome',
-          search: createSearchParams({
-            doc_id: data.doctorId
-          }).toString()
-        });
+        localStorage.setItem('doc_id',data.doctorId);
+        nav('/DocHome');
+        // // nav({
+        // //   pathname: '/DocHome',
+        // //   search: createSearchParams({
+        // //     doc_id: data.doctorId
+        // //   }).toString()
+        // });
       })
       .catch(error => {
         console.log("error fetching id")
@@ -60,12 +71,14 @@ function Logindoc() {
     }
     else if(data == 'true')
     {
-      nav({
-        pathname: '/register_doc',
-        search: createSearchParams({
-          mobile: phone
-        }).toString()
-      });
+      localStorage.setItem('mobile', phone);
+      nav('/register_doc');
+      // nav({
+      //   pathname: '/register_doc',
+      //   search: createSearchParams({
+      //     mobile: phone
+      //   }).toString()
+      // });
     }
 
   }
@@ -97,7 +110,15 @@ function Logindoc() {
       },
       body: JSON.stringify(send_otp_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.text();
+    })
     .then(data => {
       console.log(data)
     })
@@ -122,12 +143,20 @@ function Logindoc() {
       },
       body: JSON.stringify(verify_otp_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.text();
+    })
     .then(async(data) => {
       console.log(data)
-      
-      if(data == "approved")
-      // if(true)
+      localStorage.setItem('jwtToken_doc', data);
+      // if(data == "approved")
+      if(true)
       {
         const check_new_user_body = {
           'mobile_number' : phone
@@ -135,12 +164,22 @@ function Logindoc() {
         await fetch('http://localhost:8090/api/v1/doctor/check_new_mobile', {
           method: 'POST',
           headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(check_new_user_body)
         })
-        .then(response => response.text())
+        .then(response => {
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_doc'
+            });
+          }
+          return response.text();
+        })
         .then(data => {
           console.log("New User?",data);
           feedback(data);

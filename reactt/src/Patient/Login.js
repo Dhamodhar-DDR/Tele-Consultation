@@ -21,21 +21,26 @@ function Logincg() {
     
     if(data == 'false')
     {
-      nav({
-        pathname: '/selectprofile',
-        search: createSearchParams({
-          mobile: phone
-        }).toString()
-      });
+      console.log("entered")
+      localStorage.setItem("mobile", phone);
+      nav('/selectprofile')
+      // nav({
+      //   pathname: '/selectprofile',
+      //   search: createSearchParams({
+      //     mobile: phone
+      //   }).toString()
+      // });
     }
     else if(data == 'true')
     {
-      nav({
-        pathname: '/register_p',
-        search: createSearchParams({
-          mobile: phone
-        }).toString()
-      });
+      localStorage.setItem("mobile", phone);
+      nav('/register_p');
+      // nav({
+      //   pathname: '/register_p',
+      //   search: createSearchParams({
+      //     mobile: phone
+      //   }).toString()
+      // });
     }
 
   }
@@ -54,11 +59,10 @@ function Logincg() {
     // startTimer();
     e.preventDefault();
     setShowOtp(true);
-
+    console.log("entered phone ",phone)
     const send_otp_body = {
       'mobile_number' : phone
     }
-
     await fetch('http://localhost:8090/api/v1/auth/send_otp', {
       method: 'POST',
       headers: {
@@ -96,7 +100,8 @@ function Logincg() {
     .then(response => response.text())
     .then(async(data) => {
       console.log(data)
-          if(data == "approved")
+      localStorage.setItem("jwtToken", data);
+          if(true)
       {
         setloginapproved(1);
       
@@ -108,6 +113,7 @@ function Logincg() {
           await fetch('http://localhost:8090/api/v1/patient/check_new_user', {
           method: 'POST',
           headers: {
+            'Authorization': localStorage.getItem("jwtToken"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },

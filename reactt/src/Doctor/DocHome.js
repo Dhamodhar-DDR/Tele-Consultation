@@ -1,10 +1,10 @@
-
-
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
 import './styles/DocHome.css'
 import def_pp from '../imgs/profile.png'
+
+import jwt from 'jwt-decode';
 
 
 function DocHome() {
@@ -15,27 +15,81 @@ function DocHome() {
   const [showPopup, setShowPopup] = useState(false);
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
-  const did = searchParams.get('doc_id')
+  const did = localStorage.getItem('doc_id')
+  let help;
   useEffect(() => {
+    console.log(localStorage.getItem('doc_id'));
+    get_doc_id();
     get_appoin_history()    
   }, [])
 
+  const get_doc_id = async() => {
+    const get_doc_by_mobile_body = {
+      'mobile_number': jwt(localStorage.getItem('jwtToken_doc'))['sub']
+    }
+    await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
+      method: 'POST',
+      headers: {
+      'Authorization': localStorage.getItem('jwtToken_doc'),
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' 
+      },
+      body: JSON.stringify(get_doc_by_mobile_body)
+    })
+    .then(response =>{
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
+    .then(data => {
+      console.log("Doc Id assigned: ",data.doctorId)
+      localStorage.setItem('doc_id',data.doctorId)
+      nav('/DocHome')
+      // nav({
+      //   pathname: '/DocHome',
+      //   search: createSearchParams({
+      //     doc_id: data.doctorId
+      //   }).toString()
+      // });
+    })
+    .catch(error => {
+      console.log("error fetching id")
+      console.log(error)
+    });
+  }
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {docId: searchParams.get("doc_id")}
+    const getappoinhist = {docId: localStorage.getItem('doc_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_followup_appointments', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken_doc"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getappoinhist)
   
     })
-    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
       console.log("Online docs apoin list get profff: ",data)
-      settappoinlist(data)  
+      settappoinlist(data.reverse())  
      // console.log("After set profname ",prof_name)     
     })
     .catch(error => {
@@ -45,18 +99,34 @@ function DocHome() {
 
 
   const get_online_stat = async(doc_id_param) => {
+    console.log("doc_id_param: ", doc_id_param)
     const check_status_body = {
       'doctorID': doc_id_param
     }
     await fetch('http://localhost:8090/api/v1/doctor/check_online_status', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken_doc"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(check_status_body)
     })
-    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        console.log("ASDSADSDDSAD")
+        if (localStorage.getItem('jwtToken_doc'))
+        {
+        localStorage.removeItem('jwtToken_doc')
+        }
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
       console.log(check_status_body);
       console.log("Online Status: ",data)
@@ -70,36 +140,53 @@ function DocHome() {
 
   const handleAppointHist = () =>{
 
-    nav({
-      pathname: '/DocAppoinHist',
-      search: createSearchParams({
-        doc_id: did
-      }).toString()
-    });
+    localStorage.setItem('doc_id',did);
+    nav('/DocAppoinHist');
+    // nav({
+    //   pathname: '/DocAppoinHist',
+    //   search: createSearchParams({
+    //     doc_id: did
+    //   }).toString()
+    // });
   }
 
-  const HandleLogout = () =>{
-    set_status(false)
-    nav('/login_doc')
+  const HandleLogout = async() =>{
+    await set_status(false)
+    localStorage.clear();
+    localStorage.removeItem('jwtToken_doc');
+    nav('/login_doc');
+    window.location.reload();
   }
 
   const set_status = async(param) =>
   {
+   console.log(doc_id); 
     const set_online_status_body = {
 
-      'doctorID' : doc_id,
+      'doctorID' : localStorage.getItem("doc_id"),
       'online_status': param      
     }
     console.log("bef await isconsulatationactive", param)
     await fetch('http://localhost:8090/api/v1/doctor/set_online_status', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken_doc"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(set_online_status_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
       console.log("Online status: ",data)
       setIsConsultationActive(param)
@@ -112,12 +199,13 @@ function DocHome() {
   const Consultation_Button = () => {
     const toggleConsultation = async() => {
       await set_status(!isConsultationActive);
-      nav({
-        pathname: '/doctor_call',
-        search: createSearchParams({
-          doc_id: doc_id
-        }).toString()
-      });
+      nav('/doctor_call');
+      // nav({
+      //   pathname: '/doctor_call',
+      //   search: createSearchParams({
+      //     doc_id: searchParams.get("doc_id")
+      //   }).toString()
+      // });
     } 
   return (
     <div className="centered-button">
@@ -132,9 +220,10 @@ function DocHome() {
   }
 
   useEffect(() => {
-    console.log("Received num: ", searchParams.get("doc_id"));
-    setDoc_id(searchParams.get("doc_id"));
-    get_online_stat(searchParams.get("doc_id"));
+    get_doc_id();
+    console.log("Received id sesssto: ", localStorage.getItem('doc_id'));
+    setDoc_id(localStorage.getItem('doc_id'));
+    get_online_stat(localStorage.getItem('doc_id'));
   }, []);
 
   const removeFollowUp = async(app,index) => {
@@ -151,12 +240,23 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/appointment/set_appointment_for_followup', {
         method: 'POST',
         headers: {
+          'Authorization': localStorage.getItem("jwtToken_doc"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify(set_follow_up_body)
     })
-    .then(response => response.text())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken_doc')
+        nav({
+          pathname: '/login_doc'
+        });
+      }
+      return response.json()
+    })
     .then(data => {
         console.log("Online status: ",data)
     })
@@ -171,13 +271,24 @@ function DocHome() {
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
         method: 'POST',
         headers: {
-            
+          'Authorization': localStorage.getItem("jwtToken_doc"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({pat_id: pat_id})
     }).then(async(response)=>{
       const pat = await response.json();
+      
+        console.log(response);
+        if (response['status'] == 401)
+        {
+          localStorage.removeItem('jwtToken_doc')
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        // return response.json()
+    
       console.log(pat)
       setPatient({name : pat.name, age : pat.age, gender : pat.gender, mobile: pat.mobileNumber, email: pat.email})
     })

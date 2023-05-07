@@ -22,7 +22,7 @@ function Regdoc() {
   const [Age, setAge] = useState("");
 
   useEffect(() => {
-    console.log("Received num: ", searchParams.get("mobile"));
+    console.log("Received num: ", localStorage.getItem('mobile'));
   });
 
   const handleFirstNameChange = (e) => {
@@ -58,11 +58,10 @@ function Regdoc() {
   
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("In handle num:",searchParams.get("mobile"));
+    console.log("In handle num:",localStorage.getItem('mobile'));
     const create_doc_body = {
         'name' : Name,
-        'mobile' : searchParams.get("mobile"),
-
+        'mobile' : localStorage.getItem('mobile'),
         'age' : Age,
         'specialization':spec,
         'experience': exp,
@@ -75,33 +74,56 @@ function Regdoc() {
       await fetch('http://localhost:8090/api/v1/doctor/add_doctor', {
         method: 'POST',
         headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
         body: JSON.stringify(create_doc_body)
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response['status'] == 401)
+        {
+          nav({
+            pathname: '/login_doc'
+          });
+        }
+        return response.text();
+      }
+      
+      )
       .then(async(data) => {
         const get_doc_by_mobile_body = {
-          'mobile_number': searchParams.get("mobile")
+          'mobile_number': localStorage.getItem('mobile')
         }
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
           method: 'POST',
           headers: {
+        'Authorization': localStorage.getItem('jwtToken_doc'),
+
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
           body: JSON.stringify(get_doc_by_mobile_body)
         })
-        .then(response => response.json())
+        .then(response => {
+          if (response['status'] == 401)
+          {
+            nav({
+              pathname: '/login_doc'
+            });
+          }
+          return response.json();
+        })
         .then(data => {
           console.log("Doc Id assigned: ",data.doctorId)
-          nav({
-            pathname: '/DocHome',
-            search: createSearchParams({
-              doc_id: data.doctorId
-            }).toString()
-          });
+          localStorage.setItem('doc_id', data.doctorId);
+          nav('/DocHome')
+          // nav({
+          //   pathname: '/DocHome',
+          //   search: createSearchParams({
+          //     doc_id: data.doctorId
+          //   }).toString()
+          // });
         })
         .catch(error => {
           console.log("error fetching id")
@@ -131,11 +153,11 @@ function Regdoc() {
         <h1>Doctor Login</h1>
         <form  method="post" onSubmit={handleSubmit}>
 
-        <div className="txt_field">
-              <input type="number" required/>
+        {/* <div className="txt_field">
+              <input type="number"/>
               <span></span>
               <label>Mobile Number</label>
-            </div>
+            </div> */}
 
 
           <div className="txt_field">

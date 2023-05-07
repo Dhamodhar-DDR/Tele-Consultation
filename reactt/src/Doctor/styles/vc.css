@@ -6,7 +6,7 @@
 
 .doc-call-body{
   background-color: rgb(7, 0, 29);
-  background-image: none;
+  /* background-image: none; */
   font-family: 'Google Sans', sans-serif;
 }
 
@@ -307,6 +307,18 @@
   top: 10px;
   right: 10px;
   font-size: 20px;
+}
+
+.toggle-chat-btn.notification::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
 }
 
 .close-left-sidebar-btn{

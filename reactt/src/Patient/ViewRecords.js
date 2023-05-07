@@ -13,10 +13,11 @@ const DisplayFiles = () => {
 
   const display_file = async() => {
     const formData = new FormData();
-    formData.append('pat_id', searchParams.get('pat_id'))
+    formData.append('pat_id', localStorage.getItem('pat_id'))
     await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         // 'Content-Type': 'multipart/form-data',
         'Access-Control-Allow-Origin': '*' 
       },
@@ -24,12 +25,16 @@ const DisplayFiles = () => {
       body: formData
     })
     .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response['status'] == 401)
+      {
+        nav({
+          pathname: '/login_p'
+        });
       }
       return response.json();
     })
     .then((list) => {
+      console.log(list)
       for(const element of list)
       {
         fetch('data:'+element['headers']['Content-Type']+';base64,' + element['body'].data)
@@ -57,35 +62,43 @@ const DisplayFiles = () => {
 
     setviewMore(true);
   }
+
   const handleLogout = () =>{
+    localStorage.clear();
+    localStorage.removeItem('jwtToken');
     nav('/login_p')
   }
   
   const navToHome = () =>{
-    nav({
-      pathname: '/home_pat',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/home_pat');
+    // nav({
+    //   pathname: '/home_pat',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const navToMngProfile = () =>{
-    nav({
-      pathname: '/patlist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+
+    nav('/patlist');
+    // nav({
+    //   pathname: '/patlist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
   const handleAppoinHist = () => {
-    nav({
-      pathname: '/appoinhist',
-      search: createSearchParams({
-        pat_id: searchParams.get('pat_id')
-      }).toString()
-    });
+    nav('/appoinhist');
+    // nav({
+    //   pathname: '/appoinhist',
+    //   search: createSearchParams({
+    //     pat_id: searchParams.get('pat_id')
+    //   }).toString()
+    // });
   }
 
 

@@ -15,31 +15,42 @@ function AppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log(searchParams.get('pat_id'))
+    console.log("apphist pid:",localStorage.getItem('pat_id'))
     get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", searchParams.get("pat_id"));
+    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
   }, [])
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {patId: searchParams.get("pat_id")}
+    const getappoinhist = {patId: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_patient_appointments', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getappoinhist)
   
     })
-    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      else return response.json();
+    })
     .then(data => {
       // console.log("Online apoin list get profff: ",data)
-      settappoinlist(data)  
+      settappoinlist(data.reverse())  
     })
     .catch(error => {
       console.log(error)
@@ -48,17 +59,28 @@ function AppoinHist() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: searchParams.get("pat_id")}
+    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
+        'Authorization': localStorage.getItem("jwtToken"),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' 
       },
       body: JSON.stringify(getpatidbody)
   
     })
-    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response['status'] == 401)
+      {
+        localStorage.removeItem('jwtToken')
+        nav({
+          pathname: '/login_p'
+        });
+      }
+      else return response.json();
+    })
     .then(data => {
       console.log("Online docs list get profff: ",data)
       setprofname(data.name)  
@@ -71,30 +93,36 @@ function AppoinHist() {
   }
   
       const navToHome = () =>{
-        nav({
-          pathname: '/home_pat',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+        nav('/home_pat');
+        // nav({
+        //   pathname: '/home_pat',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id')
+        //   }).toString()
+        // });
       }
     
       const navToMngProfile = () =>{
-        nav({
-          pathname: '/patlist',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+        nav('/patlist');
+        // nav({
+        //   pathname: '/patlist',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id')
+        //   }).toString()
+        // });
       }
     
       const navToAppHis = () =>{
-        nav({
-          pathname: '/appoinhist',
-          search: createSearchParams({
-            pat_id: searchParams.get('pat_id')
-          }).toString()
-        });
+
+        nav('/appoinhist');
+        // nav({
+        //   pathname: '/appoinhist',
+        //   search: createSearchParams({
+        //     pat_id: searchParams.get('pat_id')
+        //   }).toString()
+        // });
       }
 
       const generatePDF = (data,appointment,appointment_id, doc_name, doc_spec) => {
@@ -153,12 +181,23 @@ function AppoinHist() {
           await fetch('http://localhost:8090/api/v1/prescription/get_prescription', {
             method: 'POST',
             headers: {
+              'Authorization': localStorage.getItem("jwtToken"),
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*' 
             },
             body: JSON.stringify(getpresbody)
           })
-          .then(response => response.json())
+          .then(response => {
+            console.log(response);
+            if (response['status'] == 401)
+            {
+              localStorage.removeItem('jwtToken')
+              nav({
+                pathname: '/login_p'
+              });
+            }
+            else return response.json();
+          })
           .then(data => {
             console.log("Prescriptions: ",data)
             generatePDF(data,appointment,appId, doc_name, doc_spec);
@@ -182,7 +221,13 @@ function AppoinHist() {
         }
         else return <></>
       }
+      const handleLogout = () =>{
+        localStorage.clear();
     
+        localStorage.removeItem('jwtToken');
+        nav('/login_p')
+        window.location.reload();
+      }
       return (
       <div>
         <div className="navbar">
@@ -197,12 +242,12 @@ function AppoinHist() {
           <div>
           <button className="nav-button1"><img  />{prof_name}</button>
 
-            <button className="nav-button" >Logout</button>
+            <button onClick={handleLogout} className="nav-button" >Logout</button>
           </div>
         </div>
         <div className="appointment-history">
           <h1>Appointment History</h1>
-          <ul className="doctor-list">
+          {appoinlist.length == 0? "No appointments":<ul className="doctor-list">
             {appoinlist.map(appointment => (
               <li key={appointment.appointment.appointmentId}>
                 <div className="doctor-profile">
@@ -222,7 +267,7 @@ function AppoinHist() {
                 </div>
               </li>
             ))}
-          </ul>
+          </ul>}
           <div id="pres-view-popup" className="appHis-popup">
             <button className="appHis-popup-btn" onClick={closePopup}>X</button>
             <iframe id="pdf-frame" title="pdf" src="" width="90%" height="90%"></iframe>

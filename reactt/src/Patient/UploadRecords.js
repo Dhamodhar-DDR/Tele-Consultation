@@ -79,7 +79,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : localStorage.getItem('pat_id'),
             doctorId: doctor_id,
             isFollowup: false,
           }
@@ -90,7 +90,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : localStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -101,7 +101,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : localStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -112,7 +112,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : pat_id,
+            patientId : localStorage.getItem('pat_id'),
             doctorId: null,
             isFollowup: false,
           }
@@ -122,6 +122,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
           await fetch('http://localhost:8090/api/v1/appointment/create_appointment', {
               method: 'POST',
               headers: {
+                'Authorization': localStorage.getItem("jwtToken"),
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*' 
               },
@@ -129,20 +130,32 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
           })
           .then(async(response) => {
             console.log(response);
+              if (response['status'] == 401)
+              {
+                nav({
+                  pathname: '/login_p'
+                });
+              }
             try{
               const data = await response.json();
               const formData = new FormData();
+              localStorage.setItem('doc_id', data.doctorId);
+              localStorage.setItem('app_id', data.appointmentId);
+              localStorage.getItem('type',upload_type);
               if(files.length == 0)
               {
-                nav({
-                  pathname: '/waiting_page',
-                  search: createSearchParams({
-                    doc_id: data.doctorId,
-                    pat_id: pat_id,
-                    app_id: data.appointmentId,
-                    type: upload_type
-                  }).toString()
-                });
+
+                nav('/waiting_page');
+
+                // nav({
+                //   pathname: '/waiting_page',
+                //   search: createSearchParams({
+                //     doc_id: data.doctorId,
+                //     pat_id: pat_id,
+                //     app_id: data.appointmentId,
+                //     type: upload_type
+                //   }).toString()
+              //  });
               }
               else{
                 for (let i = 0; i < files.length; i++) {
@@ -150,7 +163,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                 }
                 formData.append('names',names)
                 formData.append('descriptions', descriptions)
-                formData.append('patId', parseInt(pat_id))
+                formData.append('patId', localStorage.getItem('pat_id'))
                 formData.append('appId', data.appointmentId)
                 console.log(names);
                 console.log(descriptions);
@@ -158,25 +171,35 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                 await fetch('http://localhost:8090/api/v1/health_records/upload', {
                   method: 'POST',
                   headers: {
+                    'Authorization': localStorage.getItem("jwtToken"),
                     // 'Content-Type': 'multipart/form-data',
                     'Access-Control-Allow-Origin': '*' 
                   },
                   body: formData
                 })
                 .then(response2 => {
+                    if (response['status'] == 401)
+                    {
+                      nav({
+                        pathname: '/login_p'
+                      });
+                    }
                   // Handle the response from the server
                   console.log(response2);
                   console.log(data.appointmentId);
                   console.log('about to nav to waiting page');
-                  nav({
-                    pathname: '/waiting_page',
-                    search: createSearchParams({
-                      doc_id: data.doctorId,
-                      pat_id: pat_id,
-                      app_id: data.appointmentId,
-                      type: upload_type
-                    }).toString()
-                  });
+
+                  nav('/waiting_page');
+                  // nav({
+                  //   pathname: '/waiting_page',
+                  //   // search: createSearchParams({
+                  //   //   doc_id: data.doctorId,
+                  //   //   pat_id: pat_id,
+                  //   //   app_id: data.appointmentId,
+                  //   //   type: upload_type
+                  //   // }).toString()
+                //  });
+
                   // toggle("close");
                 })
                 .catch(error => {
@@ -201,44 +224,47 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
 
 
   const handlespec = (e) => {
-
     setspec(e.target.value);
     console.log("Selected Spec: ",e.target.value)
-
-
   }
 
 
-  const handleUpload = (event) => {
+  const handleUpload = async(event) => {
 
     console.log('into handle submutx');
 
     event.preventDefault();
-
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append(`files`, files[i]);
+    if(files.length != 0)
+    {
+      for (let i = 0; i < files.length; i++) {
+        formData.append(`files`, files[i]);
+      }
+      formData.append('names',names)
+      formData.append('descriptions', descriptions)
+      formData.append('patId', parseInt(localStorage.getItem('pat_id')))
+      formData.append('appId', -1)
+      console.log(parseInt(localStorage.getItem('pat_id')));
+      console.log(names);
+      console.log(descriptions);
+      await fetch('http://localhost:8090/api/v1/health_records/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': localStorage.getItem("jwtToken"),
+          // 'Content-Type': 'multipart/form-data',
+          'Access-Control-Allow-Origin': '*' 
+        },
+        body: formData
+      })
+      .then(response2 => {
+        // Handle the response from the server
+        console.log(response2);
+        toggle()("close");
+      })
+      .catch(error => {
+        console.error(error);
+      });
     }
-    formData.append('names',names)
-    formData.append('descriptions', descriptions)
-    formData.append('patId', parseInt(pat_id))
-    formData.append('appId', -1)
-  
-    fetch('http://localhost:8090/api/v1/health_records/upload', {
-      method: 'POST',
-      headers: {
-        // 'Content-Type': 'multipart/form-data',
-        'Access-Control-Allow-Origin': '*' 
-      },
-      body: formData
-    })
-    .then(response => {
-      console.log(response);
-      toggle()("close");
-    })
-    .catch(error => {
-      console.error(error);
-    });
   };
 
 

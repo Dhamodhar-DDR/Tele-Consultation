@@ -30,16 +30,19 @@ public class DoctorService {
     }
 
     public Boolean check_online_status(Integer doctorID) {
+        System.out.println("Look at here: ioohvishvfb:: " + doctorID);
         Doctor doctor = doctorRepository.findByDoctorId(doctorID);
         return doctor.isOnlineStatus();
     }
 
     public Boolean set_online_status(Integer doctorID, Boolean onlineStatus) {
         Doctor doctor = doctorRepository.findByDoctorId(doctorID);
-        doctor.setOnlineStatus(onlineStatus);
-        doctorRepository.save(doctor);
+        //doctor.setOnlineStatus(onlineStatus);
+        //doctorRepository.save(doctor);
+        doctorRepository.setOnline_Status(onlineStatus, doctorID);
         return true;
     }
+
     public List<Doctor> getOnlineDoctors() {
         return doctorRepository.findByOnlineStatusTrue();
     }

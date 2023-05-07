@@ -74,6 +74,7 @@ public class DoctorController {
     }
 
     @CrossOrigin
+    @Transactional
     @PostMapping("/set_online_status")
     public Boolean set_online_status(@RequestBody set_online_status_body sosb) {
         return this.doctorService.set_online_status(sosb.doctorID, sosb.online_status);

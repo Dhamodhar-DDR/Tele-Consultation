@@ -19,6 +19,7 @@ CREATE TABLE `Doctor` (
 	`experience` VARCHAR(255),
 	`specialization` VARCHAR(255) NOT NULL,
 	`email` VARCHAR(255),
+	`gender` VARCHAR(255) NOT NULL,
 	`profile_pic` MEDIUMBLOB ,
 	PRIMARY KEY (`doctor_id`)
 );

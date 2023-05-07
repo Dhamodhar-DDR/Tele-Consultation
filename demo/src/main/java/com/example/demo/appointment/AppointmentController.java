@@ -210,7 +210,8 @@ public class AppointmentController {
     public List<AppointmentHistoryObj> get_doctor_followup_appointments(@RequestBody getDocAppReqBod req_bod) {
         List<AppointmentHistoryObj> list = new ArrayList<AppointmentHistoryObj>();
         List<Appointment> aps_list = appointmentService.get_doctor_followup_appointments(req_bod.docId);
-        List<String> name_list = appointmentService.get_patient_names(req_bod.docId);
+        List<String> name_list = appointmentService.get_followup_patient_names(req_bod.docId);
+        System.out.println(name_list);
         for (int i = 0; i < aps_list.size(); i++) {
             AppointmentHistoryObj temp = new AppointmentHistoryObj();
             temp.appointment = aps_list.get(i);
@@ -226,6 +227,12 @@ public class AppointmentController {
     @PostMapping("/set_appointment_for_followup")
     public Boolean set_appointment_for_followup(@RequestBody getAppFollowById req_bod) {
         return appointmentService.set_appointment_for_followup(req_bod.appId,req_bod.mark, req_bod.followupReason);
+    }
+
+    @CrossOrigin
+    @PostMapping("/get_prev_app_diag")
+    public String get_prev_app_diag(@RequestBody getPatAppReqBod req_bod) {
+        return appointmentService.get_prev_app_diag(req_bod.patId);
     }
 
 }

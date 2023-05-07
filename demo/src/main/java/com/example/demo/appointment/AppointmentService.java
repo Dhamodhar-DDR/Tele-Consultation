@@ -146,7 +146,9 @@ public class AppointmentService {
     public List<String> get_patient_names(Integer docId){
         return appointmentRepository.get_patient_names(docId);
     }
-
+    public List<String>  get_followup_patient_names(Integer docId){
+        return appointmentRepository.get_followup_patient_names(docId);
+    }
     public List<String> get_doctor_specs(Integer patId){
         return appointmentRepository.get_doctor_specs(patId);
     }
@@ -174,5 +176,11 @@ public class AppointmentService {
             return false;
         }
 
+    }
+    String get_prev_app_diag(int patId)
+    {
+        List<Appointment> app = appointmentRepository.get_prev_app_diag(patId);
+        if(app.get(0).getAppointmentId() < app.get(1).getAppointmentId()) return app.get(0).getDescription();
+        else return app.get(1).getDescription();
     }
 }

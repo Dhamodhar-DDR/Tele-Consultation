@@ -81,8 +81,9 @@ public class PatientController {
     }
 
     @CrossOrigin
+    @Transactional
     @PostMapping("/add_new_profile")
-    public Patient add_new_profile(@RequestBody new_profile_request npr) {
-        return this.patientService.add_new_profile(npr.pat_id,npr.name,npr.age, npr.gender, npr.email, npr.consent);
+    public void add_new_profile(@RequestBody new_profile_request npr) {
+        this.patientService.add_new_profile(npr.pat_id,npr.name,npr.age, npr.gender, npr.email, npr.consent);
     }
 }

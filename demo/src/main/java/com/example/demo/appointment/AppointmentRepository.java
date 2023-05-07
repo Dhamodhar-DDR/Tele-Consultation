@@ -41,6 +41,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     @Query(value = "SELECT d.specialization FROM Doctor d JOIN Appointment a ON d.doctor_id = a.doctor_id WHERE a.appointment_id = :appId", nativeQuery = true)
     String get_doc_spec_from_app(@Param("appId") int appId);
 
+    @Query(value = "SELECT doctor.specialization FROM Doctor WHERE doctor.doctor_id = :docId", nativeQuery = true)
+    String get_doc_spec(@Param("docId") int docId);
+
     @Query(value = "SELECT * from Appointment WHERE patient_id = :patId ORDER BY appointment_id DESC LIMIT 2", nativeQuery = true)
     List<Appointment> get_prev_app_diag(@Param("patId") int patientId);
 }

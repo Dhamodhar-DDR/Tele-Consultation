@@ -2,7 +2,7 @@ CREATE TABLE `Patient` (
 	`patient_id` INT NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL,
 	`mobile_number` VARCHAR(255) NOT NULL,
-	`age` INT NOT NULL,
+	`dob` VARCHAR(255) NOT NULL,
 	`gender` VARCHAR(255) NOT NULL,
 	`consent` BOOLEAN NOT NULL,
 	`email` VARCHAR(255),

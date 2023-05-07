@@ -14,7 +14,7 @@ function Regc() {
 
 
     useEffect(() => {
-        console.log("Received num: from sessst", localStorage.getItem("mobile"));
+        console.log("Received num: from sessst", localStorage.getItem("p_mobile"));
       });
   const[searchParams] = useSearchParams();
 
@@ -24,6 +24,8 @@ function Regc() {
   const [gender, setgender] = useState("male");
   const [Age, setAge] = useState("");
   const [data, setData] = useState("");
+  const [dob, setDOB] = useState('');
+
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -50,19 +52,32 @@ function Regc() {
     setgender(e.target.value);
   };
 
+  function getCurrentAge(dob) {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+  
+    return age;
+  }
+
   
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("In handle num:",localStorage.getItem("mobile"));
+    console.log("In handle num:",localStorage.getItem("p_mobile"));
     const create_patient_body = {
         'name' : Name,
-        'age' : Age,
-        'mobile' : localStorage.getItem("mobile"),
+        'dob' : dob,
+        'mobile' : localStorage.getItem("p_mobile"),
         'gender' : gender,
         'email' : email,
         'consent' : false
       }
-      localStorage.getItem('jwt token', data);
+      localStorage.getItem('jwtToken', data);
       await fetch('http://localhost:8090/api/v1/patient/create', {
         method: 'POST',
         headers: {
@@ -87,7 +102,7 @@ function Regc() {
         // nav({
         //   pathname: '/selectprofile',
         //   search: createSearchParams({
-        //     mobile: localStorage.getItem("mobile")
+        //     mobile: localStorage.getItem("p_mobile")
         //   }).toString()
         // });
       })
@@ -97,22 +112,29 @@ function Regc() {
 
   };
 
+  const handleDOBChange = (event) => {
+    setDOB(event.target.value);
+    console.log(event.target.value)
+
+    const [year, month, day] = dob.split('-').map(Number);
+
+    console.log(year); // Output: 2023
+    console.log(month); // Output: 5
+    console.log(day); // Output: 8    
+    console.log("Age is " , getCurrentAge(dob));
+    
+  }
+
 
 
   return (
 
-    <div>
-    <button className="login-go-back-btn" >Go back</button>
+    <div style={{height:"100vh"}}>
+    <button className="login-go-back-btn" onClick={()=>nav('/login_p')} >Go back</button>
     <div className="login-center">
         <h1>Patient Register</h1>
         <form  method="post" onSubmit={handleSubmit}>
-
-
-
           <div className="txt_field">
- 
-               
-               
                <input type="text" value={Name} onChange={handleFirstNameChange} required/>
                <span></span>
 
@@ -120,13 +142,28 @@ function Regc() {
           </div>
 
           <div className="txt_field">
+          <span style = {{opacity:"0.5"}}> Enter Date of Birth: </span>
+          <label htmlFor="dob"></label>
+                <input
+                  type="date"
+                   id="dob"
+                  name="dob"
+                  value={dob}
+                 onChange={handleDOBChange}
+                />
+                
+
+
+          </div>
+
+          {/* <div className="txt_field">
           <input type="number" value={Age} onChange={handleAgeChange} required/>
           <span></span>
  
               <label>Age:</label>
-          </div>
+          </div> */}
 
-          
+<span style = {{opacity:"0.5"}}> Select Gender: </span>
           <select class="custom-select" onChange={handlegender}>
             <option disabled>Select Gender</option>
           <option value="male">Male</option>

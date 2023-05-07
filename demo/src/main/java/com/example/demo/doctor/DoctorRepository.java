@@ -22,7 +22,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     @Query(value="UPDATE DOCTOR SET online_status =:online_status WHERE doctor_id=:doctorID", nativeQuery = true)
     void setOnline_Status(@Param(value ="online_status") Boolean online_status, @Param(value="doctorID") Integer doctorID);
     @Modifying
-    @Query(value=" INSERT INTO DOCTOR (name, mobile_number, online_status, age, experience, gender, specialization, email) VALUES (cast(to_base64(AES_ENCRYPT(:name ,'mykeystring')) as char), cast(to_base64(AES_ENCRYPT(:mobile ,'mykeystring')) as char), :online_status, :age, :experience, :gender, :specialization, (cast(to_base64(AES_ENCRYPT(:email ,'mykeystring')) as char))", nativeQuery = true)
+    @Query(value="INSERT INTO DOCTOR (name, mobile_number, online_status, age, experience, gender, specialization, email) VALUES (cast(to_base64(AES_ENCRYPT(:name ,'mykeystring')) as char), cast(to_base64(AES_ENCRYPT(:mobile ,'mykeystring')) as char), :online_status, :age, :experience, :gender, :specialization, (cast(to_base64(AES_ENCRYPT(:email ,'mykeystring')) as char)))", nativeQuery = true)
     void addPatient(@Param(value = "name") String name, @Param(value = "mobile") String mobile, @Param(value = "online_status") Boolean online_status, @Param(value = "age") int age, @Param(value = "experience") String experience, @Param(value = "gender") String gender, @Param(value = "specialization") String specialization, @Param(value = "email") String email);
 
 }

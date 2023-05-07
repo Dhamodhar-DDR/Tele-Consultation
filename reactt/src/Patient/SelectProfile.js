@@ -16,7 +16,7 @@ function ProfileSelector() {
 console.log("function")
   const onProfileSelect = (profile) => {
 
-    localStorage.setItem('pat_id', profile.patientId)
+    localStorage.setItem('p_pat_id', profile.patientId)
 
     nav('/home_pat');
     // nav({
@@ -26,15 +26,30 @@ console.log("function")
     //   }).toString()
     // });
   };
-  console.log("received num from session: ",localStorage.getItem('mobile'));
+  console.log("received num from session: ",localStorage.getItem('p_mobile'));
   let mobile = jwt(localStorage.getItem('jwtToken'))['sub'];
   console.log(mobile);
-  if (localStorage.getItem('mobile'))
+  if (localStorage.getItem('p_mobile'))
   {
-    mobile = localStorage.getItem('mobile');
+    mobile = localStorage.getItem('p_mobile');
   }
+
+  function getCurrentAge(dob) {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+  
+    return age;
+  }
+
+
    const get_pat_id = async() => {
-    if(localStorage.getItem('mobile') != null || mobile!=undefined)
+    if(localStorage.getItem('p_mobile') != null || mobile!=undefined)
     {
       const get_profiles_body = {
         'mobile_number' : mobile
@@ -69,11 +84,11 @@ console.log("function")
         console.log(error)
       });
     }
-    else if(localStorage.getItem('pat_id') != null)
+    else if(localStorage.getItem('p_pat_id') != null)
     {
       console.log("sessst pat id is not null!!");
         const getProfilesBody = {
-          pat_id : localStorage.getItem('pat_id')
+          pat_id : localStorage.getItem('p_pat_id')
         }
         await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
           method: 'POST',
@@ -133,7 +148,7 @@ console.log("function")
               onClick={() => onProfileSelect(profile)}>
               <img className="profilepics" src={get_default_pic(profile.gender)} alt={profile.name} />
               <h3>{profile.name}</h3>
-              <p>{profile.age} years old</p>
+              <p>{getCurrentAge(profile.dob)} years old</p>
             </div>
           ))}
         </div>

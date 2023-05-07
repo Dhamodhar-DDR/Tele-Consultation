@@ -19,6 +19,7 @@ import WaitingPage from './Patient/waitingpage'
 import DocAppoinHist from './Doctor/AppHistory';
 import DisplayFiles  from './Patient/ViewRecords';
 import CallSummary from './Patient/CallSummary';
+import Page2 from './PreHome2'
 
 function check_login(){
   const user = localStorage.getItem('jwtToken');
@@ -37,7 +38,8 @@ function App()
   return (
   <Router>
     <Routes>
-      <Route exact path="/" element={<Page1 />} />
+      <Route exact path="/old_pre" element={<Page1 />} />
+      <Route exact path="/" element={<Page2 />} />
       <Route exact path="/login_p" 
       // element={<Logincg />}
       element = {check_login() ? (<ProfileSelector/>) : (<Logincg/>)}

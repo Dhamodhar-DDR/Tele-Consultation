@@ -79,7 +79,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : localStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('p_pat_id'),
             doctorId: doctor_id,
             isFollowup: false,
           }
@@ -90,7 +90,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : "",
             bookingTime : timestamp,
-            patientId : localStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('p_pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -101,7 +101,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : localStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('p_pat_id'),
             doctorId: null,
             isFollowup: true,
           }
@@ -112,7 +112,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             upload_type : upload_type,
             specialization : spec,
             bookingTime : timestamp,
-            patientId : localStorage.getItem('pat_id'),
+            patientId : localStorage.getItem('p_pat_id'),
             doctorId: null,
             isFollowup: false,
           }
@@ -132,16 +132,17 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
             console.log(response);
               if (response['status'] == 401)
               {
-                nav({
-                  pathname: '/login_p'
-                });
+                // nav({
+                //   pathname: '/login_p'
+                // });
+                handleLogout();
               }
             try{
               const data = await response.json();
               const formData = new FormData();
-              localStorage.setItem('doc_id', data.doctorId);
-              localStorage.setItem('app_id', data.appointmentId);
-              localStorage.getItem('type',upload_type);
+              localStorage.setItem('p_doc_id', data.doctorId);
+              localStorage.setItem('p_app_id', data.appointmentId);
+              localStorage.setItem('p_type',upload_type);
               if(files.length == 0)
               {
 
@@ -163,7 +164,7 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                 }
                 formData.append('names',names)
                 formData.append('descriptions', descriptions)
-                formData.append('patId', localStorage.getItem('pat_id'))
+                formData.append('patId', localStorage.getItem('p_pat_id'))
                 formData.append('appId', data.appointmentId)
                 console.log(names);
                 console.log(descriptions);
@@ -180,9 +181,10 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
                 .then(response2 => {
                     if (response['status'] == 401)
                     {
-                      nav({
-                        pathname: '/login_p'
-                      });
+                      // nav({
+                      //   pathname: '/login_p'
+                      // });
+                      handleLogout();
                     }
                   // Handle the response from the server
                   console.log(response2);
@@ -228,6 +230,22 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
     console.log("Selected Spec: ",e.target.value)
   }
 
+  const handleLogout = () =>{
+    console.log("welluntil")
+    if(localStorage.getItem('p_pat_id') != null) localStorage.removeItem('p_pat_id');
+        if(localStorage.getItem('p_mobile') != null) localStorage.removeItem('p_mobile');
+        if(localStorage.getItem('p_doc_id') != null) localStorage.removeItem('p_doc_id');
+        if(localStorage.getItem('p_app_id') != null) localStorage.removeItem('p_app_id'); 
+        if(localStorage.getItem('p_upload') != null) localStorage.removeItem('p_upload');
+        if(localStorage.getItem('p_type') != null) localStorage.removeItem('p_type'); 
+        
+    localStorage.removeItem('jwtToken');
+    console.log("welluntil")
+    nav('/login_p');
+    window.location.reload();
+  }
+
+
 
   const handleUpload = async(event) => {
 
@@ -242,9 +260,9 @@ function Modal ({toggle, upload_type, pat_id, app_id,doctor_id})  {
       }
       formData.append('names',names)
       formData.append('descriptions', descriptions)
-      formData.append('patId', parseInt(localStorage.getItem('pat_id')))
+      formData.append('patId', parseInt(localStorage.getItem('p_pat_id')))
       formData.append('appId', -1)
-      console.log(parseInt(localStorage.getItem('pat_id')));
+      console.log(parseInt(localStorage.getItem('p_pat_id')));
       console.log(names);
       console.log(descriptions);
       await fetch('http://localhost:8090/api/v1/health_records/upload', {

@@ -13,7 +13,7 @@ function CallSummary(){
     const [showPopup, setShowPopup] = useState(false);
     const get_appoin_by_id = async()=>{
         const body = {
-            appId : localStorage.getItem('app_id')
+            appId : localStorage.getItem('p_app_id')
         }
         await fetch('http://localhost:8090/api/v1/appointment/get_appointment_by_id', {
             method: 'POST',
@@ -41,7 +41,7 @@ function CallSummary(){
     }
     const get_doc_by_id = async()=>{
         const body2 = {
-            doctorID : localStorage.getItem('doc_id')
+            doctorID : localStorage.getItem('p_doc_id')
         }
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_id', {
             method: 'POST',
@@ -74,7 +74,7 @@ function CallSummary(){
     }, [])
 
     const get_prof_name_by_id = async() => {
-        const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
+        const getpatidbody = {pat_id: localStorage.getItem('p_pat_id')}
         await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
           method: 'POST',
           headers: {

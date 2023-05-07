@@ -6,6 +6,8 @@ import mic_icon from '../imgs/icons/mic.png'
 import cam_icon from '../imgs/icons/camera.png'
 import def_pp from '../imgs/profile.png'
 
+
+
 function DoctorCall() {
     const [markForFollowUp, setMarkForFollowUp] = useState(false);
     const [savefu, setsavefu] = useState(false)
@@ -39,6 +41,19 @@ function DoctorCall() {
     const [init_files, setinitFiles] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
 
+    function getCurrentAge(dob) {
+        const today = new Date();
+        const birthDate = new Date(dob);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+      
+        return age;
+      }
+
 
     const nav = useNavigate();
     const[searchParams] = useSearchParams();
@@ -46,12 +61,12 @@ function DoctorCall() {
     let APP_ID = "3750c264e1ce48108ee613f8f45e2fbe"
 
     let token = null;
-    let uid = "d_"+String(localStorage.getItem('doc_id'));
+    let uid = "d_"+String(localStorage.getItem('d_doc_id'));
 
     let client = useRef(null);
     let channel = useRef(null);
 
-    let roomId = localStorage.getItem('doc_id');
+    let roomId = localStorage.getItem('d_doc_id');
 
     let localStream = useRef(null);
     let remoteStream;
@@ -230,7 +245,7 @@ function DoctorCall() {
     let leaveChannel = async () => {
         await channel.current.leave()
         await client.current.logout()
-        localStorage.setItem('app_id', -1);
+        localStorage.setItem('d_app_id', -1);
         // await peerConnection.close();
     }
 
@@ -323,9 +338,10 @@ function DoctorCall() {
         .then(response => {
             if (response['status'] == 401)
             {
-              nav({
-                pathname: '/login_doc'
-              });
+            //   nav({
+            //     pathname: '/login_doc'
+            //   });
+                handleLogout();
             }
             return response.text();
           })
@@ -354,9 +370,10 @@ function DoctorCall() {
         .then(response => {
             if (response['status'] == 401)
             {
-              nav({
-                pathname: '/login_doc'
-              });
+            //   nav({
+            //     pathname: '/login_doc'
+            //   });
+                handleLogout();
             }
             return response.json();
           })
@@ -372,7 +389,7 @@ function DoctorCall() {
     const set_status = async(param) =>{
 
         const set_online_status_body = {
-            'doctorID' : localStorage.getItem('doc_id'),
+            'doctorID' : localStorage.getItem('d_doc_id'),
             'online_status': param
         }
         console.log("bef await isconsulatationactive", param)
@@ -389,9 +406,10 @@ function DoctorCall() {
         .then(response => {
             if (response['status'] == 401)
             {
-              nav({
-                pathname: '/login_doc'
-              });
+            //   nav({
+            //     pathname: '/login_doc'
+            //   });
+                handleLogout();
             }
             return response.json();
           })
@@ -416,7 +434,7 @@ function DoctorCall() {
     }, [isLoading]);
 
     useEffect(() => {
-        console.log(localStorage.getItem('pat_id'),localStorage.getItem('doc_id'),localStorage.getItem('app_id'))
+        console.log(localStorage.getItem('d_pat_id'),localStorage.getItem('d_doc_id'),localStorage.getItem('d_app_id'))
         init().then(()=>{
             console.log(localStream)
         });
@@ -461,7 +479,7 @@ function DoctorCall() {
         setMarkForFollowUp(false);
         console.log("Next patient is being called")
         console.log(appointmentId)
-        console.log(localStorage.getItem("app_id"))
+        console.log(localStorage.getItem("d_app_id"))
         //Api call to set appointment to completed status
         if(appointmentId != -1)
         {
@@ -504,16 +522,17 @@ function DoctorCall() {
             })
             if (set_status_response['status'] == 401)
             {
-            nav({
-                pathname: '/login_doc'
-            });
+                // nav({
+                //     pathname: '/login_doc'
+                // });
+                handleLogout();
             }
             if(set_status_response.status != 200) console.log(set_status_response)
             else console.log("Changed previous appointment status to completed!")
         }
 
         const earliest_app_response_body = {
-            docId: localStorage.getItem('doc_id')
+            docId: localStorage.getItem('d_doc_id')
         }
         const earliest_app_response = await fetch('http://localhost:8090/api/v1/appointment/get_earliest_waiting_app', {
             method: 'POST',
@@ -526,9 +545,10 @@ function DoctorCall() {
         })
         if (earliest_app_response['status'] == 401)
         {
-          nav({
-            pathname: '/login_doc'
-          });
+        //   nav({
+        //     pathname: '/login_doc'
+        //   });
+            handleLogout();
         }
 
         try{
@@ -549,14 +569,16 @@ function DoctorCall() {
             })
             if (get_pat_body_response['status'] == 401)
             {
-                nav({
-                    pathname: '/login_doc'
-                });
+                // nav({
+                //     pathname: '/login_doc'
+                // });
+                handleLogout();
             }
             const pat_details = await get_pat_body_response.json();
             setfollowup(earliest_app.followup)
             setPatientName(pat_details.name);
-            setPatientAge(pat_details.age);
+            // const curr_age = getCurrentAge(dob)
+            setPatientAge(getCurrentAge(pat_details.dob));
             setPatientGender(pat_details.gender);
             setPatientMobile(pat_details.mobileNumber);
             setPatientEmail(pat_details.email);
@@ -594,11 +616,12 @@ function DoctorCall() {
                 body: JSON.stringify(set_app_status_body)
             })
             if (set_status_response['status'] == 401)
-        {
-          nav({
-            pathname: '/login_doc'
-          });
-        }
+            {
+                // nav({
+                //     pathname: '/login_doc'
+                // });
+                handleLogout();
+            }
             if(set_status_response.status != 200) console.log(set_status_response)
             else{
                 const now = new Date(); // get current date and time
@@ -618,11 +641,12 @@ function DoctorCall() {
                     body: JSON.stringify(set_start_time_body)
                 })
                 if (set_start_time_response['status'] == 401)
-        {
-          nav({
-            pathname: '/login_doc'
-          });
-        }
+                {
+                    // nav({
+                    //     pathname: '/login_doc'
+                    // });
+                    handleLogout();
+                }
                 setIsPresSent(false)
                 console.log("Next patient status changed!")
             }
@@ -643,7 +667,7 @@ function DoctorCall() {
             console.log(members)
             for(let i = 0;i<members.length;i++)
             {
-                if(members[i] === "d_"+String(localStorage.getItem('doc_id')))
+                if(members[i] === "d_"+String(localStorage.getItem('d_doc_id')))
                 {
                     console.log('Doctor exists')
                     break;
@@ -704,9 +728,10 @@ function DoctorCall() {
         .then(response => {
             if (response['status'] == 401)
             {
-              nav({
-                pathname: '/login_doc'
-              });
+            //   nav({
+            //     pathname: '/login_doc'
+            //   });
+                handleLogout();
             }
             return response.text();
           })
@@ -747,9 +772,10 @@ function DoctorCall() {
         .then(response =>{
             if (response['status'] == 401)
             {
-              nav({
-                pathname: '/login_doc'
-              });
+            //   nav({
+            //     pathname: '/login_doc'
+            //   });
+                handleLogout();
             }
             return response.text();
           })
@@ -852,9 +878,18 @@ function DoctorCall() {
         setInputFields(values);
     };
 
-    // useEffect(() => {
-    //   display_file();
-    // }, [])
+    const handleLogout = async() =>{
+        await set_status(false)
+        if(localStorage.getItem('d_pat_id') != null) localStorage.removeItem('d_pat_id');
+        if(localStorage.getItem('d_mobile') != null) localStorage.removeItem('d_mobile');
+        if(localStorage.getItem('d_doc_id') != null) localStorage.removeItem('d_doc_id');
+        if(localStorage.getItem('d_app_id') != null) localStorage.removeItem('d_app_id'); 
+        if(localStorage.getItem('d_app_id') != null) localStorage.removeItem('d_app_id'); 
+        
+        localStorage.removeItem('jwtToken_doc');
+        nav('/login_doc');
+        window.location.reload();
+      }
   
     const display_file = async(pat_id) => {
       const formData = new FormData();
@@ -873,9 +908,10 @@ function DoctorCall() {
       .then((response) => {
         if (response['status'] == 401)
         {
-          nav({
-            pathname: '/login_doc'
-          });
+        //   nav({
+        //     pathname: '/login_doc'
+        //   });
+            handleLogout();
         }
         return response.json();
       })
@@ -889,7 +925,7 @@ function DoctorCall() {
             // console.log(blob)
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
-                if(parseInt(element.body.appId) === parseInt(localStorage.getItem('app_id')))
+                if(parseInt(element.body.appId) === parseInt(localStorage.getItem('d_app_id')))
                 {
                   setinitFiles(current => [...current, {name : element.body.name, type: blob.type , url : fileReader.result}])
                 }
@@ -954,9 +990,10 @@ function DoctorCall() {
             }
                 if (response['status'] == 401)
                 {
-                  nav({
-                    pathname: '/login_doc'
-                  });
+                    handleLogout();
+                //   nav({
+                //     pathname: '/login_doc'
+                //   });
                 }
             console.log(send_pres_diag)
             await fetch('http://localhost:8090/api/v1/appointment/set_app_description',{
@@ -971,9 +1008,10 @@ function DoctorCall() {
             .then(response2=>{
                 if (response2['status'] == 401)
                 {
-                  nav({
-                    pathname: '/login_doc'
-                  });
+                //   nav({
+                //     pathname: '/login_doc'
+                //   });
+                    handleLogout();
                 }
                 console.log(response2)
                 return response2.json();

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
-    private static final String ACCOUNT_SID = "AC00d6db9084eb417e0d35f8e8082638a3"; //System.getenv("ACbc91ba0b1ce5b5020130385133c2ae46");
-    private static final String AUTH_TOKEN = "74b63afa89c9638046946722637947cd"; //System.getenv("aa2cab81ac3f795ce2280dbe04659ef1");
+    private static final String ACCOUNT_SID = "ACc616d970b2af8dab101f3938ffb00617"; //System.getenv("ACbc91ba0b1ce5b5020130385133c2ae46");
+    private static final String AUTH_TOKEN = "e10b421bf169b9a1323842d2b74c1468"; //System.getenv("aa2cab81ac3f795ce2280dbe04659ef1");
     public void create_service() {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         com.twilio.rest.verify.v2.Service service = com.twilio.rest.verify.v2.Service.creator("My First Verify Service").create();
@@ -19,7 +19,7 @@ public class AuthenticationService {
     public String send_otp(String mobile_number) {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Verification verification = Verification.creator(
-                        "VA7a2a45cc8465e9d3c711feee7bb0df0d",
+                        "VAfe82c18c42a75b23ec1759b8cc987827",
                         "+91"+mobile_number,
                         "sms")
                 .create();
@@ -30,7 +30,7 @@ public class AuthenticationService {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
         VerificationCheck verificationCheck = VerificationCheck.creator(
-                        "VA7a2a45cc8465e9d3c711feee7bb0df0d")
+                        "VAfe82c18c42a75b23ec1759b8cc987827")
                 .setTo("+91"+mobile_number)
                 .setCode(otp)
                 .create();

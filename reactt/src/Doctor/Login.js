@@ -55,7 +55,7 @@ function Logindoc() {
       })
       .then(data => {
         console.log("Doc Id assigned: ",data.doctorId)
-        localStorage.setItem('doc_id',data.doctorId);
+        localStorage.setItem('d_doc_id',data.doctorId);
         nav('/DocHome');
         // // nav({
         // //   pathname: '/DocHome',
@@ -71,8 +71,9 @@ function Logindoc() {
     }
     else if(data == 'true')
     {
-      localStorage.setItem('mobile', phone);
+      localStorage.setItem('d_mobile', phone);
       nav('/register_doc');
+      
       // nav({
       //   pathname: '/register_doc',
       //   search: createSearchParams({
@@ -201,7 +202,7 @@ function Logindoc() {
   };
 
   return (
-    <div >
+    <div style={{height:'100vh'}}>
       <button className="login-go-back-btn" onClick={goBack}>Go back</button>
       <div className="login-center">
           <h1>Doctor Login</h1>

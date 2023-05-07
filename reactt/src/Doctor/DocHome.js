@@ -15,14 +15,26 @@ function DocHome() {
   const [showPopup, setShowPopup] = useState(false);
   const[searchParams] = useSearchParams();
   const nav = useNavigate()
-  const did = localStorage.getItem('doc_id')
+  const did = localStorage.getItem('d_doc_id')
   let help;
   useEffect(() => {
-    console.log(localStorage.getItem('doc_id'));
+    console.log(localStorage.getItem('d_doc_id'));
     get_doc_id();
     get_appoin_history()    
   }, [])
 
+  function getCurrentAge(dob) {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+  
+    return age;
+  }
   const get_doc_id = async() => {
     const get_doc_by_mobile_body = {
       'mobile_number': jwt(localStorage.getItem('jwtToken_doc'))['sub']
@@ -44,12 +56,13 @@ function DocHome() {
         nav({
           pathname: '/login_doc'
         });
+        window.location.reload()
       }
       return response.json()
     })
     .then(data => {
       console.log("Doc Id assigned: ",data.doctorId)
-      localStorage.setItem('doc_id',data.doctorId)
+      localStorage.setItem('d_doc_id',data.doctorId)
       nav('/DocHome')
       // nav({
       //   pathname: '/DocHome',
@@ -65,7 +78,7 @@ function DocHome() {
   }
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {docId: localStorage.getItem('doc_id')}
+    const getappoinhist = {docId: localStorage.getItem('d_doc_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_followup_appointments', {
       method: 'POST',
       headers: {
@@ -80,10 +93,12 @@ function DocHome() {
       console.log(response);
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
+        HandleLogout();
+        // localStorage.removeItem('jwtToken_doc')
+        // nav({
+        //   pathname: '/login_doc'
+        // });
+        // window.location.reload()
       }
       return response.json()
     })
@@ -116,14 +131,15 @@ function DocHome() {
       console.log(response);
       if (response['status'] == 401)
       {
-        console.log("ASDSADSDDSAD")
-        if (localStorage.getItem('jwtToken_doc'))
-        {
-        localStorage.removeItem('jwtToken_doc')
-        }
-        nav({
-          pathname: '/login_doc'
-        });
+        HandleLogout();
+        // if (localStorage.getItem('jwtToken_doc'))
+        // {
+        //   localStorage.removeItem('jwtToken_doc')
+        // }
+        // nav({
+        //   pathname: '/login_doc'
+        // });
+        // window.location.reload()
       }
       return response.json()
     })
@@ -140,7 +156,7 @@ function DocHome() {
 
   const handleAppointHist = () =>{
 
-    localStorage.setItem('doc_id',did);
+    localStorage.setItem('d_doc_id',did);
     nav('/DocAppoinHist');
     // nav({
     //   pathname: '/DocAppoinHist',
@@ -152,7 +168,12 @@ function DocHome() {
 
   const HandleLogout = async() =>{
     await set_status(false)
-    localStorage.clear();
+    if(localStorage.getItem('d_pat_id') != null) localStorage.removeItem('d_pat_id');
+    if(localStorage.getItem('d_mobile') != null) localStorage.removeItem('d_mobile');
+    if(localStorage.getItem('d_doc_id') != null) localStorage.removeItem('d_doc_id');
+    if(localStorage.getItem('d_app_id') != null) localStorage.removeItem('d_app_id'); 
+    if(localStorage.getItem('d_app_id') != null) localStorage.removeItem('d_app_id'); 
+    
     localStorage.removeItem('jwtToken_doc');
     nav('/login_doc');
     window.location.reload();
@@ -163,7 +184,7 @@ function DocHome() {
    console.log(doc_id); 
     const set_online_status_body = {
 
-      'doctorID' : localStorage.getItem("doc_id"),
+      'doctorID' : localStorage.getItem('d_doc_id'),
       'online_status': param      
     }
     console.log("bef await isconsulatationactive", param)
@@ -180,10 +201,11 @@ function DocHome() {
       console.log(response);
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
+        // localStorage.removeItem('jwtToken_doc')
+        // nav({
+        //   pathname: '/login_doc'
+        // });
+        HandleLogout();
       }
       return response.json()
     })
@@ -221,9 +243,9 @@ function DocHome() {
 
   useEffect(() => {
     get_doc_id();
-    console.log("Received id sesssto: ", localStorage.getItem('doc_id'));
-    setDoc_id(localStorage.getItem('doc_id'));
-    get_online_stat(localStorage.getItem('doc_id'));
+    console.log("Received id sesssto: ", localStorage.getItem('d_doc_id'));
+    setDoc_id(localStorage.getItem('d_doc_id'));
+    get_online_stat(localStorage.getItem('d_doc_id'));
   }, []);
 
   const removeFollowUp = async(app,index) => {
@@ -250,10 +272,11 @@ function DocHome() {
       console.log(response);
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken_doc')
-        nav({
-          pathname: '/login_doc'
-        });
+        // localStorage.removeItem('jwtToken_doc')
+        // nav({
+        //   pathname: '/login_doc'
+        // });
+        HandleLogout();
       }
       return response.json()
     })
@@ -282,15 +305,17 @@ function DocHome() {
         console.log(response);
         if (response['status'] == 401)
         {
-          localStorage.removeItem('jwtToken_doc')
-          nav({
-            pathname: '/login_doc'
-          });
+          // localStorage.removeItem('jwtToken_doc')
+          // nav({
+          //   pathname: '/login_doc'
+          // });
+          HandleLogout();
         }
         // return response.json()
     
       console.log(pat)
-      setPatient({name : pat.name, age : pat.age, gender : pat.gender, mobile: pat.mobileNumber, email: pat.email})
+      // age is
+      setPatient({name : pat.name, age : getCurrentAge(pat.dob), gender : pat.gender, mobile: pat.mobileNumber, email: pat.email})
     })
     .catch(error=>{
       console.log(error)
@@ -313,7 +338,7 @@ function DocHome() {
       <div className="navbar">
         <div>
         <button className="nav-button">Home</button>
-        <button className="nav-button">Edit Profile</button>
+        {/* <button className="nav-button">Edit Profile</button> */}
         <button className="nav-button" onClick={handleAppointHist}>Appointment History</button>
 
           {/* <a href="#">Edit Profile</a>

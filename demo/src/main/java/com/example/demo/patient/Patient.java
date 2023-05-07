@@ -16,8 +16,8 @@ public class Patient {
     @Column(name = "mobile_number")
     private String mobileNumber;
 
-    @Column(name = "age")
-    private int age;
+    @Column(name = "dob")
+    private String dob;
 
     @Column(name = "gender")
     private String gender;
@@ -30,10 +30,10 @@ public class Patient {
     // Constructor
     public Patient() {}
 
-    public Patient(String name, String mobileNumber, int age, String gender,String email ,Boolean consent) {
+    public Patient(String name, String mobileNumber, String dob, String gender,String email ,Boolean consent) {
         this.name = name;
         this.mobileNumber = mobileNumber;
-        this.age = age;
+        this.dob = dob;
         this.gender = gender;
         this.email = email;
         this.consent = consent;
@@ -65,12 +65,12 @@ public class Patient {
         this.mobileNumber = mobileNumber;
     }
 
-    public int getAge() {
-        return age;
+    public String getDob() {
+        return dob;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setDob(String dob) {
+        this.dob = dob;
     }
 
     public String getEmail() {

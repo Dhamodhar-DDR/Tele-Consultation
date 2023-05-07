@@ -38,7 +38,7 @@ function DoctorList() {
   
       const create_app_body = {
         bookingTime : timestamp,
-        patientId : localStorage.getItem('pat_id'),
+        patientId : localStorage.getItem('p_pat_id'),
         doctorId: doc_id,
         startTime : null,
         endTime : null,
@@ -60,9 +60,10 @@ function DoctorList() {
       .then(response => {
         if (response['status'] == 401)
         {
-          nav({
-            pathname: '/login_p'
-          });
+          // nav({
+          //   pathname: '/login_p'
+          // });
+          handleLogout();
         }
         return response.json();
       })
@@ -91,7 +92,7 @@ function DoctorList() {
         <div className="doctor-details">
           <img src={props.image} alt={props.name} />
           <div className="doctor-text">
-            <h2>{props.name}</h2>
+            <h2>Dr. {props.name}</h2>
             <p>{props.experience} years of experience</p>
             <p>{props.description}</p>
           </div>
@@ -107,7 +108,7 @@ function DoctorList() {
 
 const get_prof_name_by_id = async() => {
 
-  const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
+  const getpatidbody = {pat_id: localStorage.getItem('p_pat_id')}
   await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
     method: 'POST',
     headers: {
@@ -121,9 +122,10 @@ const get_prof_name_by_id = async() => {
   .then(response => {
     if (response['status'] == 401)
     {
-      nav({
-        pathname: '/login_p'
-      });
+      // nav({
+      //   pathname: '/login_p'
+      // });
+      handleLogout();
     }
     return response.json();
   })
@@ -153,9 +155,10 @@ const get_prof_name_by_id = async() => {
     .then(response => {
       if (response['status'] == 401)
       {
-        nav({
-          pathname: '/login_p'
-        });
+        // nav({
+        //   pathname: '/login_p'
+        // });
+        handleLogout();
       }
       return response.json();
     })
@@ -170,8 +173,12 @@ const get_prof_name_by_id = async() => {
   }
 
   const handleLogout = () =>{
-    localStorage.clear();
-
+    if(localStorage.getItem('p_pat_id') != null) localStorage.removeItem('p_pat_id');
+    if(localStorage.getItem('p_mobile') != null) localStorage.removeItem('p_mobile');
+    if(localStorage.getItem('p_doc_id') != null) localStorage.removeItem('p_doc_id');
+    if(localStorage.getItem('p_app_id') != null) localStorage.removeItem('p_app_id'); 
+    if(localStorage.getItem('p_upload') != null) localStorage.removeItem('p_upload');
+    if(localStorage.getItem('p_type') != null) localStorage.removeItem('p_type'); 
     localStorage.removeItem('jwtToken');
     nav('/login_p')
     window.location.reload();
@@ -200,7 +207,7 @@ const get_prof_name_by_id = async() => {
   }
 
   const navToAppHis = () =>{
-    // nav('/login_p')
+    nav('/appoinhist')
   }
 
 
@@ -210,7 +217,7 @@ const get_prof_name_by_id = async() => {
 
     get_prof_name_by_id()
     get_onine_doc_list()
-    console.log("Received pat_id from sess: ", localStorage.getItem('pat_id'));
+    console.log("Received pat_id from sess: ", localStorage.getItem('p_pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
@@ -254,7 +261,7 @@ const get_prof_name_by_id = async() => {
 
       </div>
 
-      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={localStorage.getItem('pat_id')} app_id={-1} doctor_id={send_did}/>)}
+      {showModal && (<Modal toggle={toggleModal} upload_type={'from_sd'} pat_id={localStorage.getItem('p_pat_id')} app_id={-1} doctor_id={send_did}/>)}
       
     </div>
     </div>

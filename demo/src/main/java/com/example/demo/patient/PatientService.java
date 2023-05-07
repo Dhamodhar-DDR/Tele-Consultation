@@ -22,7 +22,7 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient create_patient(String name, String mobile, int age, String gender, String email, Boolean consent) {
+    public Patient create_patient(String name, String mobile, String age, String gender, String email, Boolean consent) {
         Patient patient = new Patient( name, mobile,  age,  gender,  email ,consent);
         return patientRepository.save(patient);
     }
@@ -35,14 +35,14 @@ public class PatientService {
         return patientRepository.findByMobileNumber(p.getMobileNumber());
     }
 
-    public void add_new_profile(Integer patientID, String name, int age, String gender, String email, Boolean consent) {
+    public void add_new_profile(Integer patientID, String name, String age, String gender, String email, Boolean consent) {
         Patient old_patient = patientRepository.findByPatientId(patientID);
 //        Patient patient = new Patient( name, old_patient.getMobileNumber(),  age,  gender,  email ,consent);
         System.out.println("chuduuuuuuuuuuuuuuu: " + old_patient.getMobileNumber());
         patientRepository.addPatient(name, old_patient.getMobileNumber(), age, gender, consent, email);
     }
 
-    public void add_newPatient(String name, String mobile, int age, String gender, String email, Boolean consent) {
+    public void add_newPatient(String name, String mobile, String age, String gender, String email, Boolean consent) {
 //        Patient patient = new Patient( name, mobile,  age,  gender,  email ,consent);
         patientRepository.addPatient(name, mobile, age, gender, consent, email
         );

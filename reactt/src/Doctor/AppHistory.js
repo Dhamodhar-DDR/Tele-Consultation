@@ -20,11 +20,11 @@ function DocAppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log("sess doc id: ",localStorage.getItem('doc_id'))
+    console.log("sess doc id: ",localStorage.getItem('d_doc_id'))
    get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", localStorage.getItem('doc_id'));
+    console.log("Received pat_id: ", localStorage.getItem('d_doc_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
     
@@ -34,11 +34,11 @@ function DocAppoinHist() {
 
 const get_prof_name_by_id = async() => {
 
-  const getdocidbody = {doctorID: localStorage.getItem('doc_id')}
+  const getdocidbody = {doctorID: localStorage.getItem('d_doc_id')}
   await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_id', {
     method: 'POST',
     headers: {
-      'Authorization': localStorage.getItem("jwtToken"),
+      'Authorization': localStorage.getItem("jwtToken_doc"),
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*' 
     },
@@ -48,10 +48,11 @@ const get_prof_name_by_id = async() => {
   .then(response => {
     if (response['status'] == 401)
     {
-      localStorage.removeItem('jwtToken_doc')
-      nav({
-        pathname: '/login_doc'
-      });
+      // localStorage.removeItem('jwtToken_doc')
+      // nav({
+      //   pathname: '/login_doc'
+      // });
+      HandleLogout();
     }
     else return response.json();
   })
@@ -66,7 +67,7 @@ const get_prof_name_by_id = async() => {
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {docId: localStorage.getItem('doc_id')}
+    const getappoinhist = {docId: localStorage.getItem('d_doc_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_doctor_appointments', {
       method: 'POST',
       headers: {
@@ -80,9 +81,10 @@ const get_prof_name_by_id = async() => {
     .then(response => {
       if (response['status'] == 401)
       {
-        nav({
-          pathname: '/login_doc'
-        });
+        // nav({
+        //   pathname: '/login_doc'
+        // });
+        HandleLogout();
       }
       else return response.json();
     })
@@ -196,7 +198,7 @@ const get_prof_name_by_id = async() => {
         await fetch('http://localhost:8090/api/v1/prescription/get_prescription', {
           method: 'POST',
           headers: {
-            'Authorization': localStorage.getItem("jwtToken"),
+            'Authorization': localStorage.getItem("jwtToken_doc"),
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' 
           },
@@ -205,10 +207,9 @@ const get_prof_name_by_id = async() => {
         .then(response => {
           if (response['status'] == 401)
           {
-            localStorage.removeItem('jwtToken_doc')
-            nav({
-              pathname: '/login_doc'
-            });
+            // localStorage.removeItem('jwtToken_doc')
+            HandleLogout();
+            // window.location.reload();
           }
           else return response.json();
         })
@@ -225,6 +226,16 @@ const get_prof_name_by_id = async() => {
       setShowPopup(false);
       document.getElementById("pres-view-popup").style.display = 'none';
     };
+    const HandleLogout = async() =>{
+      if(localStorage.getItem('d_pat_id') != null) localStorage.removeItem('d_pat_id');
+      if(localStorage.getItem('d_mobile') != null) localStorage.removeItem('d_mobile');
+      if(localStorage.getItem('d_doc_id') != null) localStorage.removeItem('d_doc_id');
+      if(localStorage.getItem('d_app_id') != null) localStorage.removeItem('d_app_id'); 
+      if(localStorage.getItem('d_app_id') != null) localStorage.removeItem('d_app_id'); 
+      localStorage.removeItem('jwtToken_doc');
+      nav('/login_doc');
+      window.location.reload();
+    }
 
       return (
         <div>
@@ -240,7 +251,7 @@ const get_prof_name_by_id = async() => {
         <div>
         {/* <button className="nav-button1"><img  />{prof_name}</button> */}
 
-          <button className="nav-button" >Logout</button>
+          <button onClick={HandleLogout} className="nav-button" >Logout</button>
         </div>
       </div>
           <div className="appointment-history">

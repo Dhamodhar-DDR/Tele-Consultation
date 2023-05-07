@@ -11,9 +11,11 @@ const DisplayFiles = () => {
   }, [])
   const[searchParams] = useSearchParams();
 
+  
+
   const display_file = async() => {
     const formData = new FormData();
-    formData.append('pat_id', localStorage.getItem('pat_id'))
+    formData.append('pat_id', localStorage.getItem('p_pat_id'))
     await fetch('http://localhost:8090/api/v1/health_records/get_record_by_pat_id',{
       method: 'POST',
       headers: {
@@ -27,9 +29,7 @@ const DisplayFiles = () => {
     .then((response) => {
       if (response['status'] == 401)
       {
-        nav({
-          pathname: '/login_p'
-        });
+        handleLogout();
       }
       return response.json();
     })
@@ -64,7 +64,13 @@ const DisplayFiles = () => {
   }
 
   const handleLogout = () =>{
-    localStorage.clear();
+    if(localStorage.getItem('p_pat_id') != null) localStorage.removeItem('p_pat_id');
+        if(localStorage.getItem('p_mobile') != null) localStorage.removeItem('p_mobile');
+        if(localStorage.getItem('p_doc_id') != null) localStorage.removeItem('p_doc_id');
+        if(localStorage.getItem('p_app_id') != null) localStorage.removeItem('p_app_id'); 
+        if(localStorage.getItem('p_upload') != null) localStorage.removeItem('p_upload');
+        if(localStorage.getItem('p_type') != null) localStorage.removeItem('p_type'); 
+        
     localStorage.removeItem('jwtToken');
     nav('/login_p')
   }

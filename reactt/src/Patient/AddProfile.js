@@ -11,6 +11,7 @@ function AddProf() {
   
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
+  const [dob, setDOB] = useState('');
 
   const [Name, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -20,9 +21,22 @@ function AddProf() {
 
   const [prof_name, setprofname] = useState('')
 
+  const handleLogout = () =>{
+    if(localStorage.getItem('p_pat_id') != null) localStorage.removeItem('p_pat_id');
+    if(localStorage.getItem('p_mobile') != null) localStorage.removeItem('p_mobile');
+    if(localStorage.getItem('p_doc_id') != null) localStorage.removeItem('p_doc_id');
+    if(localStorage.getItem('p_app_id') != null) localStorage.removeItem('p_app_id'); 
+    if(localStorage.getItem('p_upload') != null) localStorage.removeItem('p_upload');
+    if(localStorage.getItem('p_type') != null) localStorage.removeItem('p_type'); 
+    
+    localStorage.removeItem('jwtToken');
+    nav('/login_p')
+    window.location.reload();
+  }
+
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('p_pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -36,9 +50,10 @@ function AddProf() {
     .then(response =>{
       if (response['status'] == 401)
         {
-          nav({
-            pathname: '/login_p'
-          });
+          // nav({
+          //   pathname: '/login_p'
+          // });
+          handleLogout();
         }
         return response.json();
     })
@@ -82,11 +97,11 @@ function AddProf() {
 
 
   useEffect(() => {
-    console.log("received id to add prof frm sess, ",localStorage.getItem('pat_id'));
+    console.log("received id to add prof frm sess, ",localStorage.getItem('p_pat_id'));
     
     get_prof_name_by_id()
     
-    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
+    console.log("Received pat_id: ", localStorage.getItem('p_pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
   }, [])
@@ -94,9 +109,9 @@ function AddProf() {
   const handleSubmit = async(e) =>{
     e.preventDefault();
     const create_patient_body = {
-      'pat_id': localStorage.getItem('pat_id'),
+      'pat_id': localStorage.getItem('p_pat_id'),
       'name' : Name,
-      'age' : Age,
+      'dob' : dob,
       'gender' : gender,
       'email' : email,
       'consent' : false
@@ -113,16 +128,17 @@ function AddProf() {
     .then(response => {
       if (response['status'] == 401)
         {
-          nav({
-            pathname: '/login_p'
-          });
+          // nav({
+          //   pathname: '/login_p'
+          // });
+          handleLogout();
         }
       // console.log(response)
       return response;
     })
     .then(data => {
       console.log(data)
-      // localStorage.setItem('pat_id', data.patientId);
+      // localStorage.setItem('p_pat_id', data.patientId);
       nav('/selectprofile');
       // nav({
       //   pathname: '/selectprofile',
@@ -136,6 +152,19 @@ function AddProf() {
     });
 
   };
+
+
+  const handleDOBChange = (event) => {
+    setDOB(event.target.value);
+    console.log(event.target.value)
+
+    const [year, month, day] = dob.split('-').map(Number);
+
+    console.log(year); // Output: 2023
+    console.log(month); // Output: 5
+    console.log(day); // Output: 8    
+    
+  }
 
 
   const navToHome = () =>{
@@ -185,8 +214,35 @@ function AddProf() {
         <input required type="text" value={Name} onChange={handleFirstNameChange} />
 
 
-        <label>Age:</label>
-        <input required type="number" value={Age} onChange={handleAgeChange} />
+        {/* <div className="txt_field"> */}
+          <span style = {{opacity:"0.5"}}> Enter Date of Birth: </span>
+          <label htmlFor="dob"></label>
+                <input
+                  type="date"
+                   id="dob"
+                  name="dob"
+                  value={dob}
+                 onChange={handleDOBChange}
+                />
+                
+
+
+          {/* </div> */}
+
+
+
+        {/* <label>Age:</label>
+        <input required type="number" value={Age} onChange={handleAgeChange} /> */}
+
+        {/* <label htmlFor="dob"></label>
+                <input
+                  type="date"
+                   id="dob"
+                  name="dob"
+                  value={dob}
+                 onChange={handleDOBChange}
+                /> */}
+
 
         <label id="gen">Gender:</label>
         <select id="gender_dropdown" onChange={handlegender}>

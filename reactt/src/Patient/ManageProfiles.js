@@ -9,11 +9,24 @@ function PatList() {
 
   const [prof_name, setprofname] = useState('')
   const [searchParams] = useSearchParams();
+
+  function getCurrentAge(dob) {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+  
+    return age;
+  }
   
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('p_pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -27,10 +40,11 @@ function PatList() {
     .then(response => {
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken')
-        nav({
-          pathname: '/login_p'
-        });
+        // localStorage.removeItem('jwtToken')
+        // nav({
+        //   pathname: '/login_p'
+        // });
+        handleLogout();
       }
       return response.json();
     })
@@ -61,11 +75,11 @@ function PatList() {
 
   const nav = useNavigate();
   
-  const pat_id = localStorage.getItem('pat_id');
+  const pat_id = localStorage.getItem('p_pat_id');
   console.log("loook ", pat_id)
   const get_all_profiles = async() => {
     const getProfilesBody = {
-      pat_id : localStorage.getItem('pat_id')
+      pat_id : localStorage.getItem('p_pat_id')
     }
     await fetch('http://localhost:8090/api/v1/patient/get_all_profiles', {
       method: 'POST',
@@ -80,10 +94,11 @@ function PatList() {
     .then(response => {
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken')
-        nav({
-          pathname: '/login_p'
-        });
+        // localStorage.removeItem('jwtToken')
+        // nav({
+        //   pathname: '/login_p'
+        // });
+        handleLogout();
       }
       return response.json();
     }
@@ -95,10 +110,10 @@ function PatList() {
   }
 
   useEffect(() => {
-    console.log("received id sess: ",localStorage.getItem('pat_id'))
+    console.log("received id sess: ",localStorage.getItem('p_pat_id'))
     get_prof_name_by_id()
     
-    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
+    console.log("Received pat_id: ", localStorage.getItem('p_pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
     get_all_profiles();
@@ -174,41 +189,18 @@ function PatList() {
     );
 }
 
-//   const get_onine_doc_list = async() => {
-//     await fetch('http://localhost:8090/api/v1/doctor/get_online_doctors', {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Access-Control-Allow-Origin': '*' 
-//       },
-  
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//       console.log("Online docs list: ",data)
-//       setdoclist(data)      
-//     })
-//     .catch(error => {
-//       console.log(error)
-//     });
-
-//   }
-
-//   const handleLogout = () =>{
-//     nav('/login_p')
-//   }
-
-//   useEffect(() => {
-//     get_onine_doc_list()
-//     console.log("Received pat_id: ", searchParams.get("pat_id"));
-//   }, [])
-
 const handleLogout = () =>{
-  localStorage.clear();
-
-  localStorage.removeItem('jwtToken');
-  nav('/login_p')
-  window.location.reload();
+  if(localStorage.getItem('p_pat_id') != null) localStorage.removeItem('p_pat_id');
+  if(localStorage.getItem('p_mobile') != null) localStorage.removeItem('p_mobile');
+  if(localStorage.getItem('p_doc_id') != null) localStorage.removeItem('p_doc_id');
+  if(localStorage.getItem('p_app_id') != null) localStorage.removeItem('p_app_id'); 
+  if(localStorage.getItem('p_upload') != null) localStorage.removeItem('p_upload');
+  if(localStorage.getItem('p_type') != null) localStorage.removeItem('p_type'); 
+  
+    localStorage.removeItem('jwtToken');
+    console.log("welluntil")
+    nav('/login_p');
+    window.location.reload();
 }
 
   return (
@@ -240,7 +232,7 @@ const handleLogout = () =>{
               image={def_pp}
               name={doctor.name}
               gender = {doctor.gender}
-              age={doctor.age}
+              age={getCurrentAge(doctor.dob)}
               email={doctor.email}
             />
         ))}

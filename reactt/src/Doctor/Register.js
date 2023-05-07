@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 
 import { useSearchParams,createSearchParams, useNavigate } from 'react-router-dom';
@@ -14,6 +12,8 @@ function Regdoc() {
   const nav = useNavigate();
   
   const[searchParams] = useSearchParams();
+  const [dob, setDOB] = useState('');
+
   const [Name, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const[spec, setSpec] = useState("General");
@@ -22,7 +22,7 @@ function Regdoc() {
   const [Age, setAge] = useState("");
 
   useEffect(() => {
-    console.log("Received num: ", localStorage.getItem('mobile'));
+    console.log("Received num: ", localStorage.getItem('d_mobile'));
   });
 
   const handleFirstNameChange = (e) => {
@@ -58,23 +58,23 @@ function Regdoc() {
   
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("In handle num:",localStorage.getItem('mobile'));
+    console.log("In handle num:",localStorage.getItem('d_mobile'));
     const create_doc_body = {
         'name' : Name,
-        'mobile' : localStorage.getItem('mobile'),
-        'age' : Age,
+        'mobile' : localStorage.getItem('d_mobile'),
+        'dob' : dob,
         'specialization':spec,
         'experience': exp,
         'email' : email,
         'gender' : gender,
         'onlineStatus' : false
       }
-      console.log(create_doc_body.email);
-      
+      console.log(create_doc_body);
+      console.log(localStorage.getItem('jwtToken_doc'));
       await fetch('http://localhost:8090/api/v1/doctor/add_doctor', {
         method: 'POST',
         headers: {
-        'Authorization': localStorage.getItem('jwtToken_doc'),
+          'Authorization': localStorage.getItem('jwtToken_doc'),
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*' 
         },
@@ -93,7 +93,7 @@ function Regdoc() {
       )
       .then(async(data) => {
         const get_doc_by_mobile_body = {
-          'mobile_number': localStorage.getItem('mobile')
+          'mobile_number': localStorage.getItem('d_mobile')
         }
         await fetch('http://localhost:8090/api/v1/doctor/get_doctor_by_mobile', {
           method: 'POST',
@@ -116,7 +116,9 @@ function Regdoc() {
         })
         .then(data => {
           console.log("Doc Id assigned: ",data.doctorId)
-          localStorage.setItem('doc_id', data.doctorId);
+          localStorage.setItem('d_doc_id', data.doctorId);
+          
+          if(localStorage.getItem('d_mobile') != null) localStorage.removeItem('d_mobile');
           nav('/DocHome')
           // nav({
           //   pathname: '/DocHome',
@@ -144,26 +146,32 @@ function Regdoc() {
   };
 
 
+  const handleDOBChange = (event) => {
+    setDOB(event.target.value);
+    console.log(event.target.value)
+
+    const [year, month, day] = dob.split('-').map(Number);
+
+    console.log(year); // Output: 2023
+    console.log(month); // Output: 5
+    console.log(day); // Output: 8    
+    
+  }
+
+
+
 
   return (
 
-    <div>
-    <button className="login-go-back-btn" >Go back</button>
+    <div style={{height:"100vh"}}>
+    <button className="login-go-back-btn" onClick={()=>nav('/login_doc')}>Go back</button>
     <div className="login-center">
-        <h1>Doctor Login</h1>
+        <h1>Doctor Register</h1>
         <form  method="post" onSubmit={handleSubmit}>
-
-        {/* <div className="txt_field">
-              <input type="number"/>
-              <span></span>
-              <label>Mobile Number</label>
-            </div> */}
-
 
           <div className="txt_field">
  
-               
-               
+              
                <input type="text" value={Name} onChange={handleFirstNameChange} required/>
                <span></span>
 
@@ -171,10 +179,18 @@ function Regdoc() {
           </div>
 
           <div className="txt_field">
-          <input type="number" value={Age} onChange={handleAgeChange} required/>
-          <span></span>
- 
-              <label>Age:</label>
+          <span style = {{opacity:"0.5"}}> Enter Date of Birth: </span>
+          <label htmlFor="dob"></label>
+                <input
+                  type="date"
+                   id="dob"
+                  name="dob"
+                  value={dob}
+                 onChange={handleDOBChange}
+                />
+                
+
+
           </div>
 
           <select class="custom-select" onChange={handlegender}>

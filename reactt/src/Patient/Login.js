@@ -22,7 +22,7 @@ function Logincg() {
     if(data == 'false')
     {
       console.log("entered")
-      localStorage.setItem("mobile", phone);
+      localStorage.setItem("p_mobile", phone);
       nav('/selectprofile')
       // nav({
       //   pathname: '/selectprofile',
@@ -33,7 +33,7 @@ function Logincg() {
     }
     else if(data == 'true')
     {
-      localStorage.setItem("mobile", phone);
+      localStorage.setItem("p_mobile", phone);
       nav('/register_p');
       // nav({
       //   pathname: '/register_p',
@@ -139,7 +139,7 @@ function Logincg() {
   };
 
   return (
-    <div >
+    <div style={{height:'100vh'}}>
       <button className="login-go-back-btn" onClick={goBack}>Go back</button>
         <div className="login-center">
           <h1>Patient Login</h1>

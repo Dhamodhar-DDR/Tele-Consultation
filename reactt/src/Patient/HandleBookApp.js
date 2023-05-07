@@ -43,9 +43,9 @@ async function HandleBookApp({doc_id,p_id}) {
         console.log(data.appointmentId);
         console.log('about to nav to waiting page');
 
-        localStorage.setItem('pat_id', p_id)
-        localStorage.getItem('doc_id', doc_id)
-        localStorage.getItem('app_id', data.appointmentId)
+        localStorage.setItem('p_pat_id', p_id)
+        localStorage.setItem('p_doc_id', doc_id)
+        localStorage.setItem('p_app_id', data.appointmentId)
 
         nav('/waiting_page');
       //   nav({

@@ -15,18 +15,18 @@ function AppoinHist() {
   const[appoinlist, settappoinlist] = useState([])
 
   useEffect(() => {
-    console.log("apphist pid:",localStorage.getItem('pat_id'))
+    console.log("apphist pid:",localStorage.getItem('p_pat_id'))
     get_prof_name_by_id()
     get_appoin_history()
     
-    console.log("Received pat_id: ", localStorage.getItem('pat_id'));
+    console.log("Received pat_id: ", localStorage.getItem('p_pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
 
   }, [])
 
   const get_appoin_history = async() =>{
 
-    const getappoinhist = {patId: localStorage.getItem('pat_id')}
+    const getappoinhist = {patId: localStorage.getItem('p_pat_id')}
     await fetch('http://localhost:8090/api/v1/appointment/get_patient_appointments', {
       method: 'POST',
       headers: {
@@ -41,10 +41,11 @@ function AppoinHist() {
       console.log(response);
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken')
-        nav({
-          pathname: '/login_p'
-        });
+        // localStorage.removeItem('jwtToken')
+        // nav({
+        //   pathname: '/login_p'
+        // });
+        handleLogout();
       }
       else return response.json();
     })
@@ -59,7 +60,7 @@ function AppoinHist() {
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('p_pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -74,10 +75,11 @@ function AppoinHist() {
       console.log(response);
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken')
-        nav({
-          pathname: '/login_p'
-        });
+        // localStorage.removeItem('jwtToken')
+        // nav({
+        //   pathname: '/login_p'
+        // });
+        handleLogout();
       }
       else return response.json();
     })
@@ -191,10 +193,11 @@ function AppoinHist() {
             console.log(response);
             if (response['status'] == 401)
             {
-              localStorage.removeItem('jwtToken')
-              nav({
-                pathname: '/login_p'
-              });
+              // localStorage.removeItem('jwtToken')
+              // nav({
+              //   pathname: '/login_p'
+              // });
+              handleLogout();
             }
             else return response.json();
           })
@@ -222,8 +225,13 @@ function AppoinHist() {
         else return <></>
       }
       const handleLogout = () =>{
-        localStorage.clear();
-    
+        if(localStorage.getItem('p_pat_id') != null) localStorage.removeItem('p_pat_id');
+        if(localStorage.getItem('p_mobile') != null) localStorage.removeItem('p_mobile');
+        if(localStorage.getItem('p_doc_id') != null) localStorage.removeItem('p_doc_id');
+        if(localStorage.getItem('p_app_id') != null) localStorage.removeItem('p_app_id'); 
+        if(localStorage.getItem('p_upload') != null) localStorage.removeItem('p_upload');
+        if(localStorage.getItem('p_type') != null) localStorage.removeItem('p_type'); 
+        
         localStorage.removeItem('jwtToken');
         nav('/login_p')
         window.location.reload();
@@ -253,7 +261,7 @@ function AppoinHist() {
                 <div className="doctor-profile">
                   <img className="doctor-photo" src={def_pp} alt="Doctor" />
                   <div className="doctor-info">
-                    <p className="doctor-name">{appointment.name}</p>
+                    <p className="doctor-name">Dr. {appointment.name}</p>
                     <div className="doctor-spec"><b>{appointment.specialization}</b></div>
                     <div className="info-label"><b>Call Start Time:</b> {convertTime(appointment.appointment.startTime)}</div>
                     {/* <div className="info-value">{doctor.startTime}</div> */}

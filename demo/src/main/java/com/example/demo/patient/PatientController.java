@@ -25,7 +25,7 @@ public class PatientController {
 
     record new_patient_request(
             String name,
-            int age,
+            String dob,
             String mobile,
             String gender,
 
@@ -37,7 +37,7 @@ public class PatientController {
     record new_profile_request(
             Integer pat_id,
             String name,
-            int age,
+            String dob,
             String gender,
 
             String email,
@@ -48,7 +48,7 @@ public class PatientController {
     @Transactional
     @PostMapping("/create")
     public void create_patient(@RequestBody new_patient_request npr) {
-        this.patientService.add_newPatient(npr.name,npr.mobile,npr.age, npr.gender, npr.email, npr.consent);
+        this.patientService.add_newPatient(npr.name,npr.mobile,npr.dob, npr.gender, npr.email, npr.consent);
     }
 
     record check_new_user_body (String mobile_number) {}
@@ -84,6 +84,6 @@ public class PatientController {
     @Transactional
     @PostMapping("/add_new_profile")
     public void add_new_profile(@RequestBody new_profile_request npr) {
-        this.patientService.add_new_profile(npr.pat_id,npr.name,npr.age, npr.gender, npr.email, npr.consent);
+        this.patientService.add_new_profile(npr.pat_id,npr.name,npr.dob, npr.gender, npr.email, npr.consent);
     }
 }

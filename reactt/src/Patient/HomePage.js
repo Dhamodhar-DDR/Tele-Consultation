@@ -29,13 +29,13 @@ function Homepat(){
 
   // const pat_id = searchParams.get("pat_id");
 
-  const pat_id = localStorage.getItem('pat_id');
+  const pat_id = localStorage.getItem('p_pat_id');
 
   const [prof_name, setprofname] = useState('')
 
   const get_prof_name_by_id = async() => {
 
-    const getpatidbody = {pat_id: localStorage.getItem('pat_id')}
+    const getpatidbody = {pat_id: localStorage.getItem('p_pat_id')}
     await fetch('http://localhost:8090/api/v1/patient/get_patient_by_id', {
       method: 'POST',
       headers: {
@@ -49,10 +49,11 @@ function Homepat(){
       console.log(response);
       if (response['status'] == 401)
       {
-        localStorage.removeItem('jwtToken')
-        nav({
-          pathname: '/login_p'
-        });
+        // localStorage.removeItem('jwtToken')
+        // nav({
+        //   pathname: '/login_p'
+        // });
+        handleLogout();
       }
       return response.json();
     }
@@ -83,14 +84,14 @@ function Homepat(){
   useEffect(() => {
     get_prof_name_by_id()
     
-    console.log("Received pat_id from sess: ", localStorage.getItem('pat_id'));
+    console.log("Received pat_id from sess: ", localStorage.getItem('p_pat_id'));
     console.log("Received profilename pat_id: ", prof_name);
   }, [])
 
 
   const handleUploadRecords = () => {
 
-    localStorage.setItem('upload_t', 0);
+    localStorage.setItem('p_upload_t', 0);
     
     nav('/upload_records');
 
@@ -156,7 +157,13 @@ function Homepat(){
 
   const handleLogout = () =>{
     console.log("welluntil")
-    localStorage.clear();
+    if(localStorage.getItem('p_pat_id') != null) localStorage.removeItem('p_pat_id');
+        if(localStorage.getItem('p_mobile') != null) localStorage.removeItem('p_mobile');
+        if(localStorage.getItem('p_doc_id') != null) localStorage.removeItem('p_doc_id');
+        if(localStorage.getItem('p_app_id') != null) localStorage.removeItem('p_app_id'); 
+        if(localStorage.getItem('p_upload') != null) localStorage.removeItem('p_upload');
+        if(localStorage.getItem('p_type') != null) localStorage.removeItem('p_type'); 
+        
     localStorage.removeItem('jwtToken');
     console.log("welluntil")
     nav('/login_p');
